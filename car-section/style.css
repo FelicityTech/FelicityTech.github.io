@@ -1,0 +1,80 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: white;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1440px;
+    height: 100vh;
+}
+
+section {
+    height: 400px;
+    width: 225px;
+    color: white;
+}
+
+.section img {
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.section .content h2 {
+    font-weight: 700;
+    font-size: 30px;
+    font: bold;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.section .content p {
+    margin-left: 20px;
+    line-height: 1.6;
+    margin-top: 40px;
+    margin-right: 25px;
+}
+
+.section .content button {
+    margin-top: 50px;
+    margin-left: 20px;
+    padding: 15px 20px 15px;
+    text-align: center;
+    width: 150px;
+    cursor: pointer;
+    border: 20px;
+    border-radius: 150px;
+}
+
+.button-1 {
+    color: hsl(31, 77%, 52%);
+}
+
+.button-2 {
+    color: hsl(184, 100%, 22%);
+}
+
+.button-3 {
+    color: hsl(179, 100%, 13%);
+}
+
+.section-1 {
+    background-color: hsl(31, 77%, 52%);
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.section-2 {
+    background-color: hsl(184, 100%, 22%);
+}
+
+.section-3 {
+    background-color: hsl(179, 100%, 13%);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}

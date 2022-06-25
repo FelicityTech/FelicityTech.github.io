@@ -1,0 +1,443 @@
+/* Reset */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/*************** Utility Components *****************/
+:root {
+  font-size: 62.5%;
+
+  /************ Custom Properties ***********/
+
+  /* Main Color */
+  --primary-color:gold;
+
+  /* Secondary Color */
+  --secondary-color: navy;
+
+  /* Secondary Color Modified */
+  --secondary-color-m: #ff94088e;
+
+  /* tertiary color */
+  --tertiary-color: #017374;
+
+  /* tertiary color modified */
+  --tertiary-color-m: #01727498;
+}
+
+body {
+  font-family: "Baloo Tamma 2", cursive;
+  line-height: 1.8;
+
+  display: flex;
+}
+
+/* List Items */
+li {
+  list-style: none;
+}
+
+/* Abchor Tags */
+a:link,
+a:visited {
+  text-decoration: none;
+  color: white;
+  font-size: 1.5rem;
+}
+
+/**************************** Main Styling ************************/
+
+/*-*-*-*-**-*-*-*-**-*-*-*-**-*-*-*-* Side Nav *-*-*-*-**-*-*-*-**-*-*-*-**-*-*-*-*/
+aside#side-nav {
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
+}
+
+div.side-nav__content {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background-color: var(--primary-color);
+}
+
+div.side-nav__content--logo img {
+  width: calc(3vw + 3vh);
+
+  object-fit: cover;
+}
+
+ul.side-nav__content--social {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+ul.side-nav__content--social a i {
+  /* 20px => 2rem => {1rem + [(10/1500) * 100]} => Dynamic Value */
+  font-size: calc(1rem + 0.66667vw);
+  color: white;
+
+  padding-bottom: calc(2rem + 0.6667vw);
+
+  transition: color 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+ul.side-nav__content--social a i:hover,
+ul.side-nav__content--social a i:active {
+  color: var(--secondary-color);
+}
+
+/*-*-*-*-* Main Content *-*-*--*-*-*/
+
+/* All content container => main element */
+main {
+  flex: 1;
+}
+
+/*-*-*-*-**-*-*-*-**-*-*-*-**-*-*-*-* Main Nav Header *-*-*-*-**-*-*-*-**-*-*-*-**-*-*-*-*/
+header#header {
+  background-color: var(--secondary-color);
+  height: calc(3vw + 3vh);
+  z-index: 2;
+}
+
+nav#header__main-nav {
+  height: 100%;
+}
+
+ul.header__main-nav--links {
+  /* just for demonstration purposes */
+  /* background-color: aqua; */
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+ul.header__main-nav--links li {
+  padding-right: 3vw;
+}
+
+ul.header__main-nav--links li a {
+  position: relative;
+  padding: 0.2rem 0.6rem;
+  font-size: calc(1rem + 0.66667vw);
+}
+
+ul.header__main-nav--links li a:link::before,
+ul.header__main-nav--links li a:visited::before,
+ul.header__main-nav--links li a:link::after,
+ul.header__main-nav--links li a:visited::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0.25rem;
+  background-color: white;
+
+  transform: scaleX(0);
+
+  transition: transform 0.6s cubic-bezier(1, 0, 0, 1);
+}
+
+ul.header__main-nav--links li a:link::before,
+ul.header__main-nav--links li a:visited::before {
+  top: 0;
+  /* Transform origin is center by default */
+  transform-origin: left;
+}
+
+ul.header__main-nav--links li a:link::after,
+ul.header__main-nav--links li a:visited::after {
+  bottom: 0;
+  transform-origin: right;
+}
+
+ul.header__main-nav--links li a:hover::before,
+ul.header__main-nav--links li a:active::before,
+ul.header__main-nav--links li a:hover::after,
+ul.header__main-nav--links li a:active::after {
+  transform: scaleX(1);
+}
+
+/*-*-*-*-**-*-*-*-**-*-*-*-**-*-*-*-* Showcase / Hero Section *-*-*-*-**-*-*-*-**-*-*-*-**-*-*-*-*/
+section#showcase {
+  height: 100vh;
+  background-image: url("img/background1.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+div.showcase__content {
+  background-color: var(--secondary-color);
+  padding: calc(1rem + 2vw);
+  height: calc(5rem + 20vmax);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  animation: hero 2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+@keyframes hero {
+  0% {
+    transform: translateX(100rem) rotate(360deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.showcase__content--title {
+  font-size: calc(2rem + 3vw);
+  color: white;
+}
+
+.showcase__content--para {
+  font-family: "Indie Flower", cursive;
+  font-size: calc(1.5rem + 1vw);
+  color: white;
+}
+
+.showcase__content--link:link,
+.showcase__content--link:visited {
+  padding: 1rem 0;
+  transition: all 0.5s ease-in-out;
+  width: 9rem;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.showcase__content--link:link::after,
+.showcase__content--link:visited::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--primary-color);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  z-index: -1;
+}
+
+.showcase__content--link:hover::after,
+.showcase__content--link:active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/*-*-*-*-**-*-*-*-**-*-*-*-**-*-*-*-* About Me Section *-*-*-*-**-*-*-*-**-*-*-*-**-*-*-*-*/
+section#about-me {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+
+  padding: 2rem;
+  color: white;
+  background-color: var(--secondary-color);
+}
+
+.about-me__img,
+.about-me__content {
+  flex-basis: 40rem;
+  padding: 2rem;
+  flex-grow: 1;
+}
+
+.about-me__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-me__content--title {
+  font-size: 4rem;
+  padding: 1rem 0;
+  color: white;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.about-me__content--title:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 0.3rem;
+  width: 10%;
+  background-color: var(--primary-color);
+}
+
+.about-me__content--title,
+.about-me__content--para {
+  margin-bottom: 4rem;
+  letter-spacing: 0.2rem;
+}
+
+.about-me__content--para, h3 {
+  font-size: 1.8rem;
+  font-family: "Indie Flower", cursive;
+}
+
+.about-me__content--link:link,
+.about-me__content--link:visited {
+  padding: 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.2rem;
+  text-transform: uppercase;
+
+  position: relative;
+  z-index: 1;
+}
+
+.about-me__content--link:link::after,
+.about-me__content--link:visited::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-color);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.45s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  z-index: -1;
+}
+
+.about-me__content--link:hover::after,
+.about-me__content--link:active::after {
+  transform: scaleY(1);
+  transform-origin: top;
+}
+
+/*-*-*-*-*-*-* Contact Section *-*-*-*-**-*-*-*-*/
+section#contact {
+  height: 100vh;
+  background-image: url("img/background3.jpg");
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contact__form {
+  flex-basis: 40rem;
+
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-color);
+}
+h3, p {
+  color: white;
+}
+.contact__form input,
+.contact__form textarea {
+  color: white;
+  text-color: white;
+  font-family: "Indie Flower", cursive;
+  font-size: 1.5rem;
+  letter-spacing: 0.2rem;
+  padding: 2rem;
+  background: transparent;
+  border: none;
+  border-bottom: var(--secondary-color) solid 0.1rem;
+}
+
+.contact__form textarea {
+  height: 30vh;
+}
+
+input[type="submit"] {
+  border: none;
+  cursor: pointer;
+}
+@media screen and (max-width: 460px) {
+  section#contact {
+    background-position: 15% 5%;
+  }
+}
+
+/*-*-*-*-*-*-* Registration Section *-*-*-*-**-*-*-*-*/
+section#registration {
+  height: 100vh;
+  background-image: url("img/background3.jpg");
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.registration__form {
+  flex-basis: 40rem;
+
+  display: flex;
+  flex-direction: column;
+  background-color: var(--primary-color);
+}
+
+.registration__form input,
+.registration__form select,
+.registration__form textarea {
+  color: white;
+  font-family: "Indie Flower", cursive;
+  font-size: 1.5rem;
+  letter-spacing: 0.2rem;
+  padding: 2rem;
+  background: transparent;
+  border: none;
+  border-bottom: var(--secondary-color) solid 0.1rem;
+}
+
+.registration__form option {
+  color: black;
+}
+
+.registration__form textarea {
+  height: 30vh;
+}
+
+input[type="submit"] {
+  border: none;
+  cursor: pointer;
+}
+@media screen and (max-width: 460px) {
+  section#registration {
+    background-position: 15% 5%;
+  }
+}
