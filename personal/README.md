@@ -1,2 +1,2 @@
 # FelicityTech.github.io
-# FelicityYech.github.io/personal
+# FelicityTech.github.io/personal
