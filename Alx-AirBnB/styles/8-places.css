@@ -24,6 +24,7 @@
 	justify-content: center;
 }
 
+
 .places article h2 {
 	font-size: 30px;
 	width: auto;
@@ -31,10 +32,9 @@
 	margin-left: auto;
 	text-align: center;
 	padding-left: 30px;
-	margin-top: 0px;
 }
 .places article h2.home {
-	margin-top: -100px !important;
+	/*margin-top: 1px !important;*/
 }
 .places article div.price_by_night {
 	color: #FF5A5F;
@@ -47,6 +47,8 @@
 	text-align: center;
 	line-height: 60px;
 	margin-left: auto;
+	margin-top: -90px;
+	margin-bottom: 20px;
 }
 .places article div.information {
 	width: 100%;
@@ -69,7 +71,8 @@ div.information div.max_guest, div.information div.number_rooms, div.information
 	line-height: 9em;
 }
 article div.description {
-	margin-top: 20px;
+	font-size: 14px;
+	margin: 2px 0px;
 }
 
  div.information div.max_guest {
@@ -85,3 +88,49 @@ article div.description {
  	font-size: 14px;
  	margin: 2px 0px;
  }
+ .places article div.amenities, .places article div.reviews {
+ 	margin-top: 40px;
+ 	width: 100%;
+ }
+ .places article div.amenities h2, .places article div.reviews h2 {
+ 	font-size: 16px;
+ 	border-bottom: 1px solid #DDDDDD;
+ 	text-align: left;
+ 	padding: 0px;
+ 	padding-bottom: 10px;
+ }
+ article div.amenities ul, div.reviews ul {
+ 	padding: 0px;
+ 	display: block;
+ }
+ article div.amenities ul {
+ 	margin-bottom: 0px;
+ }
+ article div.amenities ul li, article div.reviews ul li {
+ 	list-style: none;
+ }
+ article div.amenities ul li {
+ 	height: 25px;
+ 	width: 25px;
+ 	background-repeat: no-repeat;
+ 	background-position: center left;
+ 	background-size: cover; 	
+ }
+div.amenities ul li.TV {
+	background-image: url(../images/icon_tv.png);
+}
+div.amenities ul li.wifi {
+	background-image: url(../images/icon_wifi.png);
+}
+div.amenities ul li.peta {
+	background-image: url(../images/icon_pets.png);
+}
+
+div.reviews ul li p, article div.amenities ul li p {
+	font-size: 12px;
+}
+div.amenities ul li p {
+	width: 100px;
+	margin-left: 40px;
+	padding-top: 8px;
+}
