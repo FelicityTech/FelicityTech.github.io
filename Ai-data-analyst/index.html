@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FelicityTech AI Data Analyst</title>
+  <meta name="description" content="FelicityTech AI Data Analyst – Upload your data and get instant insights using free AI models. No credit card required." />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #1e88e5;
+      --primary-dark: #1565c0;
+      --bg: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+      --card: #ffffff;
+      --radius: 16px;
+      --shadow: 0 20px 40px rgba(2, 6, 23, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    header {
+      padding: 1.5rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .cta-btn {
+      background: var(--primary);
+      color: #fff;
+      padding: 0.75rem 1.4rem;
+      border-radius: 999px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 20px rgba(30, 136, 229, 0.35);
+    }
+
+    .cta-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    /* Hero */
+    .hero {
+      padding: 5rem 0 6rem;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 4vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      max-width: 540px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .secondary-btn {
+      padding: 0.75rem 1.4rem;
+      border-radius: 999px;
+      border: 1px solid #c7d2fe;
+      color: var(--primary);
+      font-weight: 600;
+      background: #fff;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+    }
+
+    .hero-card ul {
+      list-style: none;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero-card li {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      font-size: 0.95rem;
+    }
+
+    .hero-card li::before {
+      content: "✔";
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* Sections */
+    section {
+      padding: 5rem 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-title h2 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-6px);
+    }
+
+    .feature h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+
+    .feature p {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    /* CTA */
+    .final-cta {
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: #fff;
+      text-align: center;
+      padding: 5rem 1.5rem;
+      border-radius: 2rem;
+      margin: 0 auto 5rem;
+      max-width: 1000px;
+    }
+
+    .final-cta h2 {
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    .final-cta p {
+      font-size: 1.05rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem 3rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="logo">🧠 FelicityTech</div>
+      <a href="https://felicitytech-ai-data-analyst.streamlit.app/" target="_blank" class="cta-btn">Launch App</a>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>AI‑Powered <span>Data Analysis</span><br>Without Complexity</h1>
+        <p>
+          FelicityTech AI Data Analyst lets you upload datasets and instantly explore insights, charts, and custom analysis — powered by free AI models. No credit card. No setup.
+        </p>
+        <div class="hero-actions">
+          <a href="https://felicitytech-ai-data-analyst.streamlit.app/" target="_blank" class="cta-btn">Try the Live App</a>
+          <a href="#features" class="secondary-btn">Explore Features</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <ul>
+          <li>Upload CSV, Excel, JSON, Parquet, and more</li>
+          <li>Instant insights with zero AI usage</li>
+          <li>Ask questions in plain English</li>
+          <li>Powered by Gemini, Groq & Hugging Face</li>
+          <li>Runs fully in the browser via Streamlit</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-title">
+        <h2>Why Use FelicityTech AI Data Analyst?</h2>
+        <p>Designed for speed, clarity, and real-world data exploration.</p>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <h3>⚡ Instant Analysis</h3>
+          <p>Get summaries, distributions, correlations, and trends instantly without calling any AI model.</p>
+        </div>
+
+        <div class="feature">
+          <h3>🤖 Free AI Models</h3>
+          <p>Generate custom analysis code using Gemini, Groq, or Hugging Face — all free tiers supported.</p>
+        </div>
+
+        <div class="feature">
+          <h3>📊 Visual Insights</h3>
+          <p>Automatically create charts, tables, and downloadable results with clean visual output.</p>
+        </div>
+
+        <div class="feature">
+          <h3>🔒 Secure by Design</h3>
+          <p>No data storage. Your files stay in-session and API keys are fully protected.</p>
+        </div>
+
+        <div class="feature">
+          <h3>🧠 Smart Code Execution</h3>
+          <p>AI-generated Python code is validated, completed, and safely executed before results are shown.</p>
+        </div>
+
+        <div class="feature">
+          <h3>🚀 Built for Real Users</h3>
+          <p>Perfect for students, analysts, founders, and engineers who want answers fast.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="final-cta">
+      <h2>Start Analyzing Your Data Today</h2>
+      <p>Upload a dataset and turn questions into insights in seconds — no setup required.</p>
+      <a href="https://felicitytech-ai-data-analyst.streamlit.app/" target="_blank" class="cta-btn">Launch the App</a>
+    </div>
+
+    <footer>
+      Built by <strong>FelicityTech</strong> • Powered by Streamlit & Free AI APIs<br>
+      © 2026 FelicityTech. All rights reserved.
+    </footer>
+  </div>
+
+</body>
+</html>
