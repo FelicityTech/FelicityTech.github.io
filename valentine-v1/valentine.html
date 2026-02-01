@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine? 💖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Playfair Display', serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffd1dc 0%, #ffb6c1 25%, #ffc0cb 50%, #ffb3d9 75%, #ffd1dc 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            position: relative;
+            transition: all 1s ease;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0;
+            animation: floatUp 8s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .content {
+            text-align: center;
+            z-index: 10;
+            animation: fadeIn 1.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 3.5rem);
+            color: #8b0045;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(255, 192, 203, 0.5);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .name {
+            color: #d4006d;
+            font-style: italic;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: #c41e66;
+            margin-bottom: 50px;
+            font-weight: 600;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 20px 50px;
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        #yesBtn {
+            background: linear-gradient(135deg, #ff4081, #ff1744);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #yesBtn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        #yesBtn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 64, 129, 0.8);
+        }
+
+        #noBtn {
+            background: linear-gradient(135deg, #e0e0e0, #bdbdbd);
+            color: #666;
+            position: absolute;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        #noBtn:hover {
+            background: linear-gradient(135deg, #d0d0d0, #a0a0a0);
+        }
+
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff1744 0%, #ff4081 25%, #ff6090 50%, #ff4081 75%, #ff1744 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .celebration.active {
+            display: flex;
+            animation: celebrationEnter 1s ease;
+        }
+
+        @keyframes celebrationEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .celebration-message {
+            font-size: clamp(2rem, 6vw, 4rem);
+            color: white;
+            text-align: center;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .celebration-subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: #fff5f8;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            animation: confettiFall 3s linear infinite;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white;
+            animation: sparkleFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkleFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-30px) scale(1.5);
+                opacity: 0.5;
+            }
+        }
+
+        .heart-burst {
+            position: absolute;
+            font-size: 30px;
+            animation: heartBurst 2s ease-out forwards;
+        }
+
+        @keyframes heartBurst {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(1);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .button-container {
+                gap: 20px;
+            }
+            
+            button {
+                padding: 15px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <div class="content">
+            <h1>
+                <span class="name">Dorcas Oluwabusayomi</span>
+                <span class="subtitle">Will you be my Valentine? 💖</span>
+            </h1>
+            
+            <div class="button-container">
+                <button id="yesBtn">Yes 💕</button>
+                <button id="noBtn">No 💔</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-message">
+            You just made my heart the happiest! 💖
+        </div>
+        <div class="celebration-subtitle">
+            Happy Valentine's Day, Dorcas! ✨
+        </div>
+    </div>
+
+    <script>
+        // Create floating hearts
+        function createFloatingHearts() {
+            const hearts = ['💖', '💕', '💗', '💝', '💘', '❤️', '🌹'];
+            const container = document.getElementById('mainContainer');
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                container.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 10000);
+            }, 800);
+        }
+
+        // No button movement logic
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        
+        function moveNoButton() {
+            const container = document.getElementById('mainContainer');
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            const maxX = window.innerWidth - btnRect.width - 40;
+            const maxY = window.innerHeight - btnRect.height - 40;
+            
+            const newX = Math.random() * maxX;
+            const newY = Math.random() * maxY;
+            
+            noBtn.style.left = newX + 'px';
+            noBtn.style.top = newY + 'px';
+        }
+
+        noBtn.addEventListener('mouseenter', moveNoButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveNoButton();
+        });
+
+        // Yes button celebration
+        yesBtn.addEventListener('click', () => {
+            const celebration = document.getElementById('celebration');
+            celebration.classList.add('active');
+            
+            createCelebration();
+            playMusic();
+        });
+
+        function createCelebration() {
+            const celebration = document.getElementById('celebration');
+            
+            // Create confetti
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = ['#ff4081', '#ff1744', '#ffd700', '#ffffff', '#ff69b4'][Math.floor(Math.random() * 5)];
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    celebration.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 30);
+            }
+            
+            // Create sparkles
+            for (let i = 0; i < 50; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                celebration.appendChild(sparkle);
+            }
+            
+            // Create heart burst
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart-burst';
+                    heart.textContent = '💖';
+                    heart.style.left = '50%';
+                    heart.style.top = '50%';
+                    
+                    const angle = (Math.PI * 2 * i) / 20;
+                    const distance = 200 + Math.random() * 200;
+                    heart.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                    heart.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                    
+                    celebration.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 2000);
+                }, i * 50);
+            }
+        }
+
+        function playMusic() {
+            // Create a simple romantic melody using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            function playNote(frequency, startTime, duration) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, startTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                
+                oscillator.start(startTime);
+                oscillator.stop(startTime + duration);
+            }
+            
+            // Simple romantic melody
+            const melody = [
+                {note: 523.25, time: 0, duration: 0.5},    // C5
+                {note: 587.33, time: 0.5, duration: 0.5},  // D5
+                {note: 659.25, time: 1, duration: 0.5},    // E5
+                {note: 698.46, time: 1.5, duration: 0.5},  // F5
+                {note: 783.99, time: 2, duration: 1},      // G5
+                {note: 659.25, time: 3, duration: 0.5},    // E5
+                {note: 698.46, time: 3.5, duration: 1.5},  // F5
+            ];
+            
+            const startTime = audioContext.currentTime;
+            melody.forEach(({note, time, duration}) => {
+                playNote(note, startTime + time, duration);
+            });
+        }
+
+        // Initialize
+        createFloatingHearts();
+    </script>
+</body>
+</html>

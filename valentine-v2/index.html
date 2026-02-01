@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dorcas 💖 Valentine</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; font-family: 'Playfair Display', serif; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #ffd1dc, #f6c1cc, #fbe7f0);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.container {
+  z-index: 2;
+  padding: 20px;
+}
+
+h1 {
+  color: #7a003c;
+  font-size: 2.2rem;
+  margin-bottom: 25px;
+}
+
+.buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+#yesBtn {
+  background: #ff4f8b;
+  color: white;
+  box-shadow: 0 0 15px rgba(255,79,139,0.6);
+}
+
+#yesBtn:hover { transform: scale(1.1); }
+
+#noBtn {
+  background: #eee;
+  color: #444;
+  position: relative;
+}
+
+/* Celebration */
+.celebration {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+  z-index: 10;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.message {
+  color: #7a003c;
+  font-size: 2.1rem;
+  margin-top: 30px;
+}
+
+/* Slideshow */
+.slideshow {
+  width: 280px;
+  height: 360px;
+  margin: 30px auto;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.slideshow img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  opacity: 0;
+  animation: slideshow 12s infinite;
+}
+
+.slideshow img:nth-child(1){animation-delay:0s}
+.slideshow img:nth-child(2){animation-delay:4s}
+.slideshow img:nth-child(3){animation-delay:8s}
+
+@keyframes slideshow {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  30% { opacity: 1; }
+  40% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* Hearts */
+.heart {
+  position: absolute;
+  font-size: 20px;
+  animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(100vh); opacity: 1; }
+  to { transform: translateY(-10vh); opacity: 0; }
+}
+
+/* Confetti */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  animation: fall 4s linear infinite;
+}
+
+@keyframes fall {
+  from { transform: translateY(-10vh); }
+  to { transform: translateY(110vh); }
+}
+
+/* Fireworks */
+.firework {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: explode 1.2s ease-out forwards;
+}
+
+@keyframes explode {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+}
+
+/* Typewriter */
+#typewriter {
+  max-width: 700px;
+  margin: 30px auto;
+  font-size: 1.2rem;
+  line-height: 1.7;
+  color: #7a003c;
+  white-space: pre-wrap;
+}
+
+@media(max-width:600px){
+  h1 { font-size: 1.7rem; }
+  .buttons { flex-direction: column; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Dorcas Oluwabusayomi,<br>will you be my Valentine? 💖</h1>
+  <div class="buttons">
+    <button id="yesBtn">Yes 💕</button>
+    <button id="noBtn">No 💔</button>
+  </div>
+</div>
+
+<div class="celebration" id="celebration">
+  <div class="message">
+    Dorcas 💖,<br>
+    You just made <b>Solomon’s</b> heart the happiest 😍
+  </div>
+
+  <div id="typewriter"></div>
+
+  <div class="slideshow">
+    <img src="photo1.jpg">
+    <img src="photo2.jpg">
+    <img src="photo3.jpg">
+  </div>
+</div>
+
+<audio id="music" src="music.mp3" loop></audio>
+
+<script>
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const celebration = document.getElementById("celebration");
+const music = document.getElementById("music");
+
+/* No button escape */
+function moveNo() {
+  noBtn.style.position = "fixed";
+  noBtn.style.left = Math.random() * (window.innerWidth - 100) + "px";
+  noBtn.style.top = Math.random() * (window.innerHeight - 50) + "px";
+}
+noBtn.addEventListener("mouseover", moveNo);
+noBtn.addEventListener("click", moveNo);
+
+/* Effects */
+function hearts() {
+  for(let i=0;i<30;i++){
+    let h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="💖";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDuration=4+Math.random()*4+"s";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),8000);
+  }
+}
+
+function confetti(){
+  for(let i=0;i<60;i++){
+    let c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=`hsl(${Math.random()*360},100%,50%)`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),5000);
+  }
+}
+
+function fireworks(){
+  const colors=["#ff4f8b","#ffd700","#ff8fd4","#ffffff"];
+  for(let i=0;i<120;i++){
+    let f=document.createElement("div");
+    f.className="firework";
+    f.style.background=colors[Math.floor(Math.random()*colors.length)];
+    f.style.left="50vw";
+    f.style.top="50vh";
+    f.style.setProperty("--x",(Math.random()*600-300)+"px");
+    f.style.setProperty("--y",(Math.random()*600-300)+"px");
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1200);
+  }
+}
+
+/* Typewriter Letter */
+const letter = `
+Dorcas 💖,
+
+From the very first smile,
+to the laughs, late talks,
+and those moments that are just *ours* 😌
+
+You’ve become my favorite person,
+my peace, my joy, my safe place.
+
+So today, tomorrow, and always,
+I choose you.
+
+Happy Valentine’s Day 💕
+— Solomon ❤️
+`;
+
+let index=0;
+function startTypewriter(){
+  const el=document.getElementById("typewriter");
+  el.innerHTML="";
+  index=0;
+  function type(){
+    if(index<letter.length){
+      el.innerHTML+=letter.charAt(index);
+      index++;
+      setTimeout(type,40);
+    }
+  }
+  type();
+}
+
+/* Yes click */
+yesBtn.addEventListener("click",()=>{
+  celebration.style.display="block";
+  music.play();
+  hearts();
+  confetti();
+  fireworks();
+  startTypewriter();
+});
+</script>
+
+</body>
+</html>
