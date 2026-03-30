@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brainox Tutorial – JAMB 2026 Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0a0a0f;--surface:#12121a;--surface2:#1c1c2a;--border:#2a2a3e;
+    --accent:#00e5ff;--accent3:#a855f7;--green:#22c55e;--red:#ef4444;
+    --text:#e8e8f0;--muted:#6b6b8a;
+    --english:#e879f9;--physics:#00e5ff;--chemistry:#ff6b35;
+    --biology:#22c55e;--mathematics:#a855f7;--agriculture:#f59e0b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden;}
+  .noise{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:0.4;}
+  .grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(0,229,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.03) 1px,transparent 1px);background-size:40px 40px;}
+  .app{position:relative;z-index:1;}
+  .screen{display:none;min-height:100vh;}
+  .screen.active{display:flex;flex-direction:column;}
+
+  /* HEADER */
+  .bx-hdr{background:linear-gradient(135deg,#0d0d1a,#12121a);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;}
+  .bx-logo{display:flex;align-items:center;gap:10px;}
+  .bx-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#000;font-family:'Space Mono',monospace;}
+  .bx-name{font-size:1.05rem;font-weight:800;color:var(--text);}
+  .bx-name span{color:var(--accent);}
+  .bx-tag{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+  .bx-badge{font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:2px;border:1px solid rgba(0,229,255,0.3);padding:4px 10px;border-radius:20px;white-space:nowrap;}
+
+  /* HOME */
+  #home{align-items:center;padding:0 20px 40px;}
+  .hero{text-align:center;padding:36px 20px 24px;max-width:620px;margin:0 auto;}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;}
+  h1{font-size:clamp(2rem,6vw,3.8rem);font-weight:800;line-height:1.05;margin-bottom:12px;}
+  h1 span{background:linear-gradient(90deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero-sub{color:var(--muted);font-size:0.9rem;line-height:1.7;max-width:480px;margin:0 auto;}
+
+  /* CONTACT */
+  .contact-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;width:100%;max-width:720px;margin-bottom:20px;}
+  .c-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:#000;flex-shrink:0;font-family:'Space Mono',monospace;}
+  .c-name{font-weight:800;font-size:1rem;color:var(--text);}
+  .c-role{font-size:0.74rem;color:var(--muted);font-family:'Space Mono',monospace;margin-top:1px;}
+  .wa-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.3);color:#25d366;border-radius:20px;padding:5px 14px;font-family:'Space Mono',monospace;font-size:0.75rem;font-weight:700;text-decoration:none;margin-top:8px;transition:background 0.2s;}
+  .wa-btn:hover{background:rgba(37,211,102,0.22);}
+
+  /* ENGLISH BANNER */
+  .eng-banner{width:100%;max-width:720px;background:linear-gradient(135deg,rgba(232,121,249,0.09),rgba(168,85,247,0.06));border:1px solid rgba(232,121,249,0.3);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+  .eng-banner-text{font-size:0.82rem;color:var(--text);}
+  .eng-banner-text strong{color:var(--english);}
+
+  .sec-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;}
+  .mode-section{width:100%;max-width:720px;margin-bottom:22px;}
+  .mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .mode-card{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all 0.2s;text-align:left;}
+  .mode-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+  .mode-card.selected{border-color:var(--accent);background:rgba(0,229,255,0.04);}
+  .m-icon{font-size:1.4rem;margin-bottom:6px;}
+  .m-name{font-weight:700;font-size:0.95rem;margin-bottom:3px;}
+  .m-desc{font-size:0.75rem;color:var(--muted);}
+
+  .subj-section{width:100%;max-width:720px;margin-bottom:20px;}
+  .eng-lock{background:linear-gradient(135deg,rgba(232,121,249,0.08),rgba(168,85,247,0.04));border:2px solid rgba(232,121,249,0.4);border-radius:16px;padding:16px 14px;text-align:center;position:relative;}
+  .lock-badge{position:absolute;top:7px;right:7px;background:var(--english);color:#000;font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;font-family:'Space Mono',monospace;letter-spacing:1px;}
+  .subj-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:12px;}
+  .subj-card{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:15px 9px;cursor:pointer;transition:all 0.25s;text-align:center;position:relative;overflow:hidden;}
+  .subj-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.25s;}
+  .subj-card[data-s="physics"]::before{background:rgba(0,229,255,0.06);}
+  .subj-card[data-s="chemistry"]::before{background:rgba(255,107,53,0.06);}
+  .subj-card[data-s="biology"]::before{background:rgba(34,197,94,0.06);}
+  .subj-card[data-s="mathematics"]::before{background:rgba(168,85,247,0.06);}
+  .subj-card[data-s="agriculture"]::before{background:rgba(245,158,11,0.06);}
+  .subj-card:hover::before,.subj-card.sel::before{opacity:1;}
+  .subj-card[data-s="physics"]{--sc:var(--physics);}
+  .subj-card[data-s="chemistry"]{--sc:var(--chemistry);}
+  .subj-card[data-s="biology"]{--sc:var(--biology);}
+  .subj-card[data-s="mathematics"]{--sc:var(--mathematics);}
+  .subj-card[data-s="agriculture"]{--sc:var(--agriculture);}
+  .subj-card:hover{border-color:var(--sc);transform:translateY(-3px);}
+  .subj-card.sel{border-color:var(--sc);}
+  .s-icon{font-size:1.6rem;margin-bottom:6px;}
+  .s-name{font-weight:700;font-size:0.78rem;}
+  .subj-card.sel .s-name{color:var(--sc);}
+  .s-count{font-size:0.67rem;color:var(--muted);margin-top:2px;}
+  .chk{position:absolute;top:6px;right:6px;width:17px;height:17px;border-radius:50%;background:var(--sc);display:none;align-items:center;justify-content:center;font-size:9px;color:#000;font-weight:700;}
+  .subj-card.sel .chk{display:flex;}
+
+  .sel-info{font-family:'Space Mono',monospace;font-size:0.71rem;color:var(--muted);margin-bottom:14px;text-align:center;}
+  .start-btn{background:var(--accent);color:#000;border:none;padding:16px 52px;border-radius:12px;font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;letter-spacing:1px;}
+  .start-btn:hover{background:#fff;transform:scale(1.02);}
+  .start-btn:disabled{opacity:0.3;cursor:not-allowed;transform:none;}
+  .foot{margin-top:28px;text-align:center;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;line-height:1.9;}
+  .foot span{color:var(--accent);}
+
+  /* QUIZ */
+  #quiz{padding:0;}
+  .q-topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:11px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:10;}
+  .q-subj-tag{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:20px;font-weight:700;}
+  .timer{display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:1.05rem;font-weight:700;}
+  .timer.warn{color:var(--red);animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+  .prog-wrap{height:3px;background:var(--border);}
+  .prog-fill{height:100%;background:var(--accent);transition:width 0.3s;}
+  .subj-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:9px 24px;background:var(--surface2);border-bottom:1px solid var(--border);}
+  .s-tab{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
+  .s-tab.act{border-color:var(--accent);color:var(--accent);background:rgba(0,229,255,0.08);}
+  .q-body{padding:22px 24px;max-width:820px;margin:0 auto;flex:1;}
+  .prog-info{font-size:0.76rem;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:10px;}
+  .dot-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px;}
+  .dot{width:26px;height:26px;border-radius:7px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8px;cursor:pointer;transition:all 0.15s;color:var(--muted);}
+  .dot:hover{border-color:var(--accent);}
+  .dot.ans{background:rgba(0,229,255,0.12);border-color:var(--accent);color:var(--accent);}
+  .dot.cur{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;}
+  .q-num{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;}
+  .q-text{font-size:1.1rem;font-weight:600;line-height:1.65;margin-bottom:20px;}
+  .opts{display:flex;flex-direction:column;gap:9px;}
+  .opt{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:13px 15px;cursor:pointer;transition:all 0.2s;text-align:left;font-family:'Syne',sans-serif;font-size:0.88rem;color:var(--text);display:flex;align-items:center;gap:11px;}
+  .opt:hover:not(:disabled){border-color:var(--accent);background:rgba(0,229,255,0.05);}
+  .opt.sel-opt{border-color:var(--accent);background:rgba(0,229,255,0.07);}
+  .opt.correct{border-color:var(--green);background:rgba(34,197,94,0.09);color:var(--green);}
+  .opt.wrong{border-color:var(--red);background:rgba(239,68,68,0.09);color:var(--red);}
+  .opt:disabled{cursor:default;}
+  .opt-l{width:28px;height:28px;border-radius:7px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:0.74rem;font-weight:700;flex-shrink:0;transition:all 0.2s;}
+  .opt.sel-opt .opt-l{background:var(--accent);border-color:var(--accent);color:#000;}
+  .opt.correct .opt-l{background:var(--green);border-color:var(--green);color:#000;}
+  .opt.wrong .opt-l{background:var(--red);border-color:var(--red);color:#fff;}
+  .expl{margin-top:15px;padding:12px 15px;border-radius:10px;background:var(--surface2);border-left:3px solid var(--accent);font-size:0.84rem;line-height:1.6;color:var(--muted);display:none;}
+  .expl.show{display:block;}
+  .expl strong{color:var(--text);}
+  .q-nav{display:flex;align-items:center;justify-content:space-between;margin-top:22px;gap:10px;}
+  .nav-btn{padding:11px 20px;border-radius:10px;font-family:'Syne',sans-serif;font-size:0.86rem;font-weight:700;cursor:pointer;border:2px solid var(--border);background:var(--surface);color:var(--text);transition:all 0.2s;}
+  .nav-btn:hover:not(:disabled){border-color:var(--accent);}
+  .nav-btn.pri{background:var(--accent);border-color:var(--accent);color:#000;}
+  .nav-btn.pri:hover{background:#fff;border-color:#fff;}
+  .nav-btn:disabled{opacity:0.3;cursor:not-allowed;}
+
+  /* RESULTS */
+  #results{padding:0;}
+  .res-scroll{padding:0 24px 40px;max-width:800px;width:100%;margin:0 auto;}
+  .res-hdr{text-align:center;margin-bottom:26px;padding-top:26px;}
+  .score-ring{width:120px;height:120px;border-radius:50%;border:5px solid var(--border);position:relative;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+  .score-ring svg{position:absolute;inset:-5px;width:calc(100% + 10px);height:calc(100% + 10px);transform:rotate(-90deg);}
+  .score-ring circle{fill:none;stroke-width:5;}
+  .s-track{stroke:var(--border);}
+  .s-fill{stroke:var(--accent);stroke-linecap:round;transition:stroke-dasharray 1.2s ease;}
+  .score-num{font-size:1.8rem;font-weight:800;}
+  .score-lbl{font-size:0.68rem;color:var(--muted);font-family:'Space Mono',monospace;}
+  .grade-badge{display:inline-block;padding:6px 20px;border-radius:30px;font-weight:800;font-size:0.95rem;margin-top:10px;}
+  .res-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
+  .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
+  .stat-val{font-size:1.5rem;font-weight:800;}
+  .stat-lbl{font-size:0.67rem;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px;}
+  .rev-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+  .rev-list{display:flex;flex-direction:column;gap:9px;margin-bottom:22px;}
+  .rev-item{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 15px;border-left:4px solid var(--border);}
+  .rev-item.cor{border-left-color:var(--green);}
+  .rev-item.wrg{border-left-color:var(--red);}
+  .rev-item.skp{border-left-color:var(--muted);}
+  .rev-q{font-size:0.84rem;font-weight:600;margin-bottom:5px;}
+  .rev-ans{display:flex;flex-direction:column;gap:3px;font-size:0.77rem;}
+  .ans-wrong{color:var(--red);}
+  .ans-cor{color:var(--green);}
+  .res-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:22px;}
+  .act-btn{padding:12px 24px;border-radius:12px;font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;border:2px solid;}
+  .act-btn.pri{background:var(--accent);border-color:var(--accent);color:#000;}
+  .act-btn.pri:hover{background:#fff;border-color:#fff;}
+  .act-btn.sec{background:transparent;border-color:var(--border);color:var(--text);}
+  .act-btn.sec:hover{border-color:var(--accent);}
+  .res-contact{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;text-align:center;margin-bottom:16px;}
+  .res-contact p{font-size:0.79rem;color:var(--muted);margin-bottom:5px;}
+
+  .tag-english{background:rgba(232,121,249,0.15);color:var(--english);border:1px solid rgba(232,121,249,0.3);}
+  .tag-physics{background:rgba(0,229,255,0.15);color:var(--physics);border:1px solid rgba(0,229,255,0.3);}
+  .tag-chemistry{background:rgba(255,107,53,0.15);color:var(--chemistry);border:1px solid rgba(255,107,53,0.3);}
+  .tag-biology{background:rgba(34,197,94,0.15);color:var(--biology);border:1px solid rgba(34,197,94,0.3);}
+  .tag-mathematics{background:rgba(168,85,247,0.15);color:var(--mathematics);border:1px solid rgba(168,85,247,0.3);}
+  .tag-agriculture{background:rgba(245,158,11,0.15);color:var(--agriculture);border:1px solid rgba(245,158,11,0.3);}
+
+  @media(max-width:640px){.subj-grid{grid-template-columns:repeat(2,1fr);}.mode-cards{grid-template-columns:1fr;}.res-stats{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="noise"></div><div class="grid-bg"></div>
+<div class="app">
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <div class="bx-hdr">
+    <div class="bx-logo">
+      <div class="bx-icon">B</div>
+      <div><div class="bx-name">Brainox <span>Tutorial</span></div><div class="bx-tag">Empowering Future Leaders</div></div>
+    </div>
+    <div class="bx-badge">JAMB PREP 2026</div>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow">Brainox Tutorial · JAMB 2026</div>
+    <h1>JAMB <span>Practice Quiz</span></h1>
+    <p class="hero-sub">40 questions per subject. English Language is compulsory for all candidates. Choose your science subjects and beat the clock.</p>
+  </div>
+
+  <div class="contact-card">
+    <div class="c-avatar">SA</div>
+    <div>
+      <div class="c-name">Solomon Adegoke</div>
+      <div class="c-role">JAMB 2026 Preparator · Brainox Tutorial</div>
+      <a class="wa-btn" href="https://wa.me/2349058562294" target="_blank">📱 WhatsApp: 09058562294</a>
+    </div>
+  </div>
+
+  <div class="eng-banner">
+    <div style="font-size:1.2rem;">📚</div>
+    <div class="eng-banner-text"><strong>English Language is Compulsory</strong> — All candidates must sit English. Then select 1–3 additional science subjects below.</div>
+  </div>
+
+  <div class="mode-section">
+    <div class="sec-label">Select Mode</div>
+    <div class="mode-cards">
+      <div class="mode-card selected" data-mode="single" onclick="selectMode(this)">
+        <div class="m-icon">🎯</div>
+        <div class="m-name">Single Subject</div>
+        <div class="m-desc">English + 1 subject · 80 questions · 45 mins</div>
+      </div>
+      <div class="mode-card" data-mode="full" onclick="selectMode(this)">
+        <div class="m-icon">🏆</div>
+        <div class="m-name">Full JAMB Exam</div>
+        <div class="m-desc">English + up to 3 subjects · max 2 hrs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subj-section">
+    <div class="sec-label">English (Compulsory) + Choose Your Science Subject(s)</div>
+    <div class="eng-lock">
+      <div class="lock-badge">COMPULSORY</div>
+      <div class="s-icon">📖</div>
+      <div class="s-name" style="color:var(--english);font-weight:800;font-size:0.9rem;">English Language</div>
+      <div class="s-count" style="margin-top:5px;">40 questions · Always included for every candidate</div>
+    </div>
+    <div class="subj-grid">
+      <div class="subj-card" data-s="physics" onclick="toggleSubject(this)">
+        <div class="chk">✓</div><div class="s-icon">⚡</div>
+        <div class="s-name">Physics</div><div class="s-count">40 questions</div>
+      </div>
+      <div class="subj-card" data-s="chemistry" onclick="toggleSubject(this)">
+        <div class="chk">✓</div><div class="s-icon">🧪</div>
+        <div class="s-name">Chemistry</div><div class="s-count">40 questions</div>
+      </div>
+      <div class="subj-card" data-s="biology" onclick="toggleSubject(this)">
+        <div class="chk">✓</div><div class="s-icon">🧬</div>
+        <div class="s-name">Biology</div><div class="s-count">40 questions</div>
+      </div>
+      <div class="subj-card" data-s="mathematics" onclick="toggleSubject(this)">
+        <div class="chk">✓</div><div class="s-icon">📐</div>
+        <div class="s-name">Mathematics</div><div class="s-count">40 questions</div>
+      </div>
+      <div class="subj-card" data-s="agriculture" onclick="toggleSubject(this)">
+        <div class="chk">✓</div><div class="s-icon">🌾</div>
+        <div class="s-name">Agric. Science</div><div class="s-count">40 questions</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sel-info" id="selInfo">Select at least one science subject to begin (English always included)</div>
+  <button class="start-btn" id="startBtn" disabled onclick="startQuiz()">START EXAM →</button>
+  <div class="foot" style="margin-top:28px;">
+    Prepared by <span>Solomon Adegoke</span> · WhatsApp: <span>09058562294</span><br>
+    © 2026 <span>Brainox Tutorial</span> · All Rights Reserved
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <div class="bx-hdr">
+    <div class="bx-logo">
+      <div class="bx-icon">B</div>
+      <div><div class="bx-name">Brainox <span>Tutorial</span></div><div class="bx-tag">JAMB 2026 Practice</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="q-subj-tag" id="subjectTag"></span>
+      <div class="timer" id="timerBox">⏱ <span id="timerDisplay">00:00</span></div>
+    </div>
+  </div>
+  <div class="subj-tabs" id="subjectTabs"></div>
+  <div class="prog-wrap"><div class="prog-fill" id="progressBar" style="width:0%"></div></div>
+  <div class="q-body">
+    <div class="prog-info" id="progInfo"></div>
+    <div class="dot-row" id="dotRow"></div>
+    <div class="q-num" id="qNum"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="opts" id="optsList"></div>
+    <div class="expl" id="explBox"></div>
+    <div class="q-nav">
+      <button class="nav-btn" id="prevBtn" onclick="prevQ()">← Prev</button>
+      <button class="nav-btn" id="skipBtn" onclick="skipQ()">Skip</button>
+      <button class="nav-btn pri" id="nextBtn" onclick="nextQ()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen">
+  <div class="bx-hdr">
+    <div class="bx-logo">
+      <div class="bx-icon">B</div>
+      <div><div class="bx-name">Brainox <span>Tutorial</span></div><div class="bx-tag">Result Sheet · JAMB 2026</div></div>
+    </div>
+    <div class="bx-badge">RESULT SHEET</div>
+  </div>
+  <div class="res-scroll">
+    <div class="res-hdr">
+      <div class="score-ring">
+        <svg viewBox="0 0 130 130"><circle class="s-track" cx="65" cy="65" r="60"/><circle class="s-fill" id="scoreCircle" cx="65" cy="65" r="60"/></svg>
+        <div><div class="score-num" id="scoreNum">0%</div><div class="score-lbl">SCORE</div></div>
+      </div>
+      <div class="grade-badge" id="gradeBadge"></div>
+      <p style="color:var(--muted);margin-top:8px;font-size:0.8rem;" id="resSubLbl"></p>
+    </div>
+    <div class="res-stats">
+      <div class="stat-box"><div class="stat-val" style="color:var(--green)" id="cCount">0</div><div class="stat-lbl">CORRECT</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--red)" id="wCount">0</div><div class="stat-lbl">WRONG</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:var(--muted)" id="sCount">0</div><div class="stat-lbl">SKIPPED</div></div>
+    </div>
+    <div class="rev-title">Question-by-Question Review</div>
+    <div class="rev-list" id="revList"></div>
+    <div class="res-actions">
+      <button class="act-btn pri" onclick="retrySubject()">↺ Retry This Subject</button>
+      <button class="act-btn sec" onclick="goHome()">⌂ Choose New Subject</button>
+    </div>
+    <div class="res-contact">
+      <p>Need more help? Contact your JAMB Preparator:</p>
+      <p style="margin-top:4px;"><strong style="color:var(--text);">Solomon Adegoke</strong> &nbsp;·&nbsp;
+        <a class="wa-btn" href="https://wa.me/2349058562294" target="_blank" style="display:inline-flex;margin-top:0;">📱 09058562294</a>
+      </p>
+    </div>
+    <div class="foot">
+      Prepared by <span>Solomon Adegoke</span> · WhatsApp: <span>09058562294</span><br>
+      © 2026 <span>Brainox Tutorial</span> · All Rights Reserved
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+const QS = {
+  english:[
+    {q:"Choose the word nearest in meaning to 'BENEVOLENT':",o:["Cruel","Generous","Greedy","Hostile"],a:1,e:"Benevolent means well-meaning and generous — kind and charitable."},
+    {q:"'Neither the boys nor the girl ___ present.'",o:["were","are","was","have been"],a:2,e:"With 'neither...nor', the verb agrees with the nearest subject ('the girl' — singular) → 'was'."},
+    {q:"'The wind whispered through the trees.' Identify the figure of speech:",o:["Simile","Metaphor","Personification","Hyperbole"],a:2,e:"Personification attributes human qualities (whispering) to a non-human thing (wind)."},
+    {q:"'The committee has reached ___':",o:["their decision","its decision","there decision","it's decision"],a:1,e:"'Committee' is a singular collective noun → possessive pronoun = 'its'."},
+    {q:"Which sentence is grammatically correct?",o:["She don't know the answer.","He go to school every day.","They are playing football.","I has finished my work."],a:2,e:"'They are playing football' has correct subject-verb agreement. The others have verb errors."},
+    {q:"Opposite in meaning to 'VERBOSE':",o:["Talkative","Concise","Wordy","Eloquent"],a:1,e:"Verbose = using too many words. Antonym = concise (brief and to the point)."},
+    {q:"Passive of 'He gave me the book':",o:["The book was given to me by him.","I was given the book by him.","Both A and B","The book gave him to me."],a:2,e:"Both 'The book was given to me by him' and 'I was given the book by him' are correct."},
+    {q:"Part of speech of 'BEAUTIFULLY' in 'She sang beautifully':",o:["Adjective","Noun","Verb","Adverb"],a:3,e:"'Beautifully' modifies the verb 'sang' — it is an adverb (answers 'how')."},
+    {q:"Correct spelling:",o:["Accomodation","Accommodation","Acommodation","Accomodation"],a:1,e:"Correct: Accommodation — double 'c' and double 'm'."},
+    {q:"'He is a dark horse' means:",o:["He is a jockey","He owns a dark horse","He is an unknown who may succeed","He works at night"],a:2,e:"'Dark horse' = a person not well-known who may unexpectedly succeed."},
+    {q:"Correct use of semicolon:",o:["I went to the market; and bought vegetables.","She is intelligent; however, she is lazy.","He ran fast; because he was late.","They went home; but she stayed."],a:1,e:"Semicolons are used before conjunctive adverbs like 'however', 'therefore'."},
+    {q:"Word closest in meaning to 'EPHEMERAL':",o:["Permanent","Short-lived","Beautiful","Ancient"],a:1,e:"Ephemeral = lasting a very short time; transient, short-lived."},
+    {q:"'Looked after' means:",o:["Searched for","Took care of","Looked behind","Watched"],a:1,e:"'Look after' = take care of someone or something."},
+    {q:"Sentence with a dangling modifier:",o:["Walking down the road, she saw the accident.","Walking down the road, the accident was seen.","She saw the accident while walking.","As she walked, she saw the accident."],a:1,e:"'Walking down the road, the accident was seen' — the accident cannot walk. Dangling modifier."},
+    {q:"'Although it was raining, we went out.' Identify the clause type:",o:["Noun clause","Relative clause","Adverbial clause","Main clause"],a:2,e:"'Although it was raining' is an adverbial clause of concession."},
+    {q:"'The jury ___ divided in their opinion.'",o:["was","were","is","has"],a:1,e:"'Jury' can take a plural verb (British English) when members act individually."},
+    {q:"Which is a concrete noun?",o:["Happiness","Justice","Table","Beauty"],a:2,e:"'Table' is concrete — you can see and touch it. The others are abstract nouns."},
+    {q:"'The more you read, the more you know.' This is an example of:",o:["Simile","Paradox","Comparison","Correlative conjunction"],a:3,e:"'The more...the more' is a correlative conjunction showing a proportional relationship."},
+    {q:"Word that does NOT belong:",o:["Ecstatic","Joyful","Elated","Melancholy"],a:3,e:"Ecstatic, joyful, and elated all express happiness. Melancholy = sadness — the odd one out."},
+    {q:"Correct apostrophe use:",o:["Its raining outside.","The cat licked it's paw.","The children's toys were scattered.","The girls coat was torn."],a:2,e:"'Children's' correctly shows possession. 'Its' (possessive) has no apostrophe."},
+    {q:"'Philanthropy' means:",o:["Love of animals","Love of humankind","Fear of strangers","Study of nature"],a:1,e:"Greek: philos (loving) + anthropos (human being) = love of humankind."},
+    {q:"Correct use of 'who'/'whom':",o:["Who did you give the book to?","Whom called you yesterday?","To whom did you give the book?","Whom is speaking?"],a:2,e:"'Whom' is the object of a preposition. 'To whom did you give the book?' is correct."},
+    {q:"'A blessing in disguise' means:",o:["A hidden curse","Something bad that turns out good","A disguised person","A fake blessing"],a:1,e:"Something that appears bad or unfortunate at first but turns out beneficial."},
+    {q:"'Can you not see the injustice here?' Identify the device:",o:["Metaphor","Rhetorical question","Irony","Alliteration"],a:1,e:"A rhetorical question is asked for effect, not expecting an answer."},
+    {q:"Example of alliteration:",o:["As brave as a lion","Peter Piper picked a peck","The sun smiled down","He died a warrior's death"],a:1,e:"Alliteration = repetition of initial consonant sounds. 'Peter Piper picked a peck' repeats 'p'."},
+    {q:"'He burnt the midnight oil' means:",o:["He set fire to his lamp","He worked/studied late into the night","He wasted fuel","He was reckless"],a:1,e:"To burn the midnight oil = work or study very late into the night."},
+    {q:"Word nearest in meaning to 'LOQUACIOUS':",o:["Silent","Talkative","Intelligent","Honest"],a:1,e:"Loquacious = tending to talk a great deal; garrulous."},
+    {q:"Plural of 'criterion':",o:["Criterions","Criterias","Criteria","Criterion"],a:2,e:"'Criterion' is Greek. Plural = 'criteria' (Greek -on → -a pattern)."},
+    {q:"'By this time tomorrow, I will have finished the exam.' What tense?",o:["Simple future","Future continuous","Future perfect","Present perfect"],a:2,e:"Future perfect tense describes an action completed before a specific future point."},
+    {q:"'Shut the door!' Type of sentence:",o:["Declarative","Interrogative","Exclamatory","Imperative"],a:3,e:"Imperative sentences give commands or instructions."},
+    {q:"'_____ of the students have passed.'",o:["All","Every","Each","Either"],a:0,e:"'All' takes a plural verb ('have'). Every/each/either take singular verbs."},
+    {q:"Homophone of 'knight':",o:["Night","Knit","Known","Neat"],a:0,e:"Homophones sound the same. 'Knight' and 'night' are pronounced identically."},
+    {q:"'She is the apple of his eye.' The expression is:",o:["Simile","Metaphor","Idiom","Proverb"],a:2,e:"'Apple of his eye' is an idiom meaning someone precious or beloved."},
+    {q:"Indirect speech of 'She said, \"I am tired.\"':",o:["She said that she was tired.","She said that I am tired.","She said that she is tired.","She said that I was tired."],a:0,e:"Pronoun changes: I→she; tense backshifts: am→was."},
+    {q:"Grammatically correct sentence:",o:["Less students came today.","Fewer students came today.","Little students came today.","Small students came today."],a:1,e:"'Fewer' is used with countable nouns (students). 'Less' is for uncountable nouns."},
+    {q:"'AMBIGUOUS' most nearly means:",o:["Clear and specific","Having two or more possible meanings","Completely false","Very important"],a:1,e:"Ambiguous = open to more than one interpretation."},
+    {q:"Example of onomatopoeia:",o:["The tall man walked slowly","The clock ticked loudly","The buzzing bee flew by","Both B and C"],a:3,e:"'Ticked' and 'buzzing' both imitate sounds — onomatopoeia."},
+    {q:"Correct preposition: 'She has been absent ___ Monday.'",o:["for","from","since","at"],a:2,e:"'Since' = specific point in time (Monday). 'For' = duration (for three days)."},
+    {q:"'Life is a journey.' Figure of speech:",o:["Simile","Metaphor","Personification","Oxymoron"],a:1,e:"A metaphor makes a direct comparison without 'like' or 'as'."},
+    {q:"Which sentence is in passive voice?",o:["The dog chased the cat.","The teacher praised the student.","The letter was written by John.","Mary cooked the food."],a:2,e:"'The letter was written by John' — subject receives the action (passive voice)."},
+    {q:"'TACITURN' most nearly means:",o:["Cheerful","Reserved and uncommunicative","Very loud","Extremely angry"],a:1,e:"Taciturn = habitually silent or uncommunicative — a person of few words."}
+  ],
+  physics:[
+    {q:"A body moves with uniform velocity. Which is true?",o:["Resultant force is zero","Body is accelerating","Moving in circle","Net force is non-zero"],a:0,e:"Uniform velocity → no change in motion → resultant force = zero (Newton's 1st Law)."},
+    {q:"Unit of electric potential difference:",o:["Ampere","Coulomb","Volt","Ohm"],a:2,e:"Potential difference is measured in Volts (V)."},
+    {q:"Stone dropped from 45 m. Time to reach ground (g=10 m/s²):",o:["2 s","3 s","4.5 s","9 s"],a:1,e:"h=½gt² → t=√(2h/g)=√9=3 s."},
+    {q:"Which is NOT a vector quantity?",o:["Velocity","Force","Speed","Acceleration"],a:2,e:"Speed has only magnitude (scalar). The others have magnitude and direction."},
+    {q:"Total internal reflection is used in:",o:["Periscopes","Optical fibres","Microscopes","Telescopes"],a:1,e:"Optical fibres use total internal reflection to transmit light."},
+    {q:"Resistance of metallic conductor when temperature increases:",o:["Decreases","Increases","Unchanged","Varies randomly"],a:1,e:"Metallic resistance increases with temperature due to increased vibrations."},
+    {q:"Specific heat capacity = heat to raise 1 kg by:",o:["10°C","5°C","1°C","100°C"],a:2,e:"Specific heat capacity (c) = heat per kg per °C rise."},
+    {q:"Transformer: 200 primary turns, 50 secondary, Vp=240 V. Vs=?",o:["960 V","60 V","120 V","480 V"],a:1,e:"Vs = 240×(50/200) = 60 V."},
+    {q:"Which wave requires a material medium?",o:["Light","Radio","Sound","X-rays"],a:2,e:"Sound is a mechanical wave requiring a medium."},
+    {q:"Half-life 20 days. Fraction remaining after 60 days:",o:["1/2","1/4","1/8","1/16"],a:2,e:"3 half-lives: (½)³=1/8."},
+    {q:"Ohm's Law: current is ___ proportional to voltage (constant temp):",o:["Inversely","Directly","Equally","Not"],a:1,e:"V=IR; at constant R, I ∝ V directly."},
+    {q:"Converging lens, f=20 cm. Power:",o:["5 D","0.05 D","20 D","2 D"],a:0,e:"P=1/0.20=5 D."},
+    {q:"Speed of light in vacuum:",o:["3×10⁶ m/s","3×10⁸ m/s","3×10¹⁰ m/s","3×10⁴ m/s"],a:1,e:"c=3×10⁸ m/s."},
+    {q:"Photoelectric effect:",o:["Electrons emitted when light hits metal","Light emitted when electrons hit metal","Absorption of electrons","Refraction of light"],a:0,e:"Electrons are emitted from metal when light of sufficient frequency strikes it."},
+    {q:"KE of 5 kg body at 4 m/s:",o:["20 J","40 J","80 J","10 J"],a:1,e:"KE=½×5×16=40 J."},
+    {q:"Which is a longitudinal wave?",o:["Light","Water wave","Sound","Radio"],a:2,e:"Sound: particles vibrate parallel to direction of propagation."},
+    {q:"Pressure at depth h in liquid density ρ:",o:["ρg","hg","ρh","ρgh"],a:3,e:"P=ρgh."},
+    {q:"Newton's 3rd Law:",o:["F=ma","Equal and opposite reaction","Body at rest stays","Momentum conserved"],a:1,e:"Every action has an equal and opposite reaction."},
+    {q:"SI unit of electric charge:",o:["Ampere","Coulomb","Volt","Farad"],a:1,e:"Coulomb (C) is the SI unit of charge."},
+    {q:"Wave: f=50 Hz, λ=2 m. Speed:",o:["25 m/s","100 m/s","52 m/s","48 m/s"],a:1,e:"v=fλ=50×2=100 m/s."},
+    {q:"Conservation of energy:",o:["Energy can be created","Can be destroyed","Neither created nor destroyed","Always lost"],a:2,e:"Energy cannot be created or destroyed, only converted."},
+    {q:"Instrument measuring atmospheric pressure:",o:["Thermometer","Barometer","Manometer","Hygrometer"],a:1,e:"Barometer measures atmospheric pressure."},
+    {q:"Highest frequency in visible spectrum:",o:["Red","Green","Yellow","Violet"],a:3,e:"Violet has the highest frequency (~750 THz)."},
+    {q:"Body thrown horizontally has:",o:["Uniform motion","Projectile motion","Circular motion","SHM"],a:1,e:"Projectile = horizontal uniform + vertical free fall."},
+    {q:"Latent heat of vaporisation = energy to:",o:["Melt solid","Vaporise liquid at constant temp","Raise liquid temp","Freeze liquid"],a:1,e:"Energy per unit mass to change liquid to vapour at constant temperature."},
+    {q:"Electromagnetic waves are:",o:["Longitudinal only","Transverse only","Both","Neither"],a:1,e:"EM waves are transverse — oscillations perpendicular to propagation."},
+    {q:"Series circuit total resistance R₁, R₂, R₃:",o:["1/R₁+1/R₂+1/R₃","R₁×R₂×R₃","R₁+R₂+R₃","Average"],a:2,e:"R_total=R₁+R₂+R₃ in series."},
+    {q:"NOT electromagnetic radiation:",o:["X-rays","Gamma rays","Sound waves","Microwaves"],a:2,e:"Sound is mechanical. X-rays, gamma, microwaves are EM."},
+    {q:"Work: 10 N moves object 5 m:",o:["2 J","15 J","50 J","0.5 J"],a:2,e:"W=F×d=10×5=50 J."},
+    {q:"Radioactive emission NOT deflected by magnetic field:",o:["Alpha","Beta","Gamma","All deflected"],a:2,e:"Gamma rays have no charge — not deflected."},
+    {q:"Which is a semiconductor?",o:["Copper","Silver","Silicon","Aluminium"],a:2,e:"Silicon (Si) is a semiconductor."},
+    {q:"Magnification of plane mirror:",o:["Greater than 1","Less than 1","Equal to 1","Zero"],a:2,e:"Same-sized image → magnification=1."},
+    {q:"2 A through 5 Ω. Power dissipated:",o:["10 W","2.5 W","20 W","40 W"],a:2,e:"P=I²R=4×5=20 W."},
+    {q:"Centre of gravity of uniform metre rule:",o:["0 cm","25 cm","50 cm","75 cm"],a:2,e:"Uniform distribution → centre at 50 cm."},
+    {q:"Moment of force = force × ___:",o:["Area","Perpendicular distance from pivot","Mass","Velocity"],a:1,e:"Moment=Force × perpendicular distance from pivot."},
+    {q:"Nuclear fission:",o:["Two light nuclei combine","Heavy nucleus splits","Nucleus emits electron","Nucleus gains proton"],a:1,e:"Heavy nucleus splits into lighter ones, releasing energy."},
+    {q:"Speed of sound in air (~20°C):",o:["30 m/s","340 m/s","3000 m/s","34 m/s"],a:1,e:"Sound travels at ~340 m/s in air."},
+    {q:"Archimedes' Principle:",o:["Pressure increases with depth","Floating body displaces own weight","Upthrust = weight of fluid displaced","Heat flows hot to cold"],a:2,e:"Upthrust = weight of fluid displaced."},
+    {q:"Critical angle: refraction angle equals:",o:["0°","45°","90°","180°"],a:2,e:"At critical angle, refracted ray grazes surface (90°)."},
+    {q:"Excess charges on conductor reside:",o:["Throughout volume","At centre","On outer surface","On inner surface"],a:2,e:"Excess charges distribute on the outer surface."}
+  ],
+  chemistry:[
+    {q:"Atomic number = number of:",o:["Neutrons","Protons","Outermost electrons","Nucleons"],a:1,e:"Z = number of protons in nucleus."},
+    {q:"Physical change example:",o:["Burning wood","Rusting iron","Melting ice","Fermentation"],a:2,e:"Melting ice changes state only — no new substance formed."},
+    {q:"pH of neutral solution at 25°C:",o:["0","7","14","1"],a:1,e:"[H⁺]=[OH⁻]=10⁻⁷ → pH=7."},
+    {q:"Avogadro's number:",o:["6.02×10²³","6.02×10²¹","3.01×10²³","1.66×10⁻²⁴"],a:0,e:"Nₐ=6.02×10²³ mol⁻¹."},
+    {q:"Gas produced when HCl reacts with zinc:",o:["Oxygen","Chlorine","Hydrogen","Nitrogen"],a:2,e:"Zn+2HCl→ZnCl₂+H₂↑."},
+    {q:"Liquid→vapour below boiling point:",o:["Boiling","Condensation","Evaporation","Sublimation"],a:2,e:"Evaporation occurs at surface below boiling point."},
+    {q:"Highest electronegativity:",o:["Oxygen","Nitrogen","Chlorine","Fluorine"],a:3,e:"Fluorine (F) — 3.98 Pauling scale."},
+    {q:"Alloys are:",o:["Pure metals","Mixtures of metals","Compounds of metals","Ionic compounds"],a:1,e:"Alloys = homogeneous mixtures of metals."},
+    {q:"Moles in 44 g CO₂ (M=44 g/mol):",o:["0.5","2","1","44"],a:2,e:"44/44=1 mol."},
+    {q:"Bond in NaCl:",o:["Covalent","Metallic","Ionic","Hydrogen"],a:2,e:"NaCl is ionic — Na⁺ and Cl⁻ electrostatically attracted."},
+    {q:"Catalysts:",o:["Consumed in reaction","Increase activation energy","Speed reaction without being consumed","Change equilibrium position"],a:2,e:"Catalysts lower activation energy; not consumed."},
+    {q:"Product when ethanol oxidised:",o:["Ethane","Ethanoic acid","Methanol","Ether"],a:1,e:"CH₃CH₂OH → CH₃COOH (ethanoic acid)."},
+    {q:"Same group elements have same:",o:["Atomic mass","Electron count","Valence electrons","Proton count"],a:2,e:"Same group = same valence electrons → similar properties."},
+    {q:"IUPAC name of CH₃–CH₂–OH:",o:["Methanol","Propanol","Ethanol","Butanol"],a:2,e:"2 carbons + OH = Ethanol."},
+    {q:"Noble gas:",o:["Nitrogen","Neon","Chlorine","Oxygen"],a:1,e:"Neon (Ne) is Group 18 — noble/inert gas."},
+    {q:"Empirical formula: 40%C, 6.7%H, 53.3%O:",o:["CH₂O","C₂H₄O","CH₄O","C₂H₂O"],a:0,e:"Ratio 1:2:1 → CH₂O."},
+    {q:"Property of acids:",o:["Turn red litmus blue","pH>7","Produce H⁺ in solution","React with acids to form salts"],a:2,e:"Acids produce H⁺ ions in solution."},
+    {q:"Separating miscible liquids by boiling point:",o:["Filtration","Distillation","Crystallisation","Chromatography"],a:1,e:"Distillation separates by boiling point differences."},
+    {q:"Isotopes: same ___ different ___:",o:["Protons; neutrons","Neutrons; protons","Electrons; protons","Protons; electrons"],a:0,e:"Same Z (protons), different neutron count."},
+    {q:"Valency of N in NH₃:",o:["1","2","3","4"],a:2,e:"N forms 3 bonds in NH₃ → valency=3."},
+    {q:"Strong acid:",o:["Ethanoic acid","Carbonic acid","Hydrochloric acid","Citric acid"],a:2,e:"HCl fully dissociates → strong acid."},
+    {q:"Haber process manufactures:",o:["Sulphuric acid","Ammonia","Sodium hydroxide","Nitric acid"],a:1,e:"N₂+3H₂⇌2NH₃ (Haber process)."},
+    {q:"Exothermic reaction:",o:["Absorbs heat","Releases heat","No energy change","Requires catalyst"],a:1,e:"Exothermic: heat released; ΔH<0."},
+    {q:"Gas in fire extinguishers:",o:["Oxygen","Hydrogen","Carbon dioxide","Nitrogen"],a:2,e:"CO₂ smothers fire by displacing oxygen."},
+    {q:"Outermost electrons in Ca (Z=20):",o:["2","8","4","6"],a:0,e:"Config: 2,8,8,2 → 2 valence electrons."},
+    {q:"Redox reaction:",o:["NaOH+HCl→NaCl+H₂O","Na+H₂O→NaOH+½H₂","BaCl₂+Na₂SO₄→BaSO₄+2NaCl","NH₃+HCl→NH₄Cl"],a:1,e:"Na oxidised (0→+1), H reduced (+1→0) — redox."},
+    {q:"Petroleum separated by:",o:["Fractional distillation","Simple distillation","Chromatography","Crystallisation"],a:0,e:"Fractional distillation separates crude oil fractions."},
+    {q:"Formula of aluminium oxide:",o:["AlO","Al₂O","Al₂O₃","AlO₂"],a:2,e:"Al³⁺ + O²⁻ in 2:3 ratio → Al₂O₃."},
+    {q:"Drying agent:",o:["NaCl","Conc. H₂SO₄","Dilute HCl","Na₂CO₃"],a:1,e:"Conc. H₂SO₄ absorbs water — powerful drying agent."},
+    {q:"Saponification is fat + ___:",o:["Acid","Alkali","Salt","Water only"],a:1,e:"Fat + NaOH/KOH → glycerol + soap (saponification)."},
+    {q:"Sharing electrons describes:",o:["Ionic bonding","Metallic bonding","Covalent bonding","Hydrogen bonding"],a:2,e:"Covalent bonds form by sharing electron pairs."},
+    {q:"Gas causing acid rain:",o:["Oxygen","Nitrogen","Sulphur dioxide","Carbon dioxide"],a:2,e:"SO₂+H₂O+O₂→H₂SO₄ (acid rain)."},
+    {q:"STP:",o:["0°C and 1 atm","25°C and 1 atm","100°C and 1 atm","0°C and 2 atm"],a:0,e:"STP=0°C (273 K) and 1 atm."},
+    {q:"NOT an allotrope of carbon:",o:["Diamond","Graphite","Fullerene","Calcite"],a:3,e:"Calcite is CaCO₃. Diamond, graphite, fullerene are carbon allotropes."},
+    {q:"Law of conservation of mass:",o:["Mass lost","Mass gained","Reactant mass = product mass","Mass→energy"],a:2,e:"Total mass of reactants = total mass of products."},
+    {q:"Polymerisation reaction:",o:["Burning ethane","H₂ addition to ethene","Polyethene from ethene","Hydrolysis of starch"],a:2,e:"Ethene monomers join to form polyethene."},
+    {q:"Rust is:",o:["Iron(II) oxide","Iron(III) oxide","Hydrated iron(III) oxide","Iron carbonate"],a:2,e:"Rust = Fe₂O₃·xH₂O."},
+    {q:"Contact process catalyst:",o:["Iron","Platinum","Vanadium(V) oxide","MnO₂"],a:2,e:"V₂O₅ catalyses SO₂→SO₃ in Contact process."},
+    {q:"Liquid metal at room temperature:",o:["Mercury","Iron","Sulphur","Phosphorus"],a:0,e:"Mercury (Hg) melts at −38.8°C — liquid at room temp."},
+    {q:"Solid→gas directly:",o:["Evaporation","Condensation","Sublimation","Melting"],a:2,e:"Sublimation: solid→gas without liquid phase (e.g., iodine)."}
+  ],
+  biology:[
+    {q:"Powerhouse of the cell:",o:["Nucleus","Ribosome","Mitochondria","Golgi apparatus"],a:2,e:"Mitochondria produce ATP via cellular respiration."},
+    {q:"Liver does NOT produce:",o:["Bile","Blood clotting factors","Insulin","Urea"],a:2,e:"Insulin is produced by pancreatic beta cells, not the liver."},
+    {q:"Osmosis: water moves from ___ to ___ water potential:",o:["Low; high","High; low","Equal; equal","Any direction"],a:1,e:"Water moves from higher to lower water potential through semi-permeable membrane."},
+    {q:"DNA replication occurs in:",o:["G1 phase","S phase","G2 phase","M phase"],a:1,e:"S (Synthesis) phase of interphase."},
+    {q:"Plants make food through:",o:["Respiration","Transpiration","Photosynthesis","Digestion"],a:2,e:"Photosynthesis: CO₂+H₂O+light→glucose+O₂."},
+    {q:"Universal blood donor:",o:["A","B","AB","O"],a:3,e:"O negative lacks A, B antigens and Rh factor — can donate to all."},
+    {q:"Functional unit of kidney:",o:["Glomerulus","Nephron","Ureter","Renal vein"],a:1,e:"The nephron filters blood and forms urine."},
+    {q:"Father of Genetics:",o:["Lamarck","Mendel","Darwin","Pasteur"],a:1,e:"Gregor Mendel discovered laws of inheritance."},
+    {q:"Organelle for protein synthesis:",o:["Lysosome","Mitochondria","Ribosome","Vacuole"],a:2,e:"Ribosomes translate mRNA into proteins."},
+    {q:"Transpiration mainly through:",o:["Roots","Stem","Stomata","Flowers"],a:2,e:"~90% of water loss through stomata."},
+    {q:"Theory of evolution by natural selection:",o:["Lamarck","Mendel","Darwin","Pasteur"],a:2,e:"Charles Darwin, 'On the Origin of Species' (1859)."},
+    {q:"NOT a characteristic of living things:",o:["Respiration","Growth","Crystallisation","Reproduction"],a:2,e:"Crystallisation is a chemical/physical process, not a life process."},
+    {q:"Fluid mosaic model describes:",o:["DNA","Cell wall","Cell membrane","Cytoplasm"],a:2,e:"Singer & Nicolson (1972): phospholipid bilayer with embedded proteins."},
+    {q:"Malaria is caused by:",o:["Bacteria","Virus","Protozoan","Fungus"],a:2,e:"Plasmodium (protozoan), transmitted by female Anopheles mosquito."},
+    {q:"Producers in food chain:",o:["Herbivores","Carnivores","Green plants","Decomposers"],a:2,e:"Green plants (autotrophs) produce food via photosynthesis."},
+    {q:"Brain part controlling balance:",o:["Cerebrum","Medulla oblongata","Cerebellum","Hypothalamus"],a:2,e:"Cerebellum coordinates balance and fine motor control."},
+    {q:"Haemoglobin found in:",o:["White blood cells","Platelets","Red blood cells","Plasma"],a:2,e:"Haemoglobin in RBCs carries oxygen."},
+    {q:"Cell division → two identical cells:",o:["Meiosis","Mitosis","Fertilisation","Binary fission"],a:1,e:"Mitosis produces two genetically identical diploid cells."},
+    {q:"Function of large intestine:",o:["Protein digestion","Fat absorption","Water absorption","Enzyme secretion"],a:2,e:"Large intestine absorbs water and electrolytes."},
+    {q:"Blood sugar hormone:",o:["Adrenaline","Thyroxine","Insulin","Oestrogen"],a:2,e:"Insulin (pancreatic beta cells) lowers blood glucose."},
+    {q:"Biodiversity refers to:",o:["Ecosystems only","Variety of life forms in an area","Number of plants","Variety of climates"],a:1,e:"Biodiversity = genetic, species, and ecosystem variety."},
+    {q:"Photosynthesis occurs in:",o:["Roots","Mitochondria","Chloroplasts","Nucleus"],a:2,e:"Chloroplasts contain chlorophyll; site of photosynthesis."},
+    {q:"Enzyme digesting starch:",o:["Pepsin","Amylase","Lipase","Trypsin"],a:1,e:"Amylase breaks starch into maltose."},
+    {q:"Correct food chain:",o:["Consumer→Producer→Decomposer","Producer→Consumer→Decomposer","Decomposer→Producer→Consumer","Consumer→Decomposer→Producer"],a:1,e:"Energy flows: Producer→Consumer→Decomposer."},
+    {q:"Sickle cell anaemia caused by:",o:["Mutation in haemoglobin gene","Viral infection","Lack of iron","Bacterial infection"],a:0,e:"Point mutation in HbB gene produces abnormal HbS."},
+    {q:"Example of mutualism:",o:["Tick on dog","Tapeworm in intestine","Bacteria in legume nodules","Lion eating zebra"],a:2,e:"Rhizobium and legume both benefit — mutualism."},
+    {q:"Chromosomes in human somatic cell:",o:["23","44","46","48"],a:2,e:"46 chromosomes (23 pairs) in diploid somatic cells."},
+    {q:"Active transport differs from diffusion because:",o:["Moves with concentration gradient","Requires no energy","Moves against concentration gradient","Uses only water"],a:2,e:"Active transport moves against gradient, requires ATP."},
+    {q:"Vestigial organ in humans:",o:["Liver","Appendix","Kidney","Brain"],a:1,e:"The appendix is vestigial — largely functionless remnant."},
+    {q:"Asexual reproduction involves:",o:["Two parents","One parent","Fertilisation","Pollination"],a:1,e:"Asexual: one parent, offspring are genetic clones."},
+    {q:"Xylem transports:",o:["Food (sugars)","Water and minerals","Gases","Nothing"],a:1,e:"Xylem carries water and minerals from roots to leaves."},
+    {q:"Reflex action example:",o:["Writing a letter","Kicking ball deliberately","Withdrawing hand from hot object","Reading"],a:2,e:"Withdrawing hand from heat is an involuntary reflex."},
+    {q:"Rh factor is:",o:["Type of WBC","Antigen on RBC","Antibody in plasma","Enzyme"],a:1,e:"Rh factor = antigen on red blood cell surface."},
+    {q:"Vitamin C deficiency causes:",o:["Rickets","Scurvy","Pellagra","Beriberi"],a:1,e:"Scurvy: Vitamin C deficiency → bleeding gums, poor healing."},
+    {q:"Decomposers break down:",o:["Inorganic minerals","Dead organic matter","Living organisms","Water"],a:1,e:"Decomposers (bacteria, fungi) recycle nutrients from dead matter."},
+    {q:"Function of stomata:",o:["Food storage","Gas exchange and transpiration","Leaf support","Water absorption"],a:1,e:"Stomata allow CO₂/O₂ exchange and are site of transpiration."},
+    {q:"A gene is:",o:["A segment of protein","DNA coding for a protein","A chromosome","An amino acid"],a:1,e:"Gene = specific DNA sequence coding for a protein."},
+    {q:"Human heart chambers:",o:["2 atria, 2 ventricles","2 atria, 1 ventricle","1 atrium, 3 ventricles","4 ventricles"],a:0,e:"Right atrium, right ventricle, left atrium, left ventricle."},
+    {q:"Antibiotics work against:",o:["Viral infections","Bacterial infections","Both viral and bacterial","Fungal only"],a:1,e:"Antibiotics kill/inhibit bacteria. Not effective against viruses."},
+    {q:"Role of decomposers in ecosystem:",o:["Produce food from sunlight","Consume producers","Break down dead organisms, recycle nutrients","Provide shelter"],a:2,e:"Decomposers recycle nutrients back into the environment."}
+  ],
+  mathematics:[
+    {q:"log₁₀(100)+log₁₀(10)=",o:["3","4","30","1"],a:0,e:"2+1=3."},
+    {q:"Roots of x²−5x+6=0:",o:["2 and 3","1 and 6","−2 and −3","2 and −3"],a:0,e:"(x−2)(x−3)=0."},
+    {q:"Sum of interior angles of pentagon:",o:["360°","540°","720°","480°"],a:1,e:"(5−2)×180°=540°."},
+    {q:"Gradient joining (2,3) and (4,7):",o:["1","3","2","4"],a:2,e:"(7−3)/(4−2)=2."},
+    {q:"15% of 200:",o:["20","25","30","35"],a:2,e:"0.15×200=30."},
+    {q:"⁵C₂=",o:["10","20","15","6"],a:0,e:"5!/(2!3!)=10."},
+    {q:"3x−7=8 → x=",o:["3","5","1/3","15"],a:1,e:"3x=15, x=5."},
+    {q:"Area of circle r=7 cm (π=22/7):",o:["44 cm²","154 cm²","22 cm²","308 cm²"],a:1,e:"πr²=(22/7)×49=154 cm²."},
+    {q:"2^x=32, x=",o:["4","5","6","3"],a:1,e:"2⁵=32."},
+    {q:"Mean of 4,7,9,12,8:",o:["8","9","7","10"],a:0,e:"40/5=8."},
+    {q:"0.000045 in standard form:",o:["4.5×10⁻⁵","4.5×10⁵","45×10⁻⁶","0.45×10⁻⁴"],a:0,e:"4.5×10⁻⁵."},
+    {q:"Triangle A=70°, B=50°. C=",o:["50°","60°","180°","40°"],a:1,e:"180−70−50=60°."},
+    {q:"(2³×2²)/2⁴=",o:["2","4","8","16"],a:0,e:"2^(3+2−4)=2."},
+    {q:"P={1,2,3,4,5}, Q={3,4,5,6,7}. P∩Q=",o:["{1,2}","{3,4,5}","{6,7}","All elements"],a:1,e:"Common elements={3,4,5}."},
+    {q:"Quadratic formula for ax²+bx+c=0:",o:["(−b±√(b²−4ac))/2a","(b±√(b²−4ac))/2a","(−b±√(b²+4ac))/2a","(−b±√(4ac−b²))/2a"],a:0,e:"x=[−b±√(b²−4ac)]/2a."},
+    {q:"5y+3=18 → y=",o:["3","5","15","21"],a:0,e:"5y=15, y=3."},
+    {q:"Volume cylinder r=3.5 cm, h=10 cm (π=22/7):",o:["110 cm³","385 cm³","770 cm³","220 cm³"],a:1,e:"(22/7)×12.25×10=385 cm³."},
+    {q:"45° in radians:",o:["π/2","π/3","π/4","π/6"],a:2,e:"45×π/180=π/4."},
+    {q:"a:b=3:5, b:c=2:7. a:c=",o:["6:35","3:14","6:7","5:7"],a:0,e:"LCM b=10: a:b:c=6:10:35 → a:c=6:35."},
+    {q:"Median of 3,7,1,9,4,6,8:",o:["4","6","7","5"],a:1,e:"Ordered: 1,3,4,6,7,8,9 → middle=6."},
+    {q:"Factorise x²−9:",o:["(x+3)²","(x−3)²","(x+3)(x−3)","(x+9)(x−1)"],a:2,e:"Difference of two squares."},
+    {q:"nth term of AP (first term a, difference d):",o:["a+nd","a+(n−1)d","a×dⁿ⁻¹","nd−a"],a:1,e:"Tₙ=a+(n−1)d."},
+    {q:"SI on ₦5000, 4%, 3 years:",o:["₦200","₦400","₦600","₦800"],a:2,e:"SI=PRT/100=5000×4×3/100=₦600."},
+    {q:"Which is irrational?",o:["0.5","√9","√2","22/7"],a:2,e:"√2 is non-terminating, non-recurring — irrational."},
+    {q:"f(x)=3x²−2x+1. f(2)=",o:["9","13","5","11"],a:0,e:"3(4)−2(2)+1=9."},
+    {q:"P(head) when fair coin tossed:",o:["1","0","1/2","1/4"],a:2,e:"Two equally likely outcomes → P(H)=1/2."},
+    {q:"(3√2)²=",o:["6","9","18","12"],a:2,e:"9×2=18."},
+    {q:"Right triangle: hyp=13, leg=5. Other leg:",o:["8","10","12","11"],a:2,e:"√(169−25)=√144=12."},
+    {q:"S₁₀ of AP: a=2, d=3:",o:["155","185","160","140"],a:0,e:"S₁₀=(10/2)[4+27]=155."},
+    {q:"4!/2!=",o:["2","6","12","24"],a:2,e:"24/2=12."},
+    {q:"Range of 5,8,3,12,7,10:",o:["7","9","12","5"],a:1,e:"12−3=9."},
+    {q:"NOT a quadrilateral:",o:["Rectangle","Trapezium","Pentagon","Rhombus"],a:2,e:"Pentagon has 5 sides — not quadrilateral."},
+    {q:"log₂8=",o:["2","3","4","8"],a:1,e:"2³=8 → log₂8=3."},
+    {q:"Circumference, d=14 cm (π=22/7):",o:["22 cm","44 cm","88 cm","66 cm"],a:1,e:"πd=(22/7)×14=44 cm."},
+    {q:"2x/3=8 → x=",o:["4","12","16","6"],a:1,e:"2x=24 → x=12."},
+    {q:"Gradient parallel to y=3x+5:",o:["5","1/3","−3","3"],a:3,e:"Parallel lines share gradient = 3."},
+    {q:"Arrangements of 5 people in a row:",o:["25","60","100","120"],a:3,e:"5!=120."},
+    {q:"d/dx(x³)=",o:["x²","3x","3x²","x⁴/4"],a:2,e:"Power rule: 3x²."},
+    {q:"1101₂ in base 10:",o:["11","13","15","9"],a:1,e:"8+4+0+1=13."},
+    {q:"Exterior angle 45°. Number of sides:",o:["6","8","10","12"],a:1,e:"360/45=8."}
+  ],
+  agriculture:[
+    {q:"Turning over soil before planting:",o:["Harrowing","Ploughing","Ridging","Mulching"],a:1,e:"Ploughing (primary tillage) prepares the seedbed."},
+    {q:"Nutrient promoting leaf/stem growth:",o:["Phosphorus","Potassium","Nitrogen","Calcium"],a:2,e:"Nitrogen promotes vegetative growth."},
+    {q:"Science of growing vegetables:",o:["Agronomy","Horticulture","Floriculture","Olericulture"],a:3,e:"Olericulture = cultivation of vegetables."},
+    {q:"Leguminous crop:",o:["Maize","Soybean","Rice","Cassava"],a:1,e:"Soybean — legume with N₂-fixing Rhizobium nodules."},
+    {q:"Loamy soil is best because:",o:["Only sand","Good retention and drainage","Purely clay","Only humus"],a:1,e:"Loam has ideal balance of drainage and moisture retention."},
+    {q:"Adding organic matter to soil:",o:["Mulching","Composting","Liming","Irrigation"],a:1,e:"Composting produces compost that enriches soil."},
+    {q:"Viral animal disease:",o:["Anthrax","Foot and mouth disease","Tuberculosis","Brucellosis"],a:1,e:"Foot-and-mouth is caused by Aphthovirus."},
+    {q:"Gestation period of cow:",o:["114 days","150 days","280 days","365 days"],a:2,e:"~280–285 days (~9 months)."},
+    {q:"NPK contains:",o:["N, K, Ca","N, P, K","N, P, C","N, Potash, Ca"],a:1,e:"NPK=Nitrogen, Phosphorus, Potassium."},
+    {q:"Cash crop in Nigeria:",o:["Cassava","Cocoa","Yam","Maize"],a:1,e:"Cocoa is Nigeria's major export cash crop."},
+    {q:"Removing side shoots:",o:["Pruning","Thinning","Defoliation","Harvesting"],a:0,e:"Pruning removes unwanted plant parts to improve yield."},
+    {q:"Rearing fish for food:",o:["Apiculture","Pisciculture","Sericulture","Aviculture"],a:1,e:"Pisciculture = fish farming."},
+    {q:"Monocotyledonous crop:",o:["Cowpea","Groundnut","Rice","Tomato"],a:2,e:"Rice — one seed leaf, parallel veins, fibrous roots."},
+    {q:"Main cause of soil erosion:",o:["Overgrazing only","Deforestation only","Heavy rainfall only","All of the above"],a:3,e:"Combination of deforestation, overgrazing, and heavy rainfall."},
+    {q:"Trees + crops farming:",o:["Mixed farming","Agroforestry","Crop rotation","Monoculture"],a:1,e:"Agroforestry combines trees with crops/livestock."},
+    {q:"Instrument measuring rainfall:",o:["Thermometer","Barometer","Rain gauge","Hygrometer"],a:2,e:"Rain gauge measures precipitation."},
+    {q:"Vegetative propagation method:",o:["Cross-pollination","Seed dispersal","Stem cutting","Sexual reproduction"],a:2,e:"Stem cutting is a vegetative propagation method."},
+    {q:"Finest soil particles:",o:["Sandy","Loamy","Clay","Silt"],a:2,e:"Clay particles < 0.002 mm — finest."},
+    {q:"Most efficient light for photosynthesis:",o:["Green","Yellow","Red and blue","White only"],a:2,e:"Chlorophyll absorbs mainly red and blue light."},
+    {q:"Two+ crops on same land simultaneously:",o:["Crop rotation","Mixed cropping","Monoculture","Relay cropping"],a:1,e:"Mixed cropping/intercropping maximises land use."},
+    {q:"Afforestation means:",o:["Cutting trees","Planting trees where none existed","Burning forests","Selective logging"],a:1,e:"Establishing forest where no previous tree cover existed."},
+    {q:"Gestation period of goat:",o:["63 days","114 days","150 days","280 days"],a:2,e:"~150 days (~5 months)."},
+    {q:"Greenhouse gas from agriculture:",o:["Oxygen","Methane","Nitrogen","Ozone"],a:1,e:"Methane from livestock and rice paddies."},
+    {q:"Purpose of liming:",o:["Add nitrogen","Reduce pH","Increase pH (reduce acidity)","Improve drainage"],a:2,e:"Lime (CaCO₃) neutralises soil acidity."},
+    {q:"Symptom of nitrogen deficiency:",o:["Purple leaves","Yellowing of older leaves","Brown tips","Wilting"],a:1,e:"N deficiency → chlorosis (yellowing) of older leaves first."},
+    {q:"Bee-keeping:",o:["Sericulture","Apiculture","Pisciculture","Viticulture"],a:1,e:"Apiculture = honey bee colony management."},
+    {q:"Practice reducing slope erosion:",o:["Monoculture","Contour farming","Deep ploughing","Bush burning"],a:1,e:"Contour farming ploughs across slopes to reduce runoff."},
+    {q:"Humus is:",o:["Mineral soil","Decomposed organic matter","Clay","Sand"],a:1,e:"Humus = decomposed organic matter improving soil fertility."},
+    {q:"Annual crop:",o:["Mango","Cocoa","Maize","Oil palm"],a:2,e:"Maize completes life cycle within one year."},
+    {q:"Correct crop spacing:",o:["Increases pests","Reduces yield","Minimises competition for nutrients/light","Increases waterlogging"],a:2,e:"Proper spacing reduces competition for water, nutrients, light."},
+    {q:"Major pest of stored grains in Nigeria:",o:["Aphids","Weevils","Locusts","Whiteflies"],a:1,e:"Grain weevils (Sitophilus spp.) cause major post-harvest losses."},
+    {q:"Bush burning is harmful because:",o:["Adds nutrients","Kills soil organisms and causes erosion","Clears land effectively","Destroys weeds permanently"],a:1,e:"Kills microorganisms and exposes soil to erosion."},
+    {q:"Removing excess water from waterlogged land:",o:["Irrigation","Drainage","Mulching","Tillage"],a:1,e:"Drainage removes excess water using channels/pipes."},
+    {q:"Soil texture defined by:",o:["Soil colour","Proportions of sand, silt, clay","Organic matter","Soil pH"],a:1,e:"Texture = relative proportions of sand, silt, and clay."},
+    {q:"Cassava propagated by:",o:["Seeds","Stem cuttings","Bulbs","Tubers only"],a:1,e:"Cassava is mainly propagated by stem cuttings."},
+    {q:"Normal body temp of healthy chicken:",o:["36°C","39°C","41°C","37°C"],a:2,e:"Chickens: ~41°C (105.8°F)."},
+    {q:"Biological weed control:",o:["Herbicide","Manual weeding","Natural predators of weed","Crop rotation"],a:2,e:"Biological control uses natural enemies to control weeds."},
+    {q:"Silage is:",o:["Dried grass","Fermented green fodder for animal feed","Mineral fertiliser","Cattle disease"],a:1,e:"Silage = fermented high-moisture fodder stored in airtight conditions."},
+    {q:"Ruminants have ___ stomach chambers:",o:["One","Two","Three","Four"],a:3,e:"Rumen, reticulum, omasum, abomasum = four chambers."},
+    {q:"Primary tillage implement:",o:["Hoe","Disc harrow","Mouldboard plough","Seed drill"],a:2,e:"Mouldboard plough cuts, lifts, and turns over soil."}
+  ]
+};
+
+const COLOURS={english:'#e879f9',physics:'#00e5ff',chemistry:'#ff6b35',biology:'#22c55e',mathematics:'#a855f7',agriculture:'#f59e0b'};
+
+let state={mode:'single',selected:[],queue:[],idx:0,subj:'',qs:[],qIdx:0,ans:{},timer:null,timeLeft:0};
+
+function selectMode(el){
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); state.mode=el.dataset.mode;
+  document.querySelectorAll('.subj-card').forEach(c=>c.classList.remove('sel'));
+  state.selected=[]; updateInfo();
+}
+
+function toggleSubject(el){
+  const s=el.dataset.s; const max=state.mode==='single'?1:3;
+  if(el.classList.contains('sel')){el.classList.remove('sel');state.selected=state.selected.filter(x=>x!==s);}
+  else{if(state.selected.length>=max){alert(`Max ${max} science subject(s) for this mode.`);return;}el.classList.add('sel');state.selected.push(s);}
+  updateInfo();
+}
+
+function updateInfo(){
+  const info=document.getElementById('selInfo'),btn=document.getElementById('startBtn'),c=state.selected.length;
+  if(!c){info.textContent='Select at least one science subject (English always included)';btn.disabled=true;return;}
+  const mins=state.mode==='single'?45:Math.min((c+1)*30,120);
+  info.textContent=`English + ${c} subject${c>1?'s':''} · ${(c+1)*40} questions · ${mins} minutes`;btn.disabled=false;
+}
+
+function startQuiz(){
+  if(!state.selected.length)return;
+  state.queue=['english',...state.selected];state.ans={};
+  state.queue.forEach(s=>state.ans[s]={});
+  state.idx=0;
+  const mins=state.mode==='single'?45:Math.min(state.queue.length*30,120);
+  state.timeLeft=mins*60; startTimer(); loadSubj(0);
+}
+
+function loadSubj(i){
+  state.idx=i; state.subj=state.queue[i];
+  state.qs=QS[state.subj].slice(0,40); state.qIdx=0;
+  renderTabs(); renderQ(); showScreen('quiz');
+}
+
+function startTimer(){
+  clearInterval(state.timer); updateTimer();
+  state.timer=setInterval(()=>{state.timeLeft--;updateTimer();if(state.timeLeft<=0){clearInterval(state.timer);finish();}},1000);
+}
+function updateTimer(){
+  const h=Math.floor(state.timeLeft/3600),m=Math.floor((state.timeLeft%3600)/60),s=state.timeLeft%60;
+  document.getElementById('timerDisplay').textContent=h>0?`${h}:${p(m)}:${p(s)}`:`${p(m)}:${p(s)}`;
+  document.getElementById('timerBox').classList.toggle('warn',state.timeLeft<60);
+}
+function p(n){return String(n).padStart(2,'0');}
+
+function renderTabs(){
+  const tabs=document.getElementById('subjectTabs');tabs.innerHTML='';
+  state.queue.forEach((s,i)=>{const t=document.createElement('div');t.className='s-tab'+(i===state.idx?' act':'');
+  t.textContent=s.charAt(0).toUpperCase()+s.slice(1);t.onclick=()=>loadSubj(i);tabs.appendChild(t);});
+}
+
+function renderDots(){
+  const row=document.getElementById('dotRow');row.innerHTML='';
+  state.qs.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';d.textContent=i+1;
+  const a=state.ans[state.subj][i];
+  if(i===state.qIdx)d.classList.add('cur');else if(a!==undefined&&a!==-1)d.classList.add('ans');
+  d.onclick=()=>{state.qIdx=i;renderQ();};row.appendChild(d);});
+}
+
+function renderQ(){
+  const s=state.subj,q=state.qs[state.qIdx],tot=state.qs.length,i=state.qIdx,saved=state.ans[s][i];
+  const tag=document.getElementById('subjectTag');
+  tag.textContent=s.charAt(0).toUpperCase()+s.slice(1);tag.className='q-subj-tag tag-'+s;
+  const done=Object.keys(state.ans[s]).filter(k=>state.ans[s][k]!==-1).length;
+  document.getElementById('progInfo').textContent=`${s.charAt(0).toUpperCase()+s.slice(1)} · Q${i+1}/${tot} · ${done} answered`;
+  document.getElementById('progressBar').style.width=`${((i+1)/tot)*100}%`;
+  document.getElementById('qNum').textContent=`QUESTION ${i+1} / ${tot}`;
+  document.getElementById('qText').textContent=q.q;
+  renderDots();
+  const ol=document.getElementById('optsList');ol.innerHTML='';
+  q.o.forEach((opt,oi)=>{const btn=document.createElement('button');btn.className='opt';
+  btn.innerHTML=`<span class="opt-l">${String.fromCharCode(65+oi)}</span><span>${opt}</span>`;
+  if(saved!==undefined){btn.disabled=true;if(oi===q.a)btn.classList.add('correct');else if(oi===saved)btn.classList.add('wrong');}
+  else btn.onclick=()=>selectAns(oi);ol.appendChild(btn);});
+  const ex=document.getElementById('explBox');
+  if(saved!==undefined){ex.innerHTML=`<strong>Explanation:</strong> ${q.e}`;ex.classList.add('show');}else{ex.classList.remove('show');}
+  document.getElementById('prevBtn').disabled=i===0;
+  document.getElementById('nextBtn').textContent=i===tot-1?(state.idx<state.queue.length-1?'Next Subject →':'Finish ✓'):'Next →';
+  document.getElementById('skipBtn').style.display=saved!==undefined?'none':'inline-block';
+}
+
+function selectAns(oi){state.ans[state.subj][state.qIdx]=oi;renderQ();}
+function skipQ(){state.ans[state.subj][state.qIdx]=-1;nextQ();}
+function nextQ(){if(state.qIdx<state.qs.length-1){state.qIdx++;renderQ();}else{if(state.idx<state.queue.length-1)loadSubj(state.idx+1);else finish();}}
+function prevQ(){if(state.qIdx>0){state.qIdx--;renderQ();}}
+function finish(){clearInterval(state.timer);showResults(state.subj);}
+
+function showResults(s){
+  state.subj=s;const qs=QS[s].slice(0,40),ans=state.ans[s]||{};
+  let cor=0,wrg=0,skp=0;
+  qs.forEach((q,i)=>{const a=ans[i];if(a===undefined||a===-1)skp++;else if(a===q.a)cor++;else wrg++;});
+  const tot=qs.length,pct=Math.round((cor/tot)*100);
+  const circ=2*Math.PI*60;
+  const circle=document.getElementById('scoreCircle');
+  circle.style.strokeDasharray=`${(pct/100)*circ} ${circ}`;circle.style.stroke=COLOURS[s]||'#00e5ff';
+  document.getElementById('scoreNum').textContent=pct+'%';document.getElementById('scoreNum').style.color=COLOURS[s];
+  const grade=pct>=80?'🏆 Excellent!':pct>=60?'👍 Good Pass':pct>=50?'⚠️ Average':pct>=40?'📚 Needs Work':'❌ Below Pass';
+  const gc=pct>=80?'#22c55e':pct>=60?'#00e5ff':pct>=50?'#f59e0b':pct>=40?'#ff6b35':'#ef4444';
+  const badge=document.getElementById('gradeBadge');badge.textContent=grade;badge.style.cssText=`background:${gc}22;color:${gc};border:1px solid ${gc}44;`;
+  document.getElementById('resSubLbl').textContent=s.charAt(0).toUpperCase()+s.slice(1)+' · '+tot+' Questions · JAMB 2026 · Brainox Tutorial';
+  document.getElementById('cCount').textContent=cor;document.getElementById('wCount').textContent=wrg;document.getElementById('sCount').textContent=skp;
+  const rl=document.getElementById('revList');rl.innerHTML='';
+  qs.forEach((q,i)=>{const a=ans[i],isSk=a===undefined||a===-1,isCor=!isSk&&a===q.a;
+  const item=document.createElement('div');item.className=`rev-item ${isSk?'skp':isCor?'cor':'wrg'}`;
+  item.innerHTML=`<div class="rev-q">${i+1}. ${q.q}</div><div class="rev-ans">
+  ${isSk?'<span style="color:var(--muted)">⏭ Skipped</span>':`<span class="${isCor?'ans-cor':'ans-wrong'}">Your answer: ${String.fromCharCode(65+a)}. ${q.o[a]}</span>`}
+  ${!isCor?`<span class="ans-cor">✓ Correct: ${String.fromCharCode(65+q.a)}. ${q.o[q.a]}</span>`:'<span class="ans-cor">✓ Correct!</span>'}
+  <span style="color:var(--muted);font-size:0.74rem;margin-top:2px;">${q.e}</span></div>`;rl.appendChild(item);});
+  showScreen('results');
+}
+
+function retrySubject(){
+  state.ans[state.subj]={};
+  const i=state.queue.indexOf(state.subj);
+  const mins=state.mode==='single'?45:Math.min(state.queue.length*30,120);
+  state.timeLeft=mins*60; startTimer(); loadSubj(i>=0?i:0);
+}
+
+function goHome(){
+  clearInterval(state.timer);
+  document.querySelectorAll('.subj-card').forEach(c=>c.classList.remove('sel'));
+  state.selected=[];updateInfo();showScreen('home');
+}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+</script>
+</body>
+</html>
