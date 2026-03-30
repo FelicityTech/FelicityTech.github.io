@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brainox Tutorial — JAMB Practice Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d45;
+    --accent-chem: #00e5ff;
+    --accent-bio: #39ff6e;
+    --accent-phy: #ff6b35;
+    --accent-math: #c77dff;
+    --accent-eng: #ffd166;
+    --text: #e8edf5;
+    --text-muted: #6b7fa3;
+    --correct: #39ff6e;
+    --wrong: #ff4757;
+    --radius: 14px;
+    --glow-chem: 0 0 30px rgba(0,229,255,0.15);
+    --glow-bio: 0 0 30px rgba(57,255,110,0.15);
+    --glow-phy: 0 0 30px rgba(255,107,53,0.15);
+    --glow-math: 0 0 30px rgba(199,125,255,0.15);
+    --glow-eng: 0 0 30px rgba(255,209,102,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== BACKGROUND GRID ===== */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== LANDING ===== */
+  #landing {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { color: var(--accent-chem); }
+
+  .hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 24px 60px;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--accent-chem);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 32px;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+    max-width: 800px;
+  }
+
+  .hero h1 .grad {
+    background: linear-gradient(135deg, var(--accent-chem), var(--accent-math));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 500px;
+    line-height: 1.7;
+    margin-bottom: 56px;
+  }
+
+  /* ===== SUBJECT CARDS ===== */
+  .subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    width: 100%;
+    padding: 0 24px;
+    margin: 0 auto;
+  }
+
+  .subject-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+  }
+
+  .subject-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .subject-card.chem::before { background: var(--accent-chem); }
+  .subject-card.bio::before  { background: var(--accent-bio); }
+  .subject-card.phy::before  { background: var(--accent-phy); }
+  .subject-card.math::before { background: var(--accent-math); }
+  .subject-card.eng::before  { background: var(--accent-eng); }
+
+  .subject-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .subject-card.chem:hover  { box-shadow: var(--glow-chem); }
+  .subject-card.bio:hover   { box-shadow: var(--glow-bio); }
+  .subject-card.phy:hover   { box-shadow: var(--glow-phy); }
+  .subject-card.math:hover  { box-shadow: var(--glow-math); }
+  .subject-card.eng:hover   { box-shadow: var(--glow-eng); }
+
+  .subject-icon {
+    font-size: 2.2rem;
+    margin-bottom: 16px;
+  }
+
+  .subject-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+  }
+
+  .subject-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.07);
+    color: var(--text-muted);
+  }
+
+  .subject-card.chem .meta-pill { color: var(--accent-chem); background: rgba(0,229,255,0.08); }
+  .subject-card.bio .meta-pill  { color: var(--accent-bio);  background: rgba(57,255,110,0.08); }
+  .subject-card.phy .meta-pill  { color: var(--accent-phy);  background: rgba(255,107,53,0.08); }
+  .subject-card.math .meta-pill { color: var(--accent-math); background: rgba(199,125,255,0.08); }
+  .subject-card.eng .meta-pill  { color: var(--accent-eng);  background: rgba(255,209,102,0.08); }
+
+  /* ===== QUIZ SCREEN ===== */
+  #quiz-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 100;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .quiz-header .back-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .quiz-header .back-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  .quiz-subject-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .quiz-meta-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+
+  .timer-display {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+  }
+
+  .timer-display.warning { color: var(--wrong); animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .progress-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .score-live {
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  /* Progress Bar */
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent-chem);
+    transition: width 0.4s ease;
+  }
+
+  /* Quiz Body */
+  .quiz-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .quiz-content {
+    max-width: 760px;
+    width: 100%;
+  }
+
+  .question-number {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .question-text {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    margin-bottom: 32px;
+    font-weight: 400;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.98rem;
+    color: var(--text);
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .option-btn .opt-label {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: rgba(255,255,255,0.2);
+    background: var(--surface2);
+  }
+
+  .option-btn.selected { border-color: var(--accent-chem); background: rgba(0,229,255,0.07); }
+  .option-btn.correct  { border-color: var(--correct); background: rgba(57,255,110,0.1); }
+  .option-btn.correct .opt-label { background: var(--correct); color: #000; }
+  .option-btn.wrong    { border-color: var(--wrong); background: rgba(255,71,87,0.1); }
+  .option-btn.wrong .opt-label { background: var(--wrong); color: #fff; }
+  .option-btn:disabled { cursor: default; }
+
+  .feedback-box {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    display: none;
+  }
+
+  .feedback-box.correct { background: rgba(57,255,110,0.1); border: 1px solid rgba(57,255,110,0.3); color: var(--correct); }
+  .feedback-box.wrong   { background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3); color: #ff8a95; }
+
+  /* Quiz Footer */
+  .quiz-footer {
+    padding: 20px 32px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .nav-btn {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 12px 28px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+
+  .nav-btn.prev {
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  .nav-btn.next {
+    background: var(--accent-chem);
+    color: #000;
+  }
+
+  .nav-btn.next:hover { opacity: 0.85; transform: translateX(2px); }
+  .nav-btn.prev:hover { color: var(--text); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; transform: none; }
+
+  /* ===== RESULT SCREEN ===== */
+  #result-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 200;
+    overflow-y: auto;
+  }
+
+  .result-inner {
+    max-width: 700px;
+    margin: 60px auto;
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .result-emoji { font-size: 4rem; margin-bottom: 24px; }
+
+  .result-inner h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+  }
+
+  .score-ring {
+    width: 160px;
+    height: 160px;
+    margin: 36px auto;
+    position: relative;
+  }
+
+  .score-ring svg { transform: rotate(-90deg); }
+
+  .score-ring .ring-track { fill: none; stroke: var(--border); stroke-width: 10; }
+  .score-ring .ring-fill  { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.5s ease; }
+
+  .score-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-center .big-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  .score-center .small-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+  }
+
+  .stat-box .num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+  }
+
+  .stat-box .lbl { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+
+  .result-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 36px; }
+
+  .result-btn {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 13px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .result-btn.primary   { background: var(--accent-chem); color: #000; }
+  .result-btn.secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .result-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* ===== COLOR ACCENT PER SUBJECT ===== */
+  .accent-chem { --subject-accent: var(--accent-chem); }
+  .accent-bio  { --subject-accent: var(--accent-bio); }
+  .accent-phy  { --subject-accent: var(--accent-phy); }
+  .accent-math { --subject-accent: var(--accent-math); }
+  .accent-eng  { --subject-accent: var(--accent-eng); }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .top-bar { padding: 16px 20px; }
+    .quiz-header { padding: 12px 16px; gap: 10px; }
+    .quiz-footer { padding: 14px 16px; }
+    .quiz-body { padding: 24px 16px; }
+    .subjects-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .subject-card { padding: 22px 18px; }
+    .stats-row { grid-template-columns: 1fr; }
+  }
+
+  .footer-note {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== LANDING ===== -->
+<div id="landing">
+  <div class="top-bar">
+    <div class="logo">Brainox<span>Tutorial</span></div>
+    <div style="font-size:0.82rem; color:var(--text-muted); display:flex; align-items:center; gap:10px;">
+      <span>JAMB Practice Hub</span>
+      <a href="https://wa.me/2349058562294" target="_blank" style="display:inline-flex; align-items:center; gap:5px; background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.3); color:#25d366; font-size:0.78rem; font-weight:500; padding:4px 12px; border-radius:100px; text-decoration:none; transition:all 0.2s;" onmouseover="this.style.background='rgba(37,211,102,0.22)'" onmouseout="this.style.background='rgba(37,211,102,0.12)'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-badge">🎓 Brainox Tutorial — JAMB Exam Preparation</div>
+    <h1>Practice Like You<br><span class="grad">Mean Business</span></h1>
+    <p>Timed practice sessions across all JAMB science subjects. Carefully prepared by <strong style="color:var(--text)">Solomon Adegoke</strong> using real past questions to sharpen your exam readiness.</p>
+
+    <div class="subjects-grid">
+      <div class="subject-card chem" onclick="startQuiz('chemistry')">
+        <div class="subject-icon">⚗️</div>
+        <h3>Chemistry</h3>
+        <p>Atomic structure, organic chemistry, equilibrium, electrolysis & more</p>
+        <div class="card-meta">
+          <span class="meta-pill">60 Questions</span>
+          <span class="meta-pill">35 mins</span>
+        </div>
+      </div>
+
+      <div class="subject-card bio" onclick="startQuiz('biology')">
+        <div class="subject-icon">🧬</div>
+        <h3>Biology</h3>
+        <p>Cell biology, genetics, ecology, evolution, nutrition & physiology</p>
+        <div class="card-meta">
+          <span class="meta-pill">60 Questions</span>
+          <span class="meta-pill">35 mins</span>
+        </div>
+      </div>
+
+      <div class="subject-card phy" onclick="startQuiz('physics')">
+        <div class="subject-icon">⚡</div>
+        <h3>Physics</h3>
+        <p>Mechanics, waves, electricity, magnetism, optics & modern physics</p>
+        <div class="card-meta">
+          <span class="meta-pill">60 Questions</span>
+          <span class="meta-pill">35 mins</span>
+        </div>
+      </div>
+
+      <div class="subject-card math" onclick="startQuiz('mathematics')">
+        <div class="subject-icon">📐</div>
+        <h3>Mathematics</h3>
+        <p>Algebra, calculus, trigonometry, statistics & coordinate geometry</p>
+        <div class="card-meta">
+          <span class="meta-pill">60 Questions</span>
+          <span class="meta-pill">40 mins</span>
+        </div>
+      </div>
+
+      <div class="subject-card eng" onclick="startQuiz('english')">
+        <div class="subject-icon">📝</div>
+        <h3>English</h3>
+        <p>Comprehension, lexis & structure, oral English & essay writing</p>
+        <div class="card-meta">
+          <span class="meta-pill">60 Questions</span>
+          <span class="meta-pill">35 mins</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <div style="margin-bottom:16px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+      <div style="font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem; color:var(--text);">Brainox<span style="color:var(--accent-chem)">Tutorial</span></div>
+      <div style="font-size:0.82rem; color:var(--text-muted);">Prepared by <strong style="color:var(--text); font-weight:600;">Solomon Adegoke</strong></div>
+      <a href="https://wa.me/2349058562294" target="_blank"
+        style="display:inline-flex; align-items:center; gap:8px; background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.35); color:#25d366; font-size:0.85rem; font-weight:600; padding:9px 20px; border-radius:100px; text-decoration:none; transition:all 0.2s; font-family:'Syne',sans-serif;"
+        onmouseover="this.style.background='rgba(37,211,102,0.22)'; this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.background='rgba(37,211,102,0.12)'; this.style.transform='translateY(0)'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Chat on WhatsApp · 09058562294
+      </a>
+    </div>
+    <div style="border-top:1px solid var(--border); padding-top:14px;">
+      Questions sourced from JAMB past papers (2010–2018) · © 2025 Brainox Tutorial · All rights reserved
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="quiz-screen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="confirmExit()">← Exit</button>
+    <div style="display:flex; flex-direction:column; line-height:1.2;">
+      <div class="quiz-subject-name" id="quiz-title">Chemistry</div>
+      <div style="font-size:0.7rem; color:var(--text-muted); font-weight:400;">Brainox Tutorial</div>
+    </div>
+    <div class="quiz-meta-bar">
+      <div class="progress-text" id="progress-text">Q 1 / 60</div>
+      <div class="timer-display" id="timer-display">35:00</div>
+      <div class="score-live" id="score-live" style="color:var(--correct)">✓ 0</div>
+    </div>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <div class="quiz-body">
+    <div class="quiz-content">
+      <div class="question-number" id="q-number">QUESTION 1 OF 60</div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options-list" id="options-list"></div>
+      <div class="feedback-box" id="feedback-box"></div>
+    </div>
+  </div>
+  <div class="quiz-footer">
+    <button class="nav-btn prev" id="prev-btn" onclick="prevQuestion()">← Prev</button>
+    <button class="nav-btn next" id="next-btn" onclick="nextQuestion()">Next →</button>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="result-screen">
+  <div class="result-inner">
+    <div class="result-emoji" id="result-emoji">🏆</div>
+    <h2 id="result-title">Excellent Work!</h2>
+    <p id="result-subtitle" style="color:var(--text-muted); line-height:1.6;"></p>
+
+    <div class="score-ring">
+      <svg viewBox="0 0 120 120" width="160" height="160">
+        <circle class="ring-track" cx="60" cy="60" r="52"/>
+        <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+      </svg>
+      <div class="score-center">
+        <div class="big-num" id="score-pct">0%</div>
+        <div class="small-label">Score</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="num" style="color:var(--correct)" id="stat-correct">0</div>
+        <div class="lbl">Correct</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" style="color:var(--wrong)" id="stat-wrong">0</div>
+        <div class="lbl">Wrong</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" style="color:var(--text-muted)" id="stat-skipped">0</div>
+        <div class="lbl">Skipped</div>
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <button class="result-btn primary" onclick="retryQuiz()">🔄 Retry Same Quiz</button>
+      <button class="result-btn secondary" onclick="goHome()">🏠 Choose Subject</button>
+    </div>
+
+    <div style="margin-top:40px; padding-top:28px; border-top:1px solid var(--border); text-align:center;">
+      <div style="font-family:'Syne',sans-serif; font-weight:800; font-size:1.15rem; margin-bottom:4px;">
+        Brainox<span style="color:var(--accent-chem)">Tutorial</span>
+      </div>
+      <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:16px;">
+        Prepared by <strong style="color:var(--text);">Solomon Adegoke</strong>
+      </div>
+      <a href="https://wa.me/2349058562294" target="_blank"
+        style="display:inline-flex; align-items:center; gap:8px; background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.35); color:#25d366; font-size:0.85rem; font-weight:600; padding:10px 22px; border-radius:100px; text-decoration:none; font-family:'Syne',sans-serif; transition:all 0.2s;"
+        onmouseover="this.style.background='rgba(37,211,102,0.22)'; this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.background='rgba(37,211,102,0.12)'; this.style.transform='translateY(0)'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Contact: 09058562294
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// DATA — CHEMISTRY (60 questions from past papers)
+// =============================================
+const QUESTIONS = {
+
+chemistry: [
+  // 2010
+  {q:"Which of the following is an example of a mixture?", o:["Common salt","Blood","Sand","Washing soda"], a:1},
+  {q:"Calculate the percentage by mass of nitrogen in calcium trioxonitrate(V). [Ca=40, N=14, O=16]", o:["8.5%","13.1%","17.1%","27.6%"], a:1},
+  {q:"Water droplets on a cold milk bottle are due to:", o:["Water vapour gaining energy from the bottle","Temperature of milk dropping","Saturated vapour pressure equalling atmospheric pressure","Water vapour losing energy to the bottle"], a:3},
+  {q:"A gas has volume V cm³ at pressure P mmHg. What is the new volume if pressure is halved at constant temperature?", o:["4V cm³","2V cm³","V/2 cm³","V cm³"], a:1},
+  {q:"Moving left to right across a period, the rise in first ionization energy is due to:", o:["Decrease in nuclear charge","Increase in nuclear charge","Decrease in screening effect","Increase in screening effect"], a:1},
+  {q:"How many unpaired electrons are in nitrogen's p-sublevels?", o:["3","2","1","0"], a:0},
+  {q:"The stability of noble gases is due to:", o:["No electrons in outermost shells","Duplet or octet electron configurations","Belonging to group zero","Being volatile"], a:1},
+  {q:"The maximum number of electrons in the L shell of an atom is:", o:["2","8","18","32"], a:1},
+  {q:"Elements in the same period of the periodic table have the same:", o:["Number of shells","Atomic number","Chemical properties","Physical properties"], a:0},
+  {q:"The reaction ²₁D + ³₁T → ⁴₂He + ¹₀n + energy illustrates:", o:["Alpha decay","Artificial transmutation","Nuclear fusion","Nuclear fission"], a:2},
+  {q:"A noble gas with high fog-penetration power used in aerodrome beacons is:", o:["Krypton","Argon","Helium","Neon"], a:0},
+  {q:"Permanent hardness of water can be removed by:", o:["Filtration","Adding slaked lime","Adding caustic soda","Boiling"], a:2},
+  {q:"Drying agents are usually:", o:["Amphoteric","Hygroscopic","Efflorescent","Acidic"], a:1},
+  {q:"Calculate the solubility (mol dm⁻³) of 40g of CuSO₄ in 100g of water. [Cu=64, S=32, O=16]", o:["4.00","2.50","0.40","0.25"], a:1},
+  {q:"Coffee stains can best be removed by:", o:["Kerosene","Turpentine","A solution of borax in water","Ammonia solution"], a:3},
+  {q:"Carbon(II) oxide is dangerous when inhaled mainly because it:", o:["Injures the nervous system","Competes with oxygen in the blood","Competes with CO₂ in the blood","Causes lung cancer"], a:1},
+  {q:"The acid used to remove rust is:", o:["Boric","Hydrochloric","Trioxonitrate(V)","Tetraoxosulphate(VI)"], a:1},
+  {q:"Calculate the volume of 0.5 mol dm⁻³ H₂SO₄ neutralized by 25 cm³ of 0.1 mol dm⁻³ NaOH.", o:["5.0 cm³","2.5 cm³","0.4 cm³","0.1 cm³"], a:1},
+  {q:"The colour of methyl orange in alkaline medium is:", o:["Yellow","Pink","Orange","Red"], a:0},
+  {q:"Which of the following salts is slightly soluble in water?", o:["AgCl","CaSO₄","Na₂CO₃","PbCl₂"], a:1},
+  // 2010 continued
+  {q:"In the reaction 6AgNO₃ + PH₃ + 3H₂O → 6Ag + H₃PO₃ + 6HNO₃, the reducing agent is:", o:["HNO₃","H₂O","PH₃","AgNO₃"], a:2},
+  {q:"Iron can be protected from corrosion by coating with:", o:["Gold","Silver","Copper","Zinc"], a:3},
+  {q:"What quantity of aluminium is deposited when 10A flows through an aluminium salt for 1930s? [Al=27, F=96500]", o:["0.2 g","1.8 g","5.4 g","14.2 g"], a:1},
+  {q:"In which of the following is the entropy change positive?", o:["Thermal dissociation of ammonium chloride","Acid-base reaction","Adding conc. acid to water","Dissolving sodium metal in water"], a:0},
+  {q:"A catalyst lowers the energy needed in heating KClO₃ by:", o:["Lowering the pressure","Increasing surface area","Increasing the rate","Lowering the energy barrier"], a:3},
+  // 2011
+  {q:"What is the concentration of a solution of 2g NaOH in 100 cm³? [Na=23, O=16, H=1]", o:["0.40 mol dm⁻³","0.50 mol dm⁻³","0.05 mol dm⁻³","0.30 mol dm⁻³"], a:1},
+  {q:"Column chromatography separates substances based on their ability to:", o:["Move at different speeds","Dissolve in each other","React with the solvent","React with each other"], a:0},
+  {q:"The molecular lattice of iodine is held together by:", o:["Dative bond","Metallic bond","Hydrogen bond","Van der Waals forces"], a:3},
+  {q:"The arrangement of particles in crystal lattices can be studied using:", o:["X-rays","γ-rays","α-rays","β-rays"], a:0},
+  {q:"Water hardness is mainly due to the presence of:", o:["Ca(OH)₂ or Mg(OH)₂","Ca(HCO₃)₂ or CaSO₄","NaOH or Mg(OH)₂","CaCl₂ or NaCl salts"], a:1},
+  // 2012
+  {q:"How many atoms are present in 6.0g of magnesium? [Mg=24, Nₐ=6.02×10²³]", o:["1.20×10²²","2.41×10²²","1.51×10²³","3.02×10²³"], a:2},
+  {q:"An increase in pressure exerted on a gas at constant temperature results in:", o:["A decrease in effective collisions","A decrease in volume","An increase in intermolecular distance","An increase in volume"], a:1},
+  {q:"In 2H₂ + O₂ → 2H₂O, what volume of H₂ is left when 300 cm³ O₂ and 1000 cm³ H₂ are exploded?", o:["200 cm³","400 cm³","600 cm³","700 cm³"], a:1},
+  {q:"The electronic configuration of Mg²⁺ is:", o:["1s² 2s² 2p⁶ 3s² 3p²","1s² 2s² 2p⁶ 3s²","1s² 2s² 2p⁶","1s² 2s² 2p⁴"], a:2},
+  {q:"Group VII elements are:", o:["Monoatomic","Good oxidizing agents","Highly electropositive","Electron donors"], a:1},
+  {q:"Which is used to study arrangements of particles in crystal lattices?", o:["Alpha particles","Beta particles","Gamma rays","X-rays"], a:3},
+  {q:"Chlorination of water for town supply is carried out to:", o:["Make water colourless","Remove germs","Make water tasteful","Remove odour"], a:1},
+  {q:"What mass of KClO₃ crystallizes when a 1.5 mol dm⁻³ solution at 45°C is cooled to 20°C (solubility 0.5 mol dm⁻³)? [K=39, Cl=35.5, O=16]", o:["1.00 g","10.00 g","12.25 g","122.50 g"], a:3},
+  {q:"In 2Na₂O₂ + 2H₂O → 4NaOH + O₂, the substance oxidized is:", o:["Na₂O₂","NaOH","H₂O","O₂"], a:0},
+  {q:"CO(g) + H₂O(g) → CO₂(g) + H₂(g). ΔH° = ? [CO₂=−394, H₂O=−242, CO=−110 kJ mol⁻¹]", o:["+262 kJ mol⁻¹","−262 kJ mol⁻¹","+42 kJ mol⁻¹","−42 kJ mol⁻¹"], a:3},
+  // 2013
+  {q:"The radioisotope used in industrial radiography for checking faults in welds is:", o:["Carbon-14","Phosphorus-32","Cobalt-60","Iodine-131"], a:2},
+  {q:"How many unpaired electrons are in the p-orbitals of a fluorine atom?", o:["3","0","1","2"], a:2},
+  {q:"The shape of the CO₂ molecule is:", o:["Pyramidal","Linear","Angular","Tetrahedral"], a:1},
+  {q:"Which molecule is held together by hydrogen bonds?", o:["CH₄","HBr","H₂SO₄","HF"], a:3},
+  {q:"Steam changes the colour of anhydrous cobalt(II) chloride from:", o:["White to red","Blue to white","Blue to pink","White to blue"], a:2},
+  {q:"An example of a hygroscopic substance is:", o:["CuO(s)","MgCl₂(s)","CaCl₂(s)","NaOH(s)"], a:3},
+  {q:"In 2H₂O + 2F₂ → 4HF + O₂, the substance reduced is:", o:["O₂","H₂O","F₂","HF"], a:2},
+  {q:"Which gas is used as an anaesthetic?", o:["N₂O","NO₂","NH₃","NO"], a:0},
+  {q:"SO₂ is a strong reducing agent in water due to formation of:", o:["Hydroxide ion","SO₃","H₂S","Trioxosulphate(IV) salt"], a:3},
+  {q:"The coloured nature of transition metal ions is associated with their partially filled:", o:["f-orbital","s-orbital","p-orbital","d-orbital"], a:3},
+  // 2014
+  {q:"An element with configuration 1s² 2s² 2p⁶ 3s² 3p⁵ is:", o:["Has a completely filled p-orbital","Has 5 electrons in outermost shell","Belongs to group II","A halogen"], a:3},
+  {q:"Beryllium and aluminium have similar properties because they:", o:["Are both metals","Belong to same group","Belong to same period","Are positioned diagonally to each other"], a:3},
+  {q:"A bond formed between elements with electronegativity difference of 3.0 is:", o:["Metallic","Covalent","Co-ordinate","Ionic"], a:3},
+  {q:"On exposure to atmosphere, a hydrated salt losing water of crystallization is called:", o:["Efflorescence","Deliquescence","Hygroscopy","Hydrolysis"], a:0},
+  {q:"The dispersion of a liquid in a liquid medium gives:", o:["An emulsion","A fog","A gel","An aerosol"], a:0},
+  {q:"The basicity of CH₃COOH is:", o:["4","1","2","3"], a:1},
+  {q:"In Zn + CuSO₄ → ZnSO₄ + Cu, the oxidation number of the reducing agent changes from:", o:["0 to +4","0 to +2","+1 to +2","+1 to +3"], a:1},
+  {q:"The alkanol obtained from the production of soap is:", o:["Propanol","Ethanol","Glycerol","Methanol"], a:2},
+  {q:"Ethyne is passed through a hot tube with organo-nickel catalyst to produce:", o:["Isoprene","Polythene","Ethanol","Benzene"], a:3},
+  // 2015
+  {q:"The relatively high boiling points of alkanols are due to:", o:["Ionic bonding","Aromatic character","Covalent bonding","Hydrogen bonding"], a:3},
+  {q:"Given 15.00 cm³ H₂SO₄ neutralizes 25.00 cm³ of 0.125 mol dm⁻³ NaOH, the acid concentration is:", o:["0.925 mol dm⁻³","0.156 mol dm⁻³","0.104 mol dm⁻³","0.023 mol dm⁻³"], a:3},
+  {q:"When at equilibrium, 2H₂(g) + O₂(g) ⇌ 2H₂O(g) shifts right when:", o:["2SO₃ → 2SO₂ + O₂","2CO₂ → 2CO + O₂","2H₂ + O₂ → 2H₂O","2NO → N₂ + O₂"], a:2},
+  {q:"An endothermic reaction absorbs heat and is represented by:", o:["liberated −ΔH","liberated +ΔH","absorbed −ΔH","absorbed +ΔH"], a:3},
+  {q:"If temperature of 2SO₂ + O₂ ⇌ 2SO₃ (exothermic) is reduced from 800°C to 500°C:", o:["Reaction rate increases","Concentration of SO₂ decreases","Concentration of SO₂ increases","SO₂ becomes unreactive"], a:2},
+],
+
+// =============================================
+// BIOLOGY (60 questions)
+// =============================================
+biology: [
+  {q:"The basic unit of life is the:", o:["Tissue","Organ","Cell","Molecule"], a:2},
+  {q:"Which organelle is responsible for protein synthesis?", o:["Mitochondria","Ribosome","Nucleus","Golgi apparatus"], a:1},
+  {q:"The process by which plants make food using sunlight is called:", o:["Respiration","Photosynthesis","Transpiration","Digestion"], a:1},
+  {q:"DNA stands for:", o:["Deoxyribonucleic acid","Deoxyribose nucleic acid","Double nucleic acid","Deoxyribose nitrogen acid"], a:0},
+  {q:"Which blood group is the universal donor?", o:["A","B","AB","O"], a:3},
+  {q:"The powerhouse of the cell is the:", o:["Nucleus","Ribosome","Mitochondria","Chloroplast"], a:2},
+  {q:"Osmosis is the movement of water from:", o:["High solute to low solute concentration","Low solute to high solute concentration","High pressure to low pressure","Low pressure to high pressure"], a:1},
+  {q:"The scientific study of heredity is called:", o:["Ecology","Genetics","Evolution","Taxonomy"], a:1},
+  {q:"Insects belong to the class:", o:["Arachnida","Crustacea","Insecta","Myriapoda"], a:2},
+  {q:"Which vitamin is synthesized in the skin upon exposure to sunlight?", o:["Vitamin A","Vitamin B","Vitamin C","Vitamin D"], a:3},
+  {q:"The process of breaking down glucose to release energy is called:", o:["Photosynthesis","Respiration","Excretion","Digestion"], a:1},
+  {q:"Which part of the brain controls balance and coordination?", o:["Cerebrum","Cerebellum","Medulla oblongata","Hypothalamus"], a:1},
+  {q:"Malaria is caused by:", o:["A bacterium","A virus","A protozoan","A fungus"], a:2},
+  {q:"The process of cell division that results in two identical daughter cells is:", o:["Meiosis","Mitosis","Binary fission","Budding"], a:1},
+  {q:"Which organ produces insulin?", o:["Liver","Kidney","Pancreas","Spleen"], a:2},
+  {q:"Active transport requires:", o:["A concentration gradient","Energy (ATP)","A semipermeable membrane","Water"], a:1},
+  {q:"The male gamete in flowering plants is found in:", o:["Ovule","Anther","Stigma","Style"], a:1},
+  {q:"Which of the following is a characteristic of living things?", o:["Static nature","Inability to reproduce","Response to stimuli","Lack of metabolism"], a:2},
+  {q:"Haemoglobin is found in:", o:["White blood cells","Platelets","Red blood cells","Plasma"], a:2},
+  {q:"Transpiration occurs mainly through:", o:["Roots","Stomata","Lenticels","Cuticle"], a:1},
+  {q:"The nitrogen cycle involves bacteria that:", o:["Fix oxygen","Fix nitrogen","Fix carbon","Fix hydrogen"], a:1},
+  {q:"Plasmids are found in:", o:["Viruses","Bacteria","Animal cells","Plant cells"], a:1},
+  {q:"The Rh factor is a type of:", o:["Enzyme","Antigen","Antibody","Hormone"], a:1},
+  {q:"Which of the following is a monocot plant?", o:["Mango","Groundnut","Maize","Bean"], a:2},
+  {q:"Kwashiorkor is a deficiency disease caused by lack of:", o:["Carbohydrates","Proteins","Vitamins","Minerals"], a:1},
+  {q:"The vena cava carries blood to the:", o:["Lungs","Body","Right atrium","Left ventricle"], a:2},
+  {q:"Which type of immunity is acquired naturally after an infection?", o:["Passive artificial","Active artificial","Active natural","Passive natural"], a:2},
+  {q:"Lichens are a symbiotic association between:", o:["Algae and fungi","Bacteria and fungi","Algae and bacteria","Mosses and fungi"], a:0},
+  {q:"Mendel's law of segregation states that:", o:["Genes are linked","Alleles separate during gamete formation","Traits blend","Genes mutate randomly"], a:1},
+  {q:"The appendix is part of the:", o:["Small intestine","Large intestine","Stomach","Liver"], a:1},
+  {q:"Aerobic respiration produces:", o:["Ethanol only","CO₂ and water","Lactic acid","Methane"], a:1},
+  {q:"The outermost layer of a plant cell is the:", o:["Cell membrane","Cell wall","Cytoplasm","Vacuole"], a:1},
+  {q:"Which gas is produced during photosynthesis?", o:["Carbon dioxide","Nitrogen","Oxygen","Hydrogen"], a:2},
+  {q:"The process by which organisms maintain a stable internal environment is:", o:["Excretion","Homeostasis","Respiration","Digestion"], a:1},
+  {q:"The functional unit of the kidney is the:", o:["Glomerulus","Nephron","Loop of Henle","Collecting duct"], a:1},
+  {q:"Which of the following is NOT a function of the liver?", o:["Detoxification","Bile production","Insulin production","Glycogen storage"], a:2},
+  {q:"Darwin's theory of evolution is based on:", o:["Inheritance of acquired traits","Natural selection","Genetic drift","Mutation only"], a:1},
+  {q:"The carrying capacity of an environment refers to:", o:["Number of species in an area","Maximum population an environment can sustain","Rate of population growth","Total biomass"], a:1},
+  {q:"Which enzyme begins starch digestion in the mouth?", o:["Pepsin","Lipase","Salivary amylase","Trypsin"], a:2},
+  {q:"Sickle cell anaemia is caused by a mutation affecting:", o:["White blood cells","Haemoglobin","Platelets","Plasma proteins"], a:1},
+  {q:"The aorta carries blood from the:", o:["Lungs to heart","Right ventricle","Left ventricle to body","Body to heart"], a:2},
+  {q:"Which of these is a vestigial organ in humans?", o:["Appendix","Pancreas","Thyroid","Adrenal gland"], a:0},
+  {q:"The process by which excess amino acids are removed in the liver is:", o:["Deamination","Nitrification","Ammonification","Denitrification"], a:0},
+  {q:"The part of the neuron that carries impulses away from the cell body is the:", o:["Dendrite","Axon","Myelin sheath","Synapse"], a:1},
+  {q:"Which of the following is an example of mutualism?", o:["Tapeworm in human intestine","Orchid growing on a tree","Bacteria fixing nitrogen in legume roots","Tick on a dog"], a:2},
+  {q:"The pH of blood is maintained at approximately:", o:["6.5","7.4","8.0","5.5"], a:1},
+  {q:"Cloning produces organisms that are:", o:["Genetically different","Genetically identical","Half genetically similar","Randomly different"], a:1},
+  {q:"Which mineral is essential for the formation of haemoglobin?", o:["Calcium","Iron","Sodium","Potassium"], a:1},
+  {q:"The process by which dead organisms are broken down by bacteria and fungi is:", o:["Predation","Decomposition","Competition","Parasitism"], a:1},
+  {q:"Vaccination introduces into the body:", o:["Antibodies directly","Dead or weakened pathogens","Antitoxins","Live pathogens only"], a:1},
+  {q:"Which structure controls entry and exit of materials in plant cells?", o:["Cell wall","Vacuole","Cell membrane","Chloroplast"], a:2},
+  {q:"The part of the ear responsible for hearing is the:", o:["Semi-circular canals","Cochlea","Eardrum","Eustachian tube"], a:1},
+  {q:"Which of these is NOT a type of ecological succession?", o:["Primary succession","Secondary succession","Tertiary succession","Seral succession"], a:2},
+  {q:"In a food chain: grass → rabbit → fox → decomposer, the rabbit is a:", o:["Producer","Primary consumer","Secondary consumer","Tertiary consumer"], a:1},
+  {q:"Which hormone regulates the menstrual cycle?", o:["Insulin","Oestrogen","Thyroxine","Adrenaline"], a:1},
+  {q:"Osmotic pressure is highest in a solution that is:", o:["Dilute","Concentrated","Isotonic","Neutral"], a:1},
+  {q:"The cerebrum is associated with:", o:["Balance","Breathing","Intelligence and memory","Heart rate"], a:2},
+  {q:"The structural unit of muscle is the:", o:["Neuron","Sarcomere","Nucleus","Tendon"], a:1},
+  {q:"Which of the following is a secondary consumer?", o:["Grass","Grasshopper","Frog","Bacteria"], a:2},
+  {q:"The site of gaseous exchange in the lungs is the:", o:["Bronchi","Bronchioles","Alveoli","Trachea"], a:2},
+],
+
+// =============================================
+// PHYSICS (60 questions)
+// =============================================
+physics: [
+  {q:"Which of the following is a vector quantity?", o:["Speed","Mass","Temperature","Velocity"], a:3},
+  {q:"The SI unit of force is the:", o:["Joule","Watt","Newton","Pascal"], a:2},
+  {q:"Newton's first law of motion describes:", o:["Action and reaction","Acceleration","Inertia","Momentum"], a:2},
+  {q:"The speed of light in a vacuum is approximately:", o:["3×10⁶ m/s","3×10⁸ m/s","3×10¹⁰ m/s","3×10⁴ m/s"], a:1},
+  {q:"Which type of wave does NOT require a medium for propagation?", o:["Sound waves","Water waves","Electromagnetic waves","Mechanical waves"], a:2},
+  {q:"Ohm's law states that current is:", o:["Directly proportional to resistance","Inversely proportional to voltage","Directly proportional to voltage","Independent of resistance"], a:2},
+  {q:"The work done when a force of 50N moves through 10m is:", o:["5 J","60 J","500 J","0.5 J"], a:2},
+  {q:"The phenomenon of light bending as it passes from one medium to another is:", o:["Reflection","Refraction","Diffraction","Interference"], a:1},
+  {q:"The period of a wave is:", o:["Number of waves per second","Distance between two crests","Time for one complete oscillation","Speed of the wave"], a:2},
+  {q:"Which instrument is used to measure electric current?", o:["Voltmeter","Ohmmeter","Ammeter","Galvanometer"], a:2},
+  {q:"Pressure is defined as:", o:["Force × Area","Force / Area","Mass × Volume","Mass / Volume"], a:1},
+  {q:"The acceleration due to gravity on Earth's surface is approximately:", o:["9.8 m/s","9.8 m/s²","98 m/s²","0.98 m/s²"], a:1},
+  {q:"Which law states that the pressure of a gas is inversely proportional to its volume at constant temperature?", o:["Charles' law","Gay-Lussac's law","Boyle's law","Dalton's law"], a:2},
+  {q:"The SI unit of electrical resistance is the:", o:["Ampere","Volt","Ohm","Watt"], a:2},
+  {q:"A concave mirror has a focal length of 20 cm. Its radius of curvature is:", o:["10 cm","20 cm","40 cm","80 cm"], a:2},
+  {q:"The principle of conservation of energy states:", o:["Energy is created by machines","Energy can be created and destroyed","Total energy in a system remains constant","Potential energy equals kinetic energy"], a:2},
+  {q:"Sound travels fastest in:", o:["Vacuum","Air","Water","Steel"], a:3},
+  {q:"The unit of power is the:", o:["Newton","Joule","Watt","Pascal"], a:2},
+  {q:"Radioactive decay is:", o:["A chemical reaction","A nuclear reaction","An electrical process","A mechanical process"], a:1},
+  {q:"The angle of incidence equals the angle of reflection is a statement of:", o:["Snell's law","Refraction","Reflection","Diffraction"], a:2},
+  {q:"The kinetic energy of a body of mass 2kg moving at 10 m/s is:", o:["20 J","100 J","200 J","1000 J"], a:1},
+  {q:"Which of the following is an insulator?", o:["Copper","Iron","Rubber","Aluminium"], a:2},
+  {q:"Archimedes' principle states that the upthrust on an object equals:", o:["Its weight","The weight of fluid displaced","Its volume","Its density"], a:1},
+  {q:"A transformer steps voltage up. The secondary coil has:", o:["Fewer turns than primary","Same turns as primary","More turns than primary","No core"], a:2},
+  {q:"The half-life of a radioactive substance is the time taken for:", o:["All atoms to decay","Half the atoms to decay","One atom to decay","Twice the atoms to decay"], a:1},
+  {q:"Which phenomenon explains why the sky is blue?", o:["Reflection","Refraction","Dispersion","Scattering"], a:3},
+  {q:"The SI unit of frequency is the:", o:["Decibel","Hertz","Metre","Second"], a:1},
+  {q:"An object in uniform circular motion has:", o:["Constant velocity","Constant speed","Constant acceleration direction","Zero acceleration"], a:1},
+  {q:"Lenz's law is associated with:", o:["Electric fields","Electromagnetic induction","Static electricity","Capacitance"], a:1},
+  {q:"The absolute zero temperature is:", o:["0°C","−100°C","−273°C","−373°C"], a:2},
+  {q:"The loudness of sound is measured in:", o:["Hertz","Decibels","Metres","Watts"], a:1},
+  {q:"A body thrown horizontally from a height undergoes:", o:["Uniform motion","Simple harmonic motion","Projectile motion","Circular motion"], a:2},
+  {q:"The phenomenon where two waves combine to form a resultant wave is:", o:["Diffraction","Reflection","Interference","Refraction"], a:2},
+  {q:"A fuse wire is made of:", o:["High melting point material","Low melting point material","High conductivity material","Insulating material"], a:1},
+  {q:"Fleming's right-hand rule is used to determine the direction of:", o:["Magnetic force","Induced current","Current in a motor","Electric field"], a:1},
+  {q:"The refractive index of glass is 1.5. The critical angle for total internal reflection is approximately:", o:["30°","41.8°","45°","60°"], a:1},
+  {q:"Which of the following has the greatest momentum? (All at same speed)", o:["A feather","A basketball","A truck","A bicycle"], a:2},
+  {q:"The specific heat capacity of water is 4200 J/kg°C. Heat to raise 2kg by 5°C is:", o:["8400 J","42000 J","840 J","4200 J"], a:1},
+  {q:"An electric charge of 5C flows through a wire in 10s. The current is:", o:["50 A","0.5 A","2 A","15 A"], a:1},
+  {q:"A convex lens is used as a magnifying glass because it produces:", o:["A real, inverted image","A virtual, magnified image","A diminished image","An inverted image"], a:1},
+  {q:"Which particle has no charge?", o:["Proton","Electron","Neutron","Alpha particle"], a:2},
+  {q:"The terminal velocity of a falling object is reached when:", o:["Gravity equals zero","Air resistance equals weight","Acceleration is maximum","Velocity is zero"], a:1},
+  {q:"P = IV is the formula for:", o:["Resistance","Frequency","Power","Energy"], a:2},
+  {q:"The pitch of sound depends on its:", o:["Amplitude","Frequency","Wavelength","Speed"], a:1},
+  {q:"Infrared radiation is used in:", o:["X-ray imaging","TV remotes","Radio communication","Gamma-ray therapy"], a:1},
+  {q:"The photoelectric effect demonstrates that light behaves as:", o:["A wave","A particle","Both a wave and particle","Neither"], a:1},
+  {q:"A battery has an EMF of 12V and internal resistance 2Ω. Current drawn by a 4Ω external resistor is:", o:["6 A","3 A","2 A","1 A"], a:2},
+  {q:"Resonance occurs when a system is driven at its:", o:["Maximum frequency","Natural frequency","Minimum frequency","Half frequency"], a:1},
+  {q:"The unit of capacitance is the:", o:["Henry","Ohm","Farad","Tesla"], a:2},
+  {q:"Which type of electromagnetic radiation has the shortest wavelength?", o:["Radio waves","Microwaves","X-rays","Gamma rays"], a:3},
+  {q:"Moment of a force about a point equals:", o:["Force + distance","Force / distance","Force × perpendicular distance","Force × time"], a:2},
+  {q:"In a parallel circuit, the voltage across each component is:", o:["Different","The same","Zero","Divided equally"], a:1},
+  {q:"The density of water is:", o:["100 kg/m³","10 kg/m³","1000 kg/m³","10000 kg/m³"], a:2},
+  {q:"Surface tension is responsible for:", o:["Buoyancy","Capillary action","Atmospheric pressure","Bernoulli effect"], a:1},
+  {q:"A wave with frequency 50 Hz and wavelength 4m has a speed of:", o:["200 m/s","12.5 m/s","0.08 m/s","46 m/s"], a:0},
+  {q:"Radioactive emissions that are helium nuclei are called:", o:["Beta particles","Gamma rays","Alpha particles","Neutrons"], a:2},
+  {q:"The focal length of a converging lens is positive. It produces a real image when object is:", o:["Inside focal point","At focal point","Beyond focal point","At infinity"], a:2},
+  {q:"Boyle's law applies at constant:", o:["Pressure","Volume","Temperature","Mass"], a:2},
+  {q:"The braking distance of a vehicle increases when:", o:["Speed decreases","Mass decreases","Road is wet","Tyres are inflated"], a:2},
+  {q:"Nuclear fission involves:", o:["Combining nuclei","Splitting a nucleus","Electron capture","Beta decay"], a:1},
+],
+
+// =============================================
+// MATHEMATICS (60 questions)
+// =============================================
+mathematics: [
+  {q:"Simplify: log₁₀100 + log₁₀10", o:["3","4","2","1"], a:0},
+  {q:"Find the value of x if 2ˣ = 32", o:["4","5","6","3"], a:1},
+  {q:"The sum of the first 10 natural numbers is:", o:["45","50","55","60"], a:2},
+  {q:"Solve: 3x + 5 = 20", o:["x = 3","x = 4","x = 5","x = 6"], a:2},
+  {q:"The quadratic equation x² − 5x + 6 = 0 has roots:", o:["2 and 3","−2 and −3","1 and 6","−1 and −6"], a:0},
+  {q:"Find the gradient of the line y = 3x − 7", o:["−7","3","7","−3"], a:1},
+  {q:"Convert 0.375 to a fraction:", o:["3/8","3/5","3/4","1/4"], a:0},
+  {q:"Evaluate: ∫₀² 2x dx", o:["2","4","6","8"], a:1},
+  {q:"The mean of 5, 8, 12, 15, 10 is:", o:["9","10","11","12"], a:1},
+  {q:"If sin θ = 0.5, then θ =", o:["30°","45°","60°","90°"], a:0},
+  {q:"Factorize: x² − 9", o:["(x−9)(x+1)","(x−3)(x+3)","(x−3)²","(x+3)²"], a:1},
+  {q:"The area of a circle with radius 7cm is: (π = 22/7)", o:["44 cm²","154 cm²","44π cm²","308 cm²"], a:1},
+  {q:"Simplify: (3a²b)(2ab³)", o:["5a³b⁴","6a³b⁴","6a²b³","5a²b⁴"], a:1},
+  {q:"If P = {1,2,3} and Q = {2,3,4}, then P ∩ Q =", o:["{1,2,3,4}","{2,3}","{1,4}","{1,2,3}"], a:1},
+  {q:"The volume of a cylinder with radius 3cm and height 7cm is: (π = 22/7)", o:["198 cm³","66 cm³","462 cm³","396 cm³"], a:0},
+  {q:"Express 45 as a product of prime factors:", o:["3 × 15","9 × 5","3² × 5","3 × 5²"], a:2},
+  {q:"A ratio is 3:7. If the larger quantity is 42, what is the smaller?", o:["18","21","24","6"], a:0},
+  {q:"Differentiate y = x³ + 2x:", o:["3x² + 2","x² + 2","3x² + 2x","3x + 2"], a:0},
+  {q:"Find the 7th term of the sequence 2, 5, 8, 11,...", o:["17","20","23","26"], a:1},
+  {q:"Solve the inequality 2x − 3 > 7:", o:["x > 2","x > 5","x < 5","x < 2"], a:1},
+  {q:"The standard form of 0.000452 is:", o:["4.52 × 10⁻³","4.52 × 10⁻⁴","4.52 × 10⁻²","45.2 × 10⁻⁴"], a:1},
+  {q:"In a right triangle, if the two legs are 3 and 4, the hypotenuse is:", o:["5","6","7","8"], a:0},
+  {q:"If y varies directly as x and y = 10 when x = 2, find y when x = 7:", o:["35","14","70","3.5"], a:0},
+  {q:"Evaluate: ⁵C₂", o:["10","20","15","5"], a:0},
+  {q:"A triangle has angles in ratio 1:2:3. The largest angle is:", o:["30°","60°","90°","120°"], a:2},
+  {q:"The probability of picking a red ball from a bag with 3 red, 5 blue balls:", o:["5/8","3/5","3/8","1/3"], a:2},
+  {q:"Simplify: (x + 3)(x − 3)", o:["x² − 9","x² + 9","x² − 6x − 9","x² + 6x + 9"], a:0},
+  {q:"If log₂ x = 3, then x =", o:["6","8","9","12"], a:1},
+  {q:"The perimeter of a rectangle 8m × 5m is:", o:["40 m","26 m","13 m","20 m"], a:1},
+  {q:"A car travels 150 km in 2.5 hours. Its average speed is:", o:["375 km/h","37.5 km/h","60 km/h","75 km/h"], a:2},
+  {q:"Find the sum of the arithmetic series with first term 3, last term 27, and 9 terms:", o:["108","135","162","135"], a:1},
+  {q:"cos 60° =", o:["1","0.5","√3/2","0"], a:1},
+  {q:"Solve simultaneously: x + y = 7 and x − y = 3", o:["x=5, y=2","x=4, y=3","x=2, y=5","x=3, y=4"], a:0},
+  {q:"Evaluate ²⁰P₃:", o:["1140","6840","3420","1200"], a:1},
+  {q:"What is the next term in the geometric series 2, 6, 18, 54,...?", o:["108","162","216","162"], a:1},
+  {q:"Simplify: (√5 + √3)(√5 − √3)", o:["2","√15","8","4"], a:0},
+  {q:"The number of sides of a polygon whose interior angle sum is 1440° is:", o:["9","10","11","12"], a:1},
+  {q:"If f(x) = 2x² − 3x + 1, find f(2):", o:["3","5","7","9"], a:0},
+  {q:"Which of the following is correct? tan θ =", o:["sin θ / cos θ","cos θ / sin θ","sin θ × cos θ","1/sin θ"], a:0},
+  {q:"The midpoint of (2, 4) and (8, 10) is:", o:["(5, 7)","(6, 7)","(4, 6)","(5, 8)"], a:0},
+  {q:"Divide 120 in the ratio 3:5:", o:["40 and 80","45 and 75","36 and 84","50 and 70"], a:1},
+  {q:"The square root of 256 is:", o:["14","15","16","18"], a:2},
+  {q:"A principal of ₦5000 at 8% per annum simple interest for 3 years gives interest of:", o:["₦1200","₦1500","₦2400","₦400"], a:0},
+  {q:"Evaluate: 5! − 4!", o:["96","96","20","24"], a:0},
+  {q:"What is the image of the point (3, 4) after reflection in the y-axis?", o:["(3, −4)","(−3, 4)","(−3, −4)","(4, 3)"], a:1},
+  {q:"The derivative of sin x is:", o:["−cos x","cos x","tan x","−sin x"], a:1},
+  {q:"Solve: |2x − 4| = 8", o:["x = 2 or x = −2","x = 6 or x = −2","x = 6 or x = 2","x = 4 or x = −4"], a:1},
+  {q:"In a Venn diagram with n(A) = 10, n(B) = 12, n(A∩B) = 4, find n(A∪B):", o:["22","18","26","14"], a:1},
+  {q:"The equation of a line through (0,3) with slope 2 is:", o:["y = 2x + 3","y = 3x + 2","y = 2x − 3","y = 3x − 2"], a:0},
+  {q:"The surface area of a cube with side 4cm is:", o:["24 cm²","48 cm²","64 cm²","96 cm²"], a:3},
+  {q:"Expand (a + b)³:", o:["a³ + 3a²b + 3ab² + b³","a³ + b³","a³ + 3ab + b³","a³ − 3a²b + 3ab² − b³"], a:0},
+  {q:"The median of 3, 7, 5, 9, 1 is:", o:["5","7","6","9"], a:0},
+  {q:"If the angles of a triangle are 2x, 3x, and 4x, find x:", o:["15°","20°","25°","30°"], a:1},
+  {q:"A bag contains 4 red and 6 blue balls. Two balls are drawn without replacement. Probability both are red:", o:["2/15","4/15","6/45","8/90"], a:0},
+  {q:"Evaluate: ∫ (3x² + 2) dx", o:["x³ + 2x + C","3x³ + 2x + C","x³ + C","6x + C"], a:0},
+  {q:"Find the inverse of f(x) = 2x + 1:", o:["f⁻¹(x) = (x−1)/2","f⁻¹(x) = (x+1)/2","f⁻¹(x) = 2x−1","f⁻¹(x) = x/2 + 1"], a:0},
+  {q:"tan 45° =", o:["0","0.5","1","√3"], a:2},
+  {q:"A circular sector has radius 6cm and angle 60°. Its area is: (π = 22/7)", o:["18.86 cm²","37.71 cm²","56.57 cm²","12.57 cm²"], a:0},
+  {q:"Resolve into partial fractions: 5/(x²−x−2)", o:["2/(x−2) − 1/(x+1)","5/(x−2) − 5/(x+1)","1/(x−2) + 4/(x+1)","None of these"], a:0},
+  {q:"The distance between (1,2) and (4,6) is:", o:["5","7","9","3"], a:0},
+],
+
+// =============================================
+// ENGLISH LANGUAGE (60 questions)
+// =============================================
+english: [
+  {q:"Choose the word that is closest in meaning to 'ELOQUENT':", o:["Silent","Articulate","Confused","Timid"], a:1},
+  {q:"Identify the part of speech of the underlined word: 'She runs QUICKLY.'", o:["Adjective","Verb","Adverb","Noun"], a:2},
+  {q:"Select the correct spelling:", o:["Accomodate","Accommodate","Acomodate","Accommadate"], a:1},
+  {q:"Which sentence is grammatically correct?", o:["He don't like rice.","She have been here.","They were playing football.","We was late."], a:2},
+  {q:"Choose the antonym of 'BENEVOLENT':", o:["Kind","Generous","Malevolent","Helpful"], a:2},
+  {q:"'He kicked the bucket' is an example of:", o:["A simile","A metaphor","An idiom","Personification"], a:2},
+  {q:"Identify the type of clause in: 'When the rain stopped, we went out.'", o:["Noun clause","Relative clause","Adverbial clause","Main clause"], a:2},
+  {q:"Which is the correct plural of 'criterion'?", o:["Criterions","Criterias","Criteria","Criterium"], a:2},
+  {q:"Complete the sentence: 'Neither the students nor the teacher _____ present.'", o:["were","are","is","has"], a:2},
+  {q:"Which sentence uses the subjunctive mood correctly?", o:["If I was rich, I would travel.","I wish he were here.","She acts as if she is a queen.","If he comes, we will leave."], a:1},
+  {q:"'The pen is mightier than the sword' is an example of:", o:["Metaphor","Simile","Hyperbole","Alliteration"], a:0},
+  {q:"Choose the word that best fills the blank: 'The committee has reached _____ decision.'", o:["a","an","the","their"], a:0},
+  {q:"Which word is a homophone of 'knight'?", o:["Night","Knit","Light","Eight"], a:0},
+  {q:"Identify the figure of speech: 'The stars danced in the sky.'", o:["Simile","Metaphor","Personification","Hyperbole"], a:2},
+  {q:"The word 'autobiography' means:", o:["Story of another's life","Story of one's own life","A book about cars","A type of biography"], a:1},
+  {q:"Choose the correct form: 'This is the book _____ I was looking for.'", o:["who","whom","which","whose"], a:2},
+  {q:"What is the passive voice of 'The teacher taught the students'?", o:["The students taught the teacher","The students were taught by the teacher","The students are taught","Teaching was done by the teacher"], a:1},
+  {q:"Which word correctly completes: 'He is afraid _____ dogs.'?", o:["from","with","of","by"], a:2},
+  {q:"Identify the rhetorical device in: 'Ask not what your country can do for you...'", o:["Anaphora","Chiasmus","Epistrophe","Alliteration"], a:1},
+  {q:"A word opposite in meaning to another is called a/an:", o:["Synonym","Antonym","Homophone","Homonym"], a:1},
+  {q:"Choose the correctly punctuated sentence:", o:["Its raining outside.","It's raining outside.","Its' raining outside.","It is' raining outside."], a:1},
+  {q:"Which sentence contains a dangling modifier?", o:["Running fast, the dog caught the ball.","Running fast, the ball was caught.","The dog running fast caught the ball.","The fast-running dog caught the ball."], a:1},
+  {q:"'PANACEA' means:", o:["A type of flower","A solution to all problems","A type of disease","A form of meditation"], a:1},
+  {q:"The literary device where events foreshadow future occurrences is:", o:["Flashback","Foreshadowing","Irony","Allusion"], a:1},
+  {q:"Choose the word with the correct stress: 'pho-TOG-ra-phy'", o:["PHO-tog-ra-phy","pho-TOG-ra-phy","pho-tog-RA-phy","pho-tog-ra-PHY"], a:1},
+  {q:"Which sentence uses 'affect' correctly?", o:["The weather effected our plans.","The drug affected her mood.","This will effect you greatly.","The effect was affecting."], a:1},
+  {q:"A speech by one person in a play is called a:", o:["Dialogue","Monologue","Prologue","Epilogue"], a:1},
+  {q:"Choose the correct comparative: 'John is ___ than his brother.'", o:["more taller","tallest","taller","most tall"], a:2},
+  {q:"Which is NOT a type of figurative language?", o:["Simile","Metaphor","Fact","Hyperbole"], a:2},
+  {q:"'PERSPICACIOUS' means:", o:["Stubborn","Having keen insight","Talkative","Lazy"], a:1},
+  {q:"Identify the mood: 'Close the window!'", o:["Indicative","Subjunctive","Imperative","Conditional"], a:2},
+  {q:"Which of these is an example of alliteration?", o:["She sells seashells","The moon was bright","He ran quickly","The cat sat"], a:0},
+  {q:"The word 'circumlocution' means:", o:["Speaking directly","Speaking around a topic","Circular writing","Clear expression"], a:1},
+  {q:"Choose the word with silent letters: ", o:["Write","Walk","Both A and B","Neither A nor B"], a:2},
+  {q:"Which is a compound sentence?", o:["She sings.","Although she sings, she dances.","She sings and dances.","She sings beautifully."], a:2},
+  {q:"The term for a word that sounds like the noise it represents:", o:["Alliteration","Assonance","Onomatopoeia","Consonance"], a:2},
+  {q:"'EPHEMERAL' means:", o:["Lasting forever","Short-lived","Extremely large","Very important"], a:1},
+  {q:"Identify the type of sentence: 'What a beautiful sunset!'", o:["Declarative","Interrogative","Imperative","Exclamatory"], a:3},
+  {q:"Which word is a synonym of 'VERBOSE'?", o:["Concise","Wordy","Silent","Brief"], a:1},
+  {q:"A story with a moral is called a:", o:["Novel","Fable","Biography","Drama"], a:1},
+  {q:"Choose the correct form: 'If I _____ you, I would apologize.'", o:["am","was","were","be"], a:2},
+  {q:"'She cried a river of tears.' This is an example of:", o:["Simile","Personification","Metaphor","Hyperbole"], a:3},
+  {q:"Which of these words is correctly hyphenated?", o:["Self-confidence","Selfconfidence","Self confidence","Selfcon-fidence"], a:0},
+  {q:"The word 'ubiquitous' means:", o:["Rare","Found everywhere","Beautiful","Ancient"], a:1},
+  {q:"Choose the correctly written sentence:", o:["There coming here later.","Their coming here later.","They're coming here later.","Theyre coming here later."], a:2},
+  {q:"An 'oxymoron' combines:", o:["Two similar ideas","Two contradictory ideas","Two questions","Two nouns"], a:1},
+  {q:"'LOQUACIOUS' describes a person who is:", o:["Very quiet","Very talkative","Very angry","Very sad"], a:1},
+  {q:"Which sentence is in the future perfect tense?", o:["I will eat.","I will have eaten by noon.","I am eating.","I had eaten."], a:1},
+  {q:"Choose the word that collocates with 'heavy': '_____ rain'", o:["Strong","Hard","Heavy","Big"], a:2},
+  {q:"A word formed from the first letters of other words is a/an:", o:["Anagram","Acronym","Abbreviation","Homophone"], a:1},
+  {q:"Identify the subject in: 'Running every day keeps him healthy.'", o:["Running every day","every day","him","healthy"], a:0},
+  {q:"Which of these is a concrete noun?", o:["Love","Freedom","Table","Justice"], a:2},
+  {q:"'AMELIORATE' means:", o:["Make worse","Make better","Stay the same","Destroy"], a:1},
+  {q:"The plural of 'datum' is:", o:["Datums","Datas","Data","Dati"], a:2},
+  {q:"Choose the correct preposition: 'She is married _____ a doctor.'", o:["with","by","to","for"], a:2},
+  {q:"Which is an example of irony?", o:["The brave soldier ran away.","A fire station burned down.","The sun is bright.","He ran fast."], a:1},
+  {q:"'INTREPID' means:", o:["Fearful","Fearless","Indecisive","Impatient"], a:1},
+  {q:"Which sentence correctly uses a semicolon?", o:["I like coffee; and tea.","I like coffee; tea is also good.","I like; coffee and tea.","I; like coffee."], a:1},
+  {q:"The term 'protagonist' refers to:", o:["The villain","The main character","A supporting character","The narrator"], a:1},
+  {q:"'VOCIFEROUS' means:", o:["Very loud","Very quiet","Very kind","Very slow"], a:0},
+]
+};
+
+// =============================================
+// QUIZ STATE
+// =============================================
+let currentSubject = '';
+let questions = [];
+let currentIndex = 0;
+let answers = [];
+let timerInterval = null;
+let timeLeft = 0;
+let totalTime = 0;
+const ACCENT = {
+  chemistry: '#00e5ff', biology: '#39ff6e', physics: '#ff6b35',
+  mathematics: '#c77dff', english: '#ffd166'
+};
+const TIMES = {
+  chemistry: 35*60, biology: 35*60, physics: 35*60,
+  mathematics: 40*60, english: 35*60
+};
+const TITLES = {
+  chemistry:'⚗️ Chemistry', biology:'🧬 Biology',
+  physics:'⚡ Physics', mathematics:'📐 Mathematics', english:'📝 English'
+};
+
+function startQuiz(subject) {
+  currentSubject = subject;
+  questions = shuffle([...QUESTIONS[subject]]).slice(0, 60);
+  currentIndex = 0;
+  answers = new Array(questions.length).fill(null);
+  timeLeft = TIMES[subject];
+  totalTime = timeLeft;
+
+  const accent = ACCENT[subject];
+  document.querySelector('.progress-fill').style.background = accent;
+  document.querySelector('.nav-btn.next').style.background = accent;
+  document.getElementById('quiz-title').textContent = TITLES[subject];
+
+  document.getElementById('landing').style.display = 'none';
+  const qs = document.getElementById('quiz-screen');
+  qs.style.display = 'flex';
+
+  renderQuestion();
+  startTimer();
+}
+
+function shuffle(arr) {
+  for(let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft <= 0) { clearInterval(timerInterval); finishQuiz(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+  const s = (timeLeft%60).toString().padStart(2,'0');
+  const el = document.getElementById('timer-display');
+  el.textContent = `${m}:${s}`;
+  el.className = 'timer-display' + (timeLeft < 120 ? ' warning' : '');
+}
+
+function renderQuestion() {
+  const q = questions[currentIndex];
+  const total = questions.length;
+
+  document.getElementById('q-number').textContent = `QUESTION ${currentIndex+1} OF ${total}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('progress-text').textContent = `Q ${currentIndex+1} / ${total}`;
+  document.getElementById('progress-fill').style.width = `${((currentIndex+1)/total)*100}%`;
+
+  const opts = document.getElementById('options-list');
+  opts.innerHTML = '';
+  const labels = ['A','B','C','D'];
+  const answered = answers[currentIndex];
+
+  q.o.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    if(answered !== null) {
+      btn.disabled = true;
+      if(i === q.a) btn.classList.add('correct');
+      else if(i === answered && answered !== q.a) btn.classList.add('wrong');
+    } else {
+      btn.onclick = () => selectAnswer(i);
+    }
+    btn.innerHTML = `<span class="opt-label">${labels[i]}</span><span>${opt}</span>`;
+    opts.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback-box');
+  if(answered !== null) {
+    fb.style.display = 'block';
+    if(answered === q.a) {
+      fb.className = 'feedback-box correct';
+      fb.textContent = '✓ Correct!';
+    } else {
+      fb.className = 'feedback-box wrong';
+      fb.textContent = `✗ Incorrect. The correct answer is ${labels[q.a]}: ${q.o[q.a]}`;
+    }
+  } else {
+    fb.style.display = 'none';
+  }
+
+  document.getElementById('prev-btn').disabled = currentIndex === 0;
+  document.getElementById('next-btn').textContent = currentIndex === total-1 ? 'Finish ✓' : 'Next →';
+
+  updateScoreLive();
+}
+
+function selectAnswer(idx) {
+  if(answers[currentIndex] !== null) return;
+  answers[currentIndex] = idx;
+  renderQuestion();
+}
+
+function nextQuestion() {
+  if(currentIndex < questions.length - 1) {
+    currentIndex++;
+    renderQuestion();
+    document.querySelector('.quiz-body').scrollTop = 0;
+  } else {
+    finishQuiz();
+  }
+}
+
+function prevQuestion() {
+  if(currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+    document.querySelector('.quiz-body').scrollTop = 0;
+  }
+}
+
+function updateScoreLive() {
+  const correct = answers.filter((a, i) => a !== null && a === questions[i].a).length;
+  document.getElementById('score-live').textContent = `✓ ${correct}`;
+}
+
+function confirmExit() {
+  if(confirm('Exit quiz? Your progress will be lost.')) {
+    clearInterval(timerInterval);
+    goHome();
+  }
+}
+
+function goHome() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('landing').style.display = 'flex';
+}
+
+function finishQuiz() {
+  clearInterval(timerInterval);
+  const total = questions.length;
+  const correct = answers.filter((a, i) => a !== null && a === questions[i].a).length;
+  const wrong = answers.filter((a, i) => a !== null && a !== questions[i].a).length;
+  const skipped = answers.filter(a => a === null).length;
+  const pct = Math.round((correct / total) * 100);
+
+  document.getElementById('quiz-screen').style.display = 'none';
+  const rs = document.getElementById('result-screen');
+  rs.style.display = 'block';
+
+  document.getElementById('stat-correct').textContent = correct;
+  document.getElementById('stat-wrong').textContent = wrong;
+  document.getElementById('stat-skipped').textContent = skipped;
+  document.getElementById('score-pct').textContent = pct + '%';
+
+  let emoji = '😔', title = 'Keep Practicing!';
+  if(pct >= 80) { emoji = '🏆'; title = 'Outstanding!'; }
+  else if(pct >= 60) { emoji = '🎯'; title = 'Good Work!'; }
+  else if(pct >= 40) { emoji = '📚'; title = 'Keep Studying!'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-subtitle').textContent =
+    `You scored ${correct} out of ${total} in ${TITLES[currentSubject].split(' ')[1]}.`;
+
+  const accent = ACCENT[currentSubject];
+  const ring = document.getElementById('ring-fill');
+  ring.style.stroke = accent;
+  const circumference = 326.7;
+  const offset = circumference - (pct / 100) * circumference;
+  setTimeout(() => { ring.style.strokeDashoffset = offset; }, 100);
+
+  document.querySelector('.result-btn.primary').style.background = accent;
+}
+
+function retryQuiz() {
+  document.getElementById('result-screen').style.display = 'none';
+  startQuiz(currentSubject);
+}
+</script>
+</body>
+</html>
