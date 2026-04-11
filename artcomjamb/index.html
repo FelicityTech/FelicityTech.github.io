@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans, 'Segoe UI', sans-serif); background: var(--color-background-tertiary, #f5f5f0); color: var(--color-text-primary, #1a1a1a); min-height: 100vh; }
+
+  /* SCREENS */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* LANDING */
+  #landing { background: var(--color-background-primary, #fff); }
+  .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; text-align: center; }
+  .hero-badge { display: inline-block; background: #E6F1FB; color: #185FA5; font-size: 12px; font-weight: 500; padding: 4px 14px; border-radius: 20px; margin-bottom: 1.5rem; letter-spacing: 0.04em; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 500; line-height: 1.2; margin-bottom: 1rem; color: var(--color-text-primary); }
+  .hero h1 span { color: #185FA5; }
+  .hero p { font-size: 1.1rem; color: var(--color-text-secondary, #666); max-width: 480px; margin-bottom: 2.5rem; line-height: 1.7; }
+  .btn-primary { background: #185FA5; color: #fff; border: none; border-radius: 10px; padding: 14px 36px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+  .btn-primary:hover { background: #0C447C; }
+  .btn-secondary { background: transparent; color: #185FA5; border: 1.5px solid #185FA5; border-radius: 10px; padding: 12px 28px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .btn-secondary:hover { background: #E6F1FB; }
+  .hero-stats { display: flex; gap: 2.5rem; margin-bottom: 2.5rem; flex-wrap: wrap; justify-content: center; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.8rem; font-weight: 500; color: #185FA5; }
+  .stat-label { font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 2px; }
+  .footer-credit { padding: 1.2rem; text-align: center; font-size: 0.8rem; color: var(--color-text-secondary); border-top: 0.5px solid var(--color-border-tertiary, #e0e0e0); }
+  .footer-credit a { color: #185FA5; text-decoration: none; }
+  .footer-credit a:hover { text-decoration: underline; }
+
+  /* DASHBOARD */
+  #dashboard { background: var(--color-background-tertiary, #f5f5f0); }
+  .dash-header { background: var(--color-background-primary, #fff); padding: 1.2rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--color-border-tertiary, #e0e0e0); }
+  .dash-logo { font-size: 1.1rem; font-weight: 500; color: #185FA5; }
+  .dash-body { flex: 1; padding: 2rem; max-width: 900px; margin: 0 auto; width: 100%; }
+  .dash-title { font-size: 1.5rem; font-weight: 500; margin-bottom: 0.5rem; }
+  .dash-sub { color: var(--color-text-secondary); margin-bottom: 2rem; font-size: 0.95rem; }
+  .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .subject-card { background: var(--color-background-primary, #fff); border: 2px solid transparent; border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: all 0.15s; position: relative; }
+  .subject-card:hover { border-color: #B5D4F4; }
+  .subject-card.required { border-color: #185FA5; }
+  .subject-card.selected { border-color: #185FA5; background: #E6F1FB; }
+  .subject-card.required.selected { background: #E6F1FB; }
+  .required-tag { position: absolute; top: 10px; right: 10px; font-size: 10px; background: #185FA5; color: #fff; padding: 2px 8px; border-radius: 10px; }
+  .optional-tag { position: absolute; top: 10px; right: 10px; font-size: 10px; background: #E6F1FB; color: #185FA5; padding: 2px 8px; border-radius: 10px; }
+  .subject-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .subject-name { font-weight: 500; font-size: 1rem; margin-bottom: 0.25rem; }
+  .subject-desc { font-size: 0.8rem; color: var(--color-text-secondary); }
+  .section-label { font-size: 0.8rem; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.75rem; }
+  .selection-info { background: var(--color-background-primary, #fff); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border: 0.5px solid var(--color-border-tertiary); font-size: 0.9rem; color: var(--color-text-secondary); }
+  .selection-info strong { color: var(--color-text-primary); }
+  .start-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .start-info { font-size: 0.85rem; color: var(--color-text-secondary); }
+
+  /* EXAM */
+  #exam { background: var(--color-background-tertiary, #f5f5f0); }
+  .exam-header { background: var(--color-background-primary, #fff); padding: 0.9rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--color-border-tertiary); position: sticky; top: 0; z-index: 10; }
+  .timer-box { display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 500; }
+  .timer-icon { width: 16px; height: 16px; }
+  #timer-display { color: #185FA5; font-variant-numeric: tabular-nums; }
+  #timer-display.warning { color: #BA7517; }
+  #timer-display.danger { color: #A32D2D; }
+  .exam-progress-text { font-size: 0.85rem; color: var(--color-text-secondary); }
+  .subject-tabs { display: flex; gap: 0; overflow-x: auto; background: var(--color-background-secondary, #f0f0eb); border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .subject-tab { padding: 10px 18px; font-size: 0.85rem; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; color: var(--color-text-secondary); transition: all 0.12s; }
+  .subject-tab.active { border-bottom-color: #185FA5; color: #185FA5; font-weight: 500; background: var(--color-background-primary, #fff); }
+  .exam-body { flex: 1; padding: 1.5rem; max-width: 820px; margin: 0 auto; width: 100%; }
+  .question-card { background: var(--color-background-primary, #fff); border-radius: 12px; border: 0.5px solid var(--color-border-tertiary); padding: 1.5rem; margin-bottom: 1rem; }
+  .q-num { font-size: 0.78rem; color: var(--color-text-secondary); margin-bottom: 0.5rem; font-weight: 500; }
+  .q-text { font-size: 1rem; line-height: 1.7; margin-bottom: 1.25rem; color: var(--color-text-primary); }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; border-radius: 8px; border: 1.5px solid var(--color-border-tertiary, #e0e0e0); cursor: pointer; transition: all 0.12s; font-size: 0.95rem; }
+  .option:hover { border-color: #B5D4F4; background: #E6F1FB; }
+  .option.selected { border-color: #185FA5; background: #E6F1FB; color: #185FA5; }
+  .option.correct { border-color: #3B6D11; background: #EAF3DE; color: #3B6D11; }
+  .option.wrong { border-color: #A32D2D; background: #FCEBEB; color: #A32D2D; }
+  .option-letter { font-weight: 500; min-width: 20px; }
+  .exam-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background: var(--color-background-primary, #fff); border-top: 0.5px solid var(--color-border-tertiary); }
+  .nav-btns { display: flex; gap: 8px; }
+  .btn-nav { background: transparent; border: 1.5px solid var(--color-border-secondary, #ccc); border-radius: 8px; padding: 8px 16px; font-size: 0.9rem; cursor: pointer; color: var(--color-text-primary); transition: all 0.12s; }
+  .btn-nav:hover { background: var(--color-background-secondary); }
+  .btn-submit { background: #185FA5; color: #fff; border: none; border-radius: 8px; padding: 9px 20px; font-size: 0.9rem; cursor: pointer; font-weight: 500; }
+  .btn-submit:hover { background: #0C447C; }
+  .btn-danger { background: #A32D2D; color: #fff; border: none; border-radius: 8px; padding: 9px 20px; font-size: 0.9rem; cursor: pointer; }
+  .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); gap: 6px; margin-bottom: 1.5rem; }
+  .q-dot { width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid var(--color-border-tertiary); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; cursor: pointer; transition: all 0.1s; color: var(--color-text-secondary); }
+  .q-dot.answered { background: #185FA5; color: #fff; border-color: #185FA5; }
+  .q-dot.current { border-color: #185FA5; color: #185FA5; font-weight: 500; }
+  .sidebar-panel { background: var(--color-background-primary, #fff); border-radius: 10px; border: 0.5px solid var(--color-border-tertiary); padding: 1rem; margin-bottom: 1rem; }
+  .sidebar-title { font-size: 0.78rem; font-weight: 500; color: var(--color-text-secondary); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.75rem; }
+  .exam-layout { display: grid; grid-template-columns: 1fr 220px; gap: 1.5rem; }
+  @media (max-width: 700px) { .exam-layout { grid-template-columns: 1fr; } .sidebar { display: none; } }
+
+  /* RESULTS */
+  #results { background: var(--color-background-tertiary, #f5f5f0); }
+  .results-header { background: var(--color-background-primary); padding: 1.2rem 2rem; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; justify-content: space-between; align-items: center; }
+  .results-body { flex: 1; padding: 2rem; max-width: 860px; margin: 0 auto; width: 100%; }
+  .score-hero { text-align: center; padding: 2rem; background: var(--color-background-primary); border-radius: 14px; margin-bottom: 1.5rem; border: 0.5px solid var(--color-border-tertiary); }
+  .score-big { font-size: 3.5rem; font-weight: 500; color: #185FA5; }
+  .score-label { font-size: 1rem; color: var(--color-text-secondary); margin-top: 4px; }
+  .score-verdict { font-size: 1.1rem; font-weight: 500; margin-top: 0.75rem; }
+  .subject-scores { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .score-card { background: var(--color-background-primary); border-radius: 10px; padding: 1rem; border: 0.5px solid var(--color-border-tertiary); text-align: center; }
+  .score-card-name { font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.25rem; }
+  .score-card-num { font-size: 1.6rem; font-weight: 500; }
+  .score-card-num.high { color: #3B6D11; }
+  .score-card-num.mid { color: #BA7517; }
+  .score-card-num.low { color: #A32D2D; }
+  .review-section { background: var(--color-background-primary); border-radius: 12px; border: 0.5px solid var(--color-border-tertiary); overflow: hidden; margin-bottom: 1.5rem; }
+  .review-header { padding: 1rem 1.25rem; border-bottom: 0.5px solid var(--color-border-tertiary); font-weight: 500; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .review-body { padding: 1.25rem; display: none; }
+  .review-body.open { display: block; }
+  .review-q { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .review-q:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .review-q-text { font-size: 0.95rem; margin-bottom: 0.75rem; line-height: 1.6; }
+  .review-answer { font-size: 0.88rem; padding: 6px 12px; border-radius: 6px; margin-bottom: 4px; }
+  .review-answer.correct { background: #EAF3DE; color: #3B6D11; }
+  .review-answer.wrong { background: #FCEBEB; color: #A32D2D; }
+  .review-answer.your-correct { background: #EAF3DE; color: #3B6D11; }
+  .explanation { font-size: 0.85rem; color: var(--color-text-secondary); margin-top: 8px; font-style: italic; line-height: 1.6; }
+  .results-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="landing" class="screen active">
+  <div class="hero">
+    <div class="hero-badge">JAMB CBT Practice 2024/2025</div>
+    <h1>Ace Your <span>JAMB</span><br>with Confidence</h1>
+    <p>Practice real JAMB-standard questions for Arts & Commercial students. Timed, randomized, and reviewed after every session.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">160</div><div class="stat-label">Questions per exam</div></div>
+      <div class="stat"><div class="stat-num">2hrs</div><div class="stat-label">Real exam timing</div></div>
+      <div class="stat"><div class="stat-num">7+</div><div class="stat-label">Subjects available</div></div>
+    </div>
+    <button class="btn-primary" onclick="showScreen('dashboard')">Start Practicing</button>
+  </div>
+  <div class="footer-credit">
+    Prepared by <a href="https://solomonadegoke.vercel.app/" target="_blank">Solomon Adegoke</a> &mdash; JAMB CBT Practice Platform
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="screen">
+  <div class="dash-header">
+    <div class="dash-logo">JAMB Practice</div>
+    <button class="btn-secondary" onclick="showScreen('landing')" style="padding:8px 18px;font-size:0.85rem;">Back</button>
+  </div>
+  <div class="dash-body">
+    <div class="dash-title">Choose Your Subjects</div>
+    <div class="dash-sub">English Language is compulsory. Select 3 more subjects from Arts or Commercial.</div>
+
+    <div class="selection-info" id="selection-info">
+      <strong>0 of 3</strong> optional subjects selected. Pick exactly 3 to start.
+    </div>
+
+    <div class="section-label">Compulsory</div>
+    <div class="subject-grid" style="margin-bottom:1.5rem;">
+      <div class="subject-card required selected">
+        <span class="required-tag">Required</span>
+        <div class="subject-icon">📝</div>
+        <div class="subject-name">English Language</div>
+        <div class="subject-desc">Use of English &amp; Comprehension</div>
+      </div>
+    </div>
+
+    <div class="section-label">Arts Subjects</div>
+    <div class="subject-grid" id="arts-grid"></div>
+
+    <div class="section-label">Commercial Subjects</div>
+    <div class="subject-grid" id="commercial-grid"></div>
+
+    <div class="start-row">
+      <button class="btn-primary" id="start-btn" onclick="startExam()" disabled style="opacity:0.5">Begin Exam (2 hrs)</button>
+      <div class="start-info">160 questions &bull; Answers shown after submission</div>
+    </div>
+  </div>
+  <div class="footer-credit">
+    Prepared by <a href="https://solomonadegoke.vercel.app/" target="_blank">Solomon Adegoke</a>
+  </div>
+</div>
+
+<!-- EXAM -->
+<div id="exam" class="screen">
+  <div class="exam-header">
+    <div class="timer-box">
+      <svg class="timer-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="9" r="6" stroke="#185FA5" stroke-width="1.5"/><path d="M8 6v3l2 1" stroke="#185FA5" stroke-width="1.5" stroke-linecap="round"/><path d="M6 2h4" stroke="#185FA5" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span id="timer-display">2:00:00</span>
+    </div>
+    <div class="exam-progress-text" id="exam-progress-text">Q 1 of 160</div>
+    <button class="btn-danger" onclick="confirmSubmit()">Submit</button>
+  </div>
+  <div class="subject-tabs" id="subject-tabs"></div>
+  <div class="exam-body">
+    <div class="exam-layout">
+      <div id="question-area"></div>
+      <div class="sidebar">
+        <div class="sidebar-panel">
+          <div class="sidebar-title">Question Navigator</div>
+          <div class="q-grid" id="q-grid"></div>
+        </div>
+        <div class="sidebar-panel">
+          <div class="sidebar-title">Legend</div>
+          <div style="display:flex;gap:8px;flex-direction:column;font-size:0.8rem;">
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;border-radius:4px;background:#185FA5;"></div> Answered</div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;border-radius:4px;border:1.5px solid #185FA5;"></div> Current</div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:16px;height:16px;border-radius:4px;border:1.5px solid #ccc;"></div> Unanswered</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="exam-nav">
+    <div class="nav-btns">
+      <button class="btn-nav" onclick="prevQ()">← Prev</button>
+      <button class="btn-nav" onclick="nextQ()">Next →</button>
+    </div>
+    <div style="font-size:0.85rem;color:var(--color-text-secondary);" id="answered-count">0 answered</div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen">
+  <div class="results-header">
+    <div class="dash-logo">Exam Results</div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-secondary" onclick="showScreen('dashboard')" style="padding:8px 18px;font-size:0.85rem;">New Exam</button>
+      <button class="btn-secondary" onclick="showScreen('landing')" style="padding:8px 18px;font-size:0.85rem;">Home</button>
+    </div>
+  </div>
+  <div class="results-body" id="results-body"></div>
+  <div class="footer-credit">
+    Prepared by <a href="https://solomonadegoke.vercel.app/" target="_blank">Solomon Adegoke</a>
+  </div>
+</div>
+
+<script>
+// ===== QUESTION BANK =====
+const QUESTION_BANK = {
+  english: [
+    // Use of English - JAMB standard, medium-hard
+    {q:"In the sentence 'The committee has reached its decision', the subject of the verb 'has reached' is",opts:["A. committee","B. decision","C. its","D. The"],ans:"A",exp:"'Committee' is a collective noun functioning as the subject, hence the singular verb 'has'."},
+    {q:"Choose the word that is nearest in meaning to LACONIC",opts:["A. verbose","B. brief","C. unclear","D. eloquent"],ans:"B",exp:"Laconic means using very few words; brief in speech or expression."},
+    {q:"The figure of speech in 'The wind howled through the night' is",opts:["A. simile","B. metaphor","C. personification","D. onomatopoeia"],ans:"C",exp:"Personification attributes human action (howling) to a non-human thing (wind)."},
+    {q:"Identify the sentence with correct punctuation: ",opts:["A. 'Its time to go,' she said.","B. \"It's time to go,\" she said.","C. \"Its time to go\" she said.","D. 'It's time to go,' she said."],ans:"D",exp:"The contraction 'It's' needs an apostrophe; single quotes are used for speech within British standard."},
+    {q:"Which of the following is a conditional sentence?",opts:["A. He runs fast","B. If she studies hard, she will pass","C. The boy cried","D. They came yesterday"],ans:"B",exp:"A conditional sentence uses 'if' to express a condition and its result."},
+    {q:"The expression 'once in a blue moon' means",opts:["A. at night","B. very rarely","C. under the moonlight","D. when it rains"],ans:"B",exp:"'Once in a blue moon' is an idiom meaning something that happens very rarely."},
+    {q:"In the sentence 'Barely had he arrived when trouble started', the word 'barely' is used as",opts:["A. a conjunction","B. an adverb","C. a preposition","D. an adjective"],ans:"B",exp:"'Barely' modifies the verb, hence it is an adverb."},
+    {q:"Which sentence contains a dangling modifier?",opts:["A. Running fast, the bus was missed.","B. Running fast, he missed the bus.","C. He missed the bus while running.","D. The bus was missed by him."],ans:"A",exp:"In option A, 'Running fast' has no clear subject to modify—the bus wasn't running."},
+    {q:"The plural of 'criterion' is",opts:["A. criterions","B. criteria","C. criterias","D. criterium"],ans:"B",exp:"'Criterion' is of Greek origin; its correct plural is 'criteria'."},
+    {q:"Choose the option that best completes: 'Neither the principal nor the teachers ___ present.'",opts:["A. was","B. were","C. are","D. is"],ans:"B",exp:"When 'neither...nor' joins subjects, the verb agrees with the subject closest to it; 'teachers' is plural so 'were' is correct."},
+    {q:"The word 'ubiquitous' means",opts:["A. extremely ugly","B. appearing everywhere at once","C. unique and rare","D. morally upright"],ans:"B",exp:"Ubiquitous means present, appearing, or found everywhere."},
+    {q:"In 'He gave her a book', 'her' is a",opts:["A. direct object","B. indirect object","C. subject complement","D. reflexive pronoun"],ans:"B",exp:"'Her' receives the action indirectly; 'book' is the direct object."},
+    {q:"The literary device in 'Peter Piper picked a peck of pickled peppers' is",opts:["A. assonance","B. alliteration","C. consonance","D. rhyme"],ans:"B",exp:"Alliteration is the repetition of initial consonant sounds—here the 'p' sound."},
+    {q:"Identify the correctly spelt word",opts:["A. accomodation","B. accommodation","C. acommodation","D. accomadation"],ans:"B",exp:"The correct spelling is 'accommodation' with double 'c' and double 'm'."},
+    {q:"The expression 'to beat about the bush' means",opts:["A. to fight in a forest","B. to avoid coming to the point","C. to speak clearly","D. to search the bush"],ans:"B",exp:"This idiom means to talk around a subject without addressing it directly."},
+    {q:"Which of the following is an abstract noun?",opts:["A. teacher","B. Lagos","C. justice","D. table"],ans:"C",exp:"Abstract nouns name ideas, concepts, or qualities that cannot be physically touched."},
+    {q:"The tense in 'By next year, I shall have graduated' is",opts:["A. future simple","B. future continuous","C. future perfect","D. present perfect"],ans:"C",exp:"'Shall have graduated' is future perfect, indicating an action completed before a future time."},
+    {q:"A word that imitates the sound it describes is called",opts:["A. euphemism","B. onomatopoeia","C. irony","D. hyperbole"],ans:"B",exp:"Onomatopoeia—e.g., 'buzz', 'hiss', 'crack'—imitates natural sounds."},
+    {q:"The passive voice of 'The teacher punished the student' is",opts:["A. The student is punished by the teacher","B. The student was punished by the teacher","C. The student were punished by the teacher","D. The student punished the teacher"],ans:"B",exp:"Past tense active 'punished' becomes 'was punished' in passive voice."},
+    {q:"Choose the word with the correct stress: 'reCORD' (verb) vs 'RECord' (noun). Which is the noun form?",opts:["A. reCORD","B. RECord","C. Both are the same","D. Neither"],ans:"B",exp:"In English, many two-syllable noun/verb pairs are distinguished by stress: nouns stress the first syllable."},
+    {q:"The sentence 'What a beautiful painting!' is",opts:["A. declarative","B. interrogative","C. exclamatory","D. imperative"],ans:"C",exp:"Exclamatory sentences express strong emotion and end with an exclamation mark."},
+    {q:"Identify the correct use of the apostrophe",opts:["A. The girl's book","B. The girls book","C. The girls' book (one girl)","D. The girl book's"],ans:"A",exp:"For a singular possessive, the apostrophe comes before the 's'."},
+    {q:"The word EPHEMERAL means",opts:["A. lasting forever","B. very important","C. lasting a very short time","D. extremely large"],ans:"C",exp:"Ephemeral means lasting for a very short time; transitory."},
+    {q:"Which option is the correct indirect speech for: He said, 'I am tired'?",opts:["A. He said he is tired","B. He said he was tired","C. He said that he is tired","D. He said I am tired"],ans:"B",exp:"In indirect speech, the tense shifts back—present 'am' becomes past 'was'."},
+    {q:"'To call it a day' means",opts:["A. to start work","B. to name the day","C. to stop work for the day","D. to call someone"],ans:"C",exp:"This idiom means to decide to stop doing something for the rest of the day."},
+    {q:"Which sentence has a split infinitive?",opts:["A. She wants to sing loudly","B. He decided to boldly go","C. They began to run","D. She tried to finish early"],ans:"B",exp:"A split infinitive has an adverb inserted between 'to' and the verb—'to boldly go'."},
+    {q:"The word LOQUACIOUS means",opts:["A. tending to talk a great deal","B. very quiet","C. extremely angry","D. physically weak"],ans:"A",exp:"Loquacious means talkative; fond of talking."},
+    {q:"In 'The jury has given its verdict', the noun 'jury' is",opts:["A. a proper noun","B. a collective noun","C. a material noun","D. an abstract noun"],ans:"B",exp:"Jury is a collective noun—it names a group of people."},
+    {q:"The correct pronunciation stress for 'photograph' is on which syllable?",opts:["A. pho-TO-graph","B. PHO-to-graph","C. pho-to-GRAPH","D. pho-TO-GRAPH"],ans:"B",exp:"'Photograph' is stressed on the first syllable: PHO-to-graph."},
+    {q:"Which of the following contains a malapropism?",opts:["A. He is a wolf in sheep's clothing","B. She has a photogenic memory","C. The boy ran fast","D. They left early"],ans:"B",exp:"'Photogenic memory' is a malapropism for 'photographic memory'."},
+    {q:"The rhetorical question is best illustrated by",opts:["A. What time is it?","B. Who can stand against injustice and remain silent?","C. Can you pass the salt?","D. Where did she go?"],ans:"B",exp:"A rhetorical question is asked for effect, not expecting a literal answer."},
+    {q:"VERBOSE is the antonym of",opts:["A. silent","B. terse","C. loud","D. complex"],ans:"B",exp:"Verbose means wordy; its antonym terse means brief and concise."},
+    {q:"Identify the correctly written sentence",opts:["A. Every one of the girls were present","B. Everyone of the girls was present","C. Every one of the girls was present","D. Every one of the girls are present"],ans:"C",exp:"'Every one' (each individual) takes a singular verb 'was'."},
+    {q:"The figure of speech in 'Life is a journey' is",opts:["A. simile","B. metaphor","C. allegory","D. paradox"],ans:"B",exp:"A metaphor directly equates two unlike things without using 'like' or 'as'."},
+    {q:"Which word does NOT belong to the same word family as the others?",opts:["A. amiable","B. amicable","C. enmity","D. amity"],ans:"C",exp:"'Enmity' means hostility—opposite to the friendly meaning shared by the others from Latin 'amicus' (friend)."},
+    {q:"Choose the grammatically correct sentence",opts:["A. Between you and I, this is wrong","B. Between you and me, this is wrong","C. Between you and myself, this is wrong","D. Between I and you, this is wrong"],ans:"B",exp:"After a preposition like 'between', object pronouns are used: 'me' not 'I'."},
+    {q:"A EUPHEMISM is",opts:["A. a harsh expression for a mild thing","B. a mild expression substituted for a harsh one","C. an expression of sorrow","D. a figurative comparison"],ans:"B",exp:"A euphemism is a polite or indirect word used in place of a more blunt one."},
+    {q:"The sentence 'Close the door' is",opts:["A. declarative","B. interrogative","C. exclamatory","D. imperative"],ans:"D",exp:"Imperative sentences give commands or make requests."},
+    {q:"Identify the word that is correctly hyphenated",opts:["A. self-confidence","B. selfconfidence","C. self confidence","D. selfc-onfidence"],ans:"A",exp:"Compound words with 'self' are always hyphenated: self-confidence, self-esteem."},
+    {q:"The grammatical term for 'quickly' in 'He ran quickly' is",opts:["A. adjective","B. adverb","C. preposition","D. conjunction"],ans:"B",exp:"'Quickly' modifies the verb 'ran', making it an adverb."},
+    {q:"AMELIORATE means",opts:["A. to make worse","B. to remain the same","C. to make better","D. to eliminate"],ans:"C",exp:"To ameliorate means to make something bad or unsatisfactory better; to improve."},
+  ],
+
+  literature: [
+    {q:"Which of the following is NOT a feature of tragedy according to Aristotle?",opts:["A. Catharsis","B. Hamartia","C. Deus ex machina","D. Peripeteia"],ans:"C",exp:"Aristotle actually criticized deus ex machina as poor dramatic craftsmanship."},
+    {q:"The term 'in medias res' in literature means",opts:["A. in the middle of things","B. at the beginning","C. at the end","D. in a dream sequence"],ans:"A",exp:"Latin for 'into the middle of things'—a narrative technique that begins in the middle of the action."},
+    {q:"Who wrote 'Things Fall Apart'?",opts:["A. Wole Soyinka","B. Chinua Achebe","C. Chimamanda Adichie","D. Ngugi wa Thiong'o"],ans:"B",exp:"Chinua Achebe published 'Things Fall Apart' in 1958."},
+    {q:"The Okonkwo in 'Things Fall Apart' commits suicide because",opts:["A. he was poor","B. he killed Ikemefuna","C. he could not endure the humiliation of colonial submission","D. his daughter died"],ans:"C",exp:"Okonkwo's suicide represents his refusal to live in a world that has stripped him of his dignity and warrior identity."},
+    {q:"A SOLILOQUY is best described as",opts:["A. a conversation between two characters","B. a character speaking their thoughts aloud alone","C. a poem with 14 lines","D. a prologue to a play"],ans:"B",exp:"A soliloquy is when a character speaks their private thoughts aloud while alone on stage."},
+    {q:"The literary term for the reversal of a protagonist's fortune is",opts:["A. catharsis","B. anagnorisis","C. peripeteia","D. hubris"],ans:"C",exp:"Peripeteia (from Aristotle's Poetics) refers to a sudden reversal of fortune in a narrative."},
+    {q:"In Soyinka's 'The Lion and the Jewel', Lakunle represents",opts:["A. traditional African values","B. blind Westernization","C. political corruption","D. rural wisdom"],ans:"B",exp:"Lakunle represents uncritical adoption of Western culture while rejecting African traditions."},
+    {q:"An EPIC is characterized by all EXCEPT",opts:["A. invocation of the muse","B. in medias res opening","C. a domestic, private theme","D. divine intervention"],ans:"C",exp:"Epics deal with grand, public themes of heroism and national identity—not domestic or private matters."},
+    {q:"The theme of 'alienation' in African literature most commonly refers to",opts:["A. moving to a foreign country","B. the loss of cultural identity under colonialism","C. becoming very rich","D. studying abroad"],ans:"B",exp:"Alienation in African literature often reflects the psychological and cultural dislocation caused by colonialism."},
+    {q:"The play 'Death and the King's Horseman' was written by",opts:["A. J.P. Clark","B. Chinua Achebe","C. Wole Soyinka","D. Ola Rotimi"],ans:"C",exp:"Wole Soyinka wrote 'Death and the King's Horseman', published in 1975."},
+    {q:"DRAMATIC IRONY occurs when",opts:["A. the audience knows something the characters do not","B. a character says the opposite of what they mean","C. the ending is unexpected","D. two characters misunderstand each other"],ans:"A",exp:"Dramatic irony creates tension when the audience has more information than the characters on stage."},
+    {q:"The narrative technique where the story is told as a memory is called",opts:["A. stream of consciousness","B. flashback","C. foreshadowing","D. allegory"],ans:"B",exp:"A flashback is a scene set in a time earlier than the main story."},
+    {q:"In poetry, ENJAMBMENT refers to",opts:["A. rhyming at the end of lines","B. a pause at the end of a line","C. the continuation of a sentence beyond a line break","D. repeated consonant sounds"],ans:"C",exp:"Enjambment continues the sentence or clause across a line break without pause."},
+    {q:"Which poetic foot consists of one unstressed syllable followed by one stressed syllable?",opts:["A. Trochee","B. Spondee","C. Dactyl","D. Iamb"],ans:"D",exp:"An iamb (da-DUM) is the most common foot in English poetry, used in iambic pentameter."},
+    {q:"The setting of 'Purple Hibiscus' by Chimamanda Adichie is primarily",opts:["A. Lagos","B. Enugu","C. Abuja","D. Kano"],ans:"B",exp:"Purple Hibiscus is primarily set in Enugu, Nigeria."},
+    {q:"A MOTIF in literature is",opts:["A. the main message of a work","B. a recurring element that has symbolic significance","C. the climax of a story","D. the opening paragraph"],ans:"B",exp:"A motif is a recurring symbol, image, or idea that develops or contributes to the theme."},
+    {q:"The term HUBRIS in Greek tragedy refers to",opts:["A. excessive pride leading to downfall","B. divine punishment","C. sudden recognition","D. the tragic hero's wisdom"],ans:"A",exp:"Hubris is extreme pride or self-confidence that leads to the protagonist's nemesis."},
+    {q:"Which of these is a PICARESQUE novel?",opts:["A. Things Fall Apart","B. The Adventures of Huckleberry Finn","C. Purple Hibiscus","D. Arrow of God"],ans:"B",exp:"A picaresque follows a roguish hero through episodic adventures—Huck Finn fits this mold."},
+    {q:"The first person to win the Nobel Prize in Literature from Africa was",opts:["A. Chinua Achebe","B. Ngugi wa Thiong'o","C. Wole Soyinka","D. Ben Okri"],ans:"C",exp:"Wole Soyinka won the Nobel Prize in Literature in 1986."},
+    {q:"'The gods are not to blame' is a play by",opts:["A. Wole Soyinka","B. J.P. Clark","C. Ola Rotimi","D. Femi Osofisan"],ans:"C",exp:"Ola Rotimi's 'The Gods Are Not to Blame' (1971) is an adaptation of Sophocles' Oedipus Rex."},
+    {q:"A DENOUEMENT in a play refers to",opts:["A. the central conflict","B. the resolution or unraveling of the plot","C. the opening scene","D. the main character's flaw"],ans:"B",exp:"The denouement is the final part of a narrative in which matters are explained or resolved."},
+    {q:"Which literary period is characterized by reason, order, and classical values?",opts:["A. Romanticism","B. Modernism","C. Neoclassicism","D. Postmodernism"],ans:"C",exp:"The Neoclassical period (17th–18th century) emphasized reason, order, and imitation of classical authors."},
+    {q:"The term 'stream of consciousness' in literature refers to",opts:["A. writing about rivers","B. a technique depicting the flow of thoughts","C. historical fiction","D. a narrative set in the past"],ans:"B",exp:"Stream of consciousness is a narrative technique representing a character's continuous thought flow."},
+    {q:"A poem with 14 lines and a specific rhyme scheme is called a",opts:["A. ode","B. elegy","C. sonnet","D. ballad"],ans:"C",exp:"A sonnet has exactly 14 lines; Petrarchan and Shakespearean are the two main types."},
+    {q:"PATHETIC FALLACY refers to",opts:["A. a logical error in reasoning","B. attributing human emotions to nature","C. excessive sentimentality","D. an unbelievable plot"],ans:"B",exp:"Pathetic fallacy is the attribution of human emotions or responses to nature (e.g., 'the angry sea')."},
+    {q:"In 'Arrow of God' by Chinua Achebe, the protagonist Ezeulu is",opts:["A. the chief priest of Ulu","B. a colonial officer","C. a Christian convert","D. a trader"],ans:"A",exp:"Ezeulu is the chief priest of Ulu, the god of the six villages of Umuaro."},
+    {q:"A DIDACTIC work of literature is one that",opts:["A. entertains only","B. aims to teach or instruct","C. deals with death","D. is written in verse"],ans:"B",exp:"Didactic literature has the primary purpose of teaching a moral or lesson."},
+    {q:"The poetic device in 'O Romeo, Romeo, wherefore art thou Romeo?' is",opts:["A. apostrophe","B. allusion","C. irony","D. antithesis"],ans:"A",exp:"Apostrophe is a figure of speech where the speaker addresses an absent person or abstract idea."},
+    {q:"VERISIMILITUDE in fiction means",opts:["A. the appearance of being true or real","B. a supernatural element","C. excessive description","D. a tragic ending"],ans:"A",exp:"Verisimilitude refers to the quality of seeming true or lifelike in a literary work."},
+    {q:"Chinua Achebe's narrative technique in 'Things Fall Apart' is best described as",opts:["A. first-person confessional","B. omniscient third-person narrative","C. stream of consciousness","D. second-person experimental"],ans:"B",exp:"Achebe uses omniscient third-person narration to tell Okonkwo's story with cultural depth."},
+    {q:"A ROUND character in fiction is one who",opts:["A. has no flaw","B. is complex and undergoes development","C. appears only once","D. is always villainous"],ans:"B",exp:"A round character is fully developed, multi-dimensional, and capable of change."},
+    {q:"Which of the following is an example of SYNECDOCHE?",opts:["A. The pen is mightier than the sword","B. All hands on deck","C. The wind whispered","D. She is as fast as lightning"],ans:"B",exp:"'All hands on deck' uses 'hands' (a part) to refer to sailors (the whole)—that's synecdoche."},
+    {q:"The term ANACHRONISM refers to",opts:["A. something placed outside its proper historical time","B. a character who ages rapidly","C. the use of ancient language","D. a sudden change of setting"],ans:"A",exp:"An anachronism is an error or inconsistency in which a person, object, or event appears in the wrong period."},
+    {q:"The play 'Othello' by Shakespeare is a tragedy of",opts:["A. ambition","B. jealousy","C. greed","D. cowardice"],ans:"B",exp:"Jealousy—manipulated by Iago—is the central tragic flaw that drives Othello's downfall."},
+    {q:"An ELEGY is a poem that",opts:["A. celebrates a military victory","B. mourns the death of someone","C. describes nature in spring","D. praises a god"],ans:"B",exp:"An elegy is a mournful, melancholic poem written as a lament for the dead."},
+    {q:"MAGICAL REALISM as a literary genre is characterized by",opts:["A. pure fantasy with no reality","B. realistic narrative combined with magical elements","C. science fiction and futurism","D. horror and supernatural only"],ans:"B",exp:"Magical realism blends realistic narrative with magical or fantastical elements presented matter-of-factly."},
+    {q:"In literature, a FOIL character serves to",opts:["A. be the main character","B. contrast with another character to highlight qualities","C. provide comic relief","D. narrate the story"],ans:"B",exp:"A foil is a character who contrasts with another to highlight particular qualities of that character."},
+    {q:"The narrative point of view in which the narrator knows the thoughts of all characters is",opts:["A. first person limited","B. second person","C. third person omniscient","D. third person limited"],ans:"C",exp:"An omniscient narrator has access to the thoughts, feelings, and motivations of all characters."},
+    {q:"INTERTEXTUALITY refers to",opts:["A. a text written between two books","B. the relationship between a text and other texts","C. a very long paragraph","D. the index of a book"],ans:"B",exp:"Intertextuality is the relationship between texts, especially how they reference, echo, or transform one another."},
+    {q:"Which of the following is a dramatic monologue?",opts:["A. A poem narrating events","B. A poem in which a speaker addresses a silent listener","C. A conversation between two lovers","D. A poem without rhyme"],ans:"B",exp:"A dramatic monologue features a single speaker addressing a silent audience, revealing character through speech."},
+    {q:"CATHARSIS as described by Aristotle refers to",opts:["A. the tragic hero's pride","B. the purging of pity and fear through tragic drama","C. the climax of a play","D. comic relief in tragedy"],ans:"B",exp:"Aristotle used catharsis to describe the emotional purification experienced by the audience at the end of tragedy."},
+  ],
+
+  government: [
+    {q:"The concept of SEPARATION OF POWERS was developed by",opts:["A. John Locke","B. Jean-Jacques Rousseau","C. Montesquieu","D. Thomas Hobbes"],ans:"C",exp:"Baron de Montesquieu developed the doctrine of separation of powers in 'The Spirit of the Laws' (1748)."},
+    {q:"Under Nigeria's 1999 Constitution, the President may be impeached by",opts:["A. a simple majority in the Senate","B. two-thirds majority of all members of both chambers","C. the Supreme Court","D. the electorate through referendum"],ans:"B",exp:"Section 143 of Nigeria's 1999 Constitution requires a two-thirds majority for presidential impeachment."},
+    {q:"FEDERALISM is a system where",opts:["A. all power is concentrated at the center","B. power is divided between central and regional governments","C. the military controls governance","D. a monarch rules absolutely"],ans:"B",exp:"Federalism divides governmental authority between a central government and constituent units."},
+    {q:"The doctrine of JUDICIAL REVIEW empowers courts to",opts:["A. make laws","B. declare laws unconstitutional","C. appoint ministers","D. conduct elections"],ans:"B",exp:"Judicial review is the power of courts to examine legislation and void it if it conflicts with the constitution."},
+    {q:"A UNITARY state is one where",opts:["A. power is shared equally","B. supreme authority rests with the central government","C. states have sovereignty","D. the military shares power"],ans:"B",exp:"In a unitary state, the central government has supreme constitutional authority over all parts of the state."},
+    {q:"The WESTMINSTER MODEL of parliamentary government originated in",opts:["A. France","B. USA","C. United Kingdom","D. Germany"],ans:"C",exp:"The Westminster system is a parliamentary system of government modelled on that of the United Kingdom."},
+    {q:"Nigeria became a republic in",opts:["A. 1960","B. 1963","C. 1966","D. 1979"],ans:"B",exp:"Nigeria became a republic on October 1, 1963, replacing the Queen as head of state with a President."},
+    {q:"The ELECTORAL COLLEGE system is used in electing the president of",opts:["A. France","B. United Kingdom","C. United States of America","D. Germany"],ans:"C",exp:"The US uses an Electoral College system where electors formally elect the President and Vice President."},
+    {q:"PROPORTIONAL REPRESENTATION ensures that",opts:["A. only the majority party wins all seats","B. seats are allocated based on proportion of votes received","C. only two parties can participate","D. elections are held every two years"],ans:"B",exp:"Proportional representation allocates legislative seats in proportion to each party's share of the vote."},
+    {q:"The LOME CONVENTION was primarily concerned with",opts:["A. military cooperation","B. trade and aid between ACP states and the EU","C. border disputes","D. nuclear disarmament"],ans:"B",exp:"The Lomé Convention established a trade and aid agreement between the EU and ACP (African, Caribbean, Pacific) states."},
+    {q:"Which of the following is NOT a function of the legislature?",opts:["A. Law making","B. Representation","C. Judicial interpretation","D. Oversight of the executive"],ans:"C",exp:"Judicial interpretation is the function of the judiciary, not the legislature."},
+    {q:"A BICAMERAL legislature consists of",opts:["A. one chamber","B. two chambers","C. three chambers","D. regional assemblies only"],ans:"B",exp:"A bicameral legislature has two chambers—e.g., Nigeria's Senate and House of Representatives."},
+    {q:"PRESSURE GROUPS differ from political parties in that they",opts:["A. are larger in membership","B. seek to influence policy without seeking to form government","C. hold regular elections","D. receive government funding"],ans:"B",exp:"Pressure groups aim to influence policy makers without aspiring to govern themselves."},
+    {q:"The principle of RULE OF LAW was developed by",opts:["A. Aristotle","B. Montesquieu","C. A.V. Dicey","D. John Stuart Mill"],ans:"C",exp:"A.V. Dicey elaborated the modern concept of rule of law in 'Introduction to the Study of the Law of the Constitution' (1885)."},
+    {q:"COLONIALISM refers to",opts:["A. migration to cities","B. the control of one country over another for exploitation","C. economic cooperation","D. military alliance"],ans:"B",exp:"Colonialism is the policy and practice of a power extending control over weaker peoples or areas."},
+    {q:"The AFRICAN UNION headquarters is in",opts:["A. Lagos","B. Nairobi","C. Addis Ababa","D. Cairo"],ans:"C",exp:"The African Union is headquartered in Addis Ababa, Ethiopia."},
+    {q:"Nigeria's INEC is responsible for",opts:["A. managing the economy","B. conducting elections","C. making laws","D. enforcing judicial decisions"],ans:"B",exp:"INEC (Independent National Electoral Commission) is responsible for organizing elections in Nigeria."},
+    {q:"Which of the following is a CONSTITUTIONAL MONARCHY?",opts:["A. Saudi Arabia","B. United Kingdom","C. Iran","D. China"],ans:"B",exp:"The UK is a constitutional monarchy where the monarch's powers are limited by a constitution."},
+    {q:"The United Nations was founded in",opts:["A. 1919","B. 1939","C. 1945","D. 1960"],ans:"C",exp:"The United Nations was established on October 24, 1945, after World War II."},
+    {q:"GERRYMANDER refers to",opts:["A. free and fair elections","B. manipulating electoral boundaries for partisan advantage","C. a type of proportional representation","D. voter registration"],ans:"B",exp:"Gerrymandering is the manipulation of electoral district boundaries to favor a particular party."},
+    {q:"The concept of SOVEREIGNTY means",opts:["A. territorial size","B. the supreme authority of a state within its territory","C. military strength","D. economic power"],ans:"B",exp:"Sovereignty is the supreme power of a state to govern itself and make decisions within its territory."},
+    {q:"A CONFEDERAL system of government is one where",opts:["A. a central government has absolute power","B. sovereign states voluntarily unite, retaining independence","C. the military governs jointly","D. power is equal at all levels"],ans:"B",exp:"In a confederation, member states retain sovereignty and delegate limited powers to a central body."},
+    {q:"The DOCTRINE OF CHECKS AND BALANCES ensures that",opts:["A. money is properly accounted for","B. no branch of government becomes too powerful","C. elections are held regularly","D. the judiciary is independent"],ans:"B",exp:"Checks and balances prevent any one branch from gaining unchecked power by giving each branch oversight over the others."},
+    {q:"The concept of POLITICAL SOCIALIZATION refers to",opts:["A. forming political parties","B. the process by which people acquire political values and behaviors","C. socializing with politicians","D. government welfare programs"],ans:"B",exp:"Political socialization is the lifelong process through which people form their political attitudes and values."},
+    {q:"Which of these is a feature of a PRESIDENTIAL system?",opts:["A. Fusion of legislature and executive","B. Collective cabinet responsibility","C. Fixed term for the executive","D. Prime minister leads government"],ans:"C",exp:"In a presidential system, the executive serves a fixed term and is not directly accountable to the legislature."},
+    {q:"COUP D'ETAT means",opts:["A. a democratic election","B. a sudden seizure of government by force","C. a constitutional amendment","D. an economic revolution"],ans:"B",exp:"A coup d'état is a sudden, violent seizure of power from a government."},
+    {q:"The Economic Community of West African States (ECOWAS) was established in",opts:["A. 1960","B. 1975","C. 1980","D. 1963"],ans:"B",exp:"ECOWAS was established on May 28, 1975, with the signing of the Treaty of Lagos."},
+    {q:"NATIONALISM is best described as",opts:["A. hatred of foreigners","B. devotion and loyalty to one's nation","C. imperialism","D. militarism"],ans:"B",exp:"Nationalism is a political ideology centered on the idea that a people sharing a national identity should govern themselves."},
+    {q:"The First Republic of Nigeria ended in",opts:["A. 1960","B. 1966","C. 1979","D. 1983"],ans:"B",exp:"Nigeria's First Republic ended with the military coup of January 15, 1966."},
+    {q:"A PLEBISCITE is",opts:["A. a type of election to choose leaders","B. a direct vote by the electorate on a specific question","C. a meeting of parliament","D. a judicial review"],ans:"B",exp:"A plebiscite is a direct vote in which the entire electorate is asked to accept or reject a proposal."},
+    {q:"The concept of POWER in political science refers to",opts:["A. electrical energy","B. the ability to influence others' behavior","C. military strength only","D. economic wealth only"],ans:"B",exp:"Political power is the ability to direct or influence the behavior of others or the course of events."},
+    {q:"APARTHEID was a system of racial segregation practiced in",opts:["A. Kenya","B. Nigeria","C. South Africa","D. Zimbabwe"],ans:"C",exp:"Apartheid was a system of institutionalised racial segregation that existed in South Africa from 1948 to 1994."},
+    {q:"Which of the following is NOT a source of revenue for the Nigerian government?",opts:["A. Oil revenue","B. Customs duties","C. Personal income tax","D. Foreign aid from UN"],ans:"D",exp:"Direct foreign aid from the UN is not a standard source of government revenue; the others are formal revenue sources."},
+    {q:"The OMBUDSMAN in government serves as",opts:["A. a military commander","B. an official who investigates citizens' complaints against government","C. a tax collector","D. an electoral officer"],ans:"B",exp:"An ombudsman is an official appointed to investigate individuals' complaints against maladministration."},
+    {q:"TOTALITARIANISM refers to a system where",opts:["A. multiple parties compete freely","B. the state seeks total control over public and private life","C. the judiciary is independent","D. citizens have maximum freedom"],ans:"B",exp:"Totalitarianism is a political system where the state holds total authority over society and seeks to control all aspects of life."},
+    {q:"The concept of LEGITIMACY in government means",opts:["A. the legality of government actions","B. the acceptance of government authority by the governed","C. the age of a government","D. military support for government"],ans:"B",exp:"Political legitimacy is the right and acceptance of an authority's rule by those over whom it exercises power."},
+    {q:"BICAMERALISM in Nigeria refers to the existence of",opts:["A. Senate and INEC","B. Senate and House of Representatives","C. State and Federal government","D. Executive and Judiciary"],ans:"B",exp:"Nigeria's National Assembly is bicameral, comprising the Senate (upper chamber) and House of Representatives (lower chamber)."},
+    {q:"Which of the following is a CIVIL RIGHT?",opts:["A. The right to vote","B. The right to bear arms","C. The right to a fair trial","D. The right to form a trade union"],ans:"C",exp:"The right to a fair trial is a civil right that protects individuals from arbitrary or unjust actions by government."},
+    {q:"The principle of POPULAR SOVEREIGNTY holds that",opts:["A. only the elite should govern","B. political authority derives from the people","C. the military should lead the people","D. sovereignty belongs to the monarch"],ans:"B",exp:"Popular sovereignty is the principle that the authority of a government is created and sustained by the consent of its people."},
+    {q:"The GENEVA CONVENTION primarily deals with",opts:["A. international trade","B. treatment of prisoners of war and civilians in armed conflict","C. nuclear disarmament","D. climate change"],ans:"B",exp:"The Geneva Conventions establish international legal standards for humanitarian treatment in war."},
+  ],
+
+  economics: [
+    {q:"OPPORTUNITY COST is best defined as",opts:["A. the price of a good","B. the cost of production","C. the value of the next best alternative forgone","D. total expenses incurred"],ans:"C",exp:"Opportunity cost is the value of the best alternative sacrificed when making an economic decision."},
+    {q:"When demand is PRICE ELASTIC, a rise in price leads to",opts:["A. a proportionally larger fall in quantity demanded","B. an increase in total revenue","C. a smaller fall in quantity demanded","D. no change in quantity demanded"],ans:"A",exp:"Elastic demand (PED > 1) means quantity demanded is highly responsive to price changes."},
+    {q:"The PHILLIPS CURVE shows the relationship between",opts:["A. price level and GDP","B. unemployment and inflation","C. interest rates and savings","D. exports and imports"],ans:"B",exp:"The Phillips Curve depicts an inverse relationship between rates of unemployment and corresponding rates of inflation."},
+    {q:"GROSS DOMESTIC PRODUCT (GDP) measures",opts:["A. total wealth of citizens abroad","B. total value of all goods and services produced within a country in a year","C. government expenditure only","D. total imports and exports"],ans:"B",exp:"GDP is the monetary value of all finished goods and services produced within a country in a specific time period."},
+    {q:"A MONOPOLY exists when",opts:["A. many firms sell similar products","B. two firms dominate the market","C. a single firm controls the entire market supply","D. government controls all production"],ans:"C",exp:"A monopoly is a market structure with a single seller who has no close competitors."},
+    {q:"The MULTIPLIER EFFECT in economics refers to",opts:["A. price increases spreading across markets","B. the proportional increase in national income from an initial increase in spending","C. compound interest on savings","D. population growth effects on economy"],ans:"B",exp:"The multiplier effect shows how an initial change in spending leads to a greater final change in national income."},
+    {q:"STAGFLATION refers to",opts:["A. rapid economic growth with low inflation","B. high unemployment combined with high inflation","C. economic stagnation without inflation","D. deflation during a boom"],ans:"B",exp:"Stagflation is an economic condition where slow growth (stagnation) and high inflation occur simultaneously."},
+    {q:"The PRIMARY sector of the economy includes",opts:["A. manufacturing","B. banking","C. agriculture and mining","D. retail trade"],ans:"C",exp:"The primary sector involves the extraction and collection of natural resources—farming, mining, fishing."},
+    {q:"COMPARATIVE ADVANTAGE theory was developed by",opts:["A. Adam Smith","B. Karl Marx","C. David Ricardo","D. John Maynard Keynes"],ans:"C",exp:"David Ricardo developed the theory of comparative advantage in 'Principles of Political Economy' (1817)."},
+    {q:"INFLATION is best measured by",opts:["A. GDP growth rate","B. Consumer Price Index (CPI)","C. balance of trade","D. interest rate level"],ans:"B",exp:"The Consumer Price Index (CPI) measures the average change over time in prices paid by consumers for goods and services."},
+    {q:"A BUDGET DEFICIT occurs when",opts:["A. government revenue exceeds spending","B. imports exceed exports","C. government spending exceeds revenue","D. exports exceed imports"],ans:"C",exp:"A budget deficit occurs when a government's expenditures exceed its revenues in a given period."},
+    {q:"PERFECT COMPETITION is characterized by",opts:["A. price-making firms","B. high barriers to entry","C. homogeneous products and many buyers and sellers","D. government-controlled prices"],ans:"C",exp:"Perfect competition has many buyers and sellers, identical products, free entry/exit, and perfect information."},
+    {q:"The CIRCULAR FLOW OF INCOME shows that",opts:["A. money flows in one direction only","B. income and expenditure flow between households and firms","C. only the government controls income","D. savings are always equal to investment"],ans:"B",exp:"The circular flow model shows how money, goods, and services move between households and businesses."},
+    {q:"DEVALUATION of a currency refers to",opts:["A. an increase in the external value of a currency","B. a reduction in the external value of a currency","C. printing more money","D. reducing interest rates"],ans:"B",exp:"Currency devaluation is a deliberate downward adjustment to a country's currency value relative to other currencies."},
+    {q:"The concept of ELASTICITY OF SUPPLY measures",opts:["A. how prices affect demand","B. how quickly suppliers respond to price changes","C. the amount produced at any price","D. government supply controls"],ans:"B",exp:"Price elasticity of supply measures the responsiveness of quantity supplied to a change in price."},
+    {q:"OLIGOPOLY is a market structure with",opts:["A. one dominant firm","B. a few large firms dominating the market","C. many small competing firms","D. government monopoly"],ans:"B",exp:"An oligopoly is dominated by a small number of large sellers who have significant market power."},
+    {q:"FISCAL POLICY refers to government use of",opts:["A. interest rates to control the economy","B. taxation and spending to influence the economy","C. exchange rates to manage trade","D. money supply to control inflation"],ans:"B",exp:"Fiscal policy is how governments use spending and taxation to influence macroeconomic conditions."},
+    {q:"The LAW OF DIMINISHING RETURNS states that",opts:["A. returns always increase with input","B. adding more of one input eventually yields less additional output","C. firms always make profit","D. prices always fall with more production"],ans:"B",exp:"As one input increases while others remain fixed, the marginal output from each additional unit eventually diminishes."},
+    {q:"BALANCE OF PAYMENTS records",opts:["A. government budget accounts","B. all economic transactions between a country and the rest of the world","C. trade between regions","D. domestic financial transactions"],ans:"B",exp:"The balance of payments is a statement of all transactions made between a country and the rest of the world in a given period."},
+    {q:"MONETARY POLICY is administered by",opts:["A. Ministry of Finance","B. INEC","C. The Central Bank","D. Federal Executive Council"],ans:"C",exp:"Monetary policy (controlling money supply and interest rates) is administered by a country's central bank."},
+    {q:"PRICE MECHANISM in a free market refers to",opts:["A. government price controls","B. how prices coordinate supply and demand","C. price-fixing by large firms","D. international price agreements"],ans:"B",exp:"The price mechanism allocates resources through the interaction of supply and demand determining market prices."},
+    {q:"The GINI COEFFICIENT measures",opts:["A. GDP growth","B. income or wealth inequality","C. trade imbalance","D. inflation rate"],ans:"B",exp:"The Gini coefficient is a statistical measure of income or wealth distribution within a population."},
+    {q:"MERIT GOODS are goods that",opts:["A. are produced in excess","B. the government provides because people underconsume them","C. are free in a market economy","D. have no social value"],ans:"B",exp:"Merit goods (like education and healthcare) are underconsumed in a free market, so governments often provide or subsidize them."},
+    {q:"ECONOMIES OF SCALE refer to",opts:["A. cost increases with output growth","B. cost savings achieved as output increases","C. equal costs at all output levels","D. diminishing returns to capital"],ans:"B",exp:"Economies of scale are the cost advantages gained by increasing the scale of production."},
+    {q:"The TERMS OF TRADE refers to",opts:["A. trade agreements between countries","B. the ratio of export prices to import prices","C. tariffs on international goods","D. trade deficits"],ans:"B",exp:"Terms of trade is the ratio of an index of export prices to an index of import prices."},
+    {q:"STRUCTURAL UNEMPLOYMENT occurs due to",opts:["A. economic recession","B. seasonal changes in demand","C. mismatch between workers' skills and available jobs","D. workers voluntarily changing jobs"],ans:"C",exp:"Structural unemployment results from changes in the economy that create a skills or location mismatch between workers and jobs."},
+    {q:"The concept of EXTERNALITIES refers to",opts:["A. foreign trade","B. costs or benefits that affect third parties not involved in a transaction","C. external debt","D. export subsidies"],ans:"B",exp:"Externalities are the costs or benefits of economic activities experienced by third parties outside the transaction."},
+    {q:"IMPORT SUBSTITUTION INDUSTRIALISATION (ISI) is a strategy that",opts:["A. promotes free trade","B. replaces imported goods with domestically produced ones","C. increases foreign investment","D. devalues currency to boost exports"],ans:"B",exp:"ISI is a trade and economic policy that advocates replacing foreign imports with domestic production."},
+    {q:"NATIONAL INCOME ACCOUNTING measures",opts:["A. individual incomes only","B. total economic output, income, and expenditure of a nation","C. company profits only","D. government revenue only"],ans:"B",exp:"National income accounting tracks the overall economic activity of a nation, measured through GDP, GNP, and related aggregates."},
+    {q:"The ACCELERATOR THEORY explains that",opts:["A. technology always speeds up production","B. investment is determined by changes in the rate of economic growth","C. inflation accelerates unemployment","D. exports accelerate with devaluation"],ans:"B",exp:"The accelerator principle states that investment spending is driven by changes in the rate of change of income/output."},
+    {q:"A MIXED ECONOMY combines",opts:["A. capitalism and feudalism","B. private enterprise and government intervention","C. democracy and dictatorship","D. agriculture and industry only"],ans:"B",exp:"A mixed economy has both privately owned businesses and government-owned or controlled industries."},
+    {q:"The SUPPLY SIDE ECONOMICS approach focuses on",opts:["A. increasing government spending","B. boosting aggregate demand","C. improving productivity and reducing barriers to production","D. controlling money supply only"],ans:"C",exp:"Supply-side economics focuses on increasing the production capacity of an economy through deregulation, tax cuts, and reducing friction."},
+    {q:"DEMAND-PULL INFLATION is caused by",opts:["A. rising production costs","B. excess demand in the economy exceeding supply","C. falling unemployment","D. supply shortages"],ans:"B",exp:"Demand-pull inflation occurs when aggregate demand in an economy outpaces aggregate supply."},
+    {q:"The COBWEB THEOREM applies to markets with",opts:["A. immediate supply responses","B. time lags between price changes and supply responses","C. perfectly elastic demand","D. government price controls"],ans:"B",exp:"The cobweb theorem describes cycles of supply and price that occur when there is a time lag in supply response to price changes."},
+    {q:"COST-PUSH INFLATION results from",opts:["A. too much money in circulation","B. increased production costs passed to consumers","C. excessive government spending","D. rising consumer confidence"],ans:"B",exp:"Cost-push inflation occurs when rising production costs force businesses to increase prices."},
+    {q:"The KEYNESIAN THEORY of employment argues that",opts:["A. markets always self-correct","B. government intervention can maintain full employment","C. inflation is always caused by money supply","D. supply creates its own demand"],ans:"B",exp:"Keynes argued that governments should use fiscal policy to maintain full employment, especially during recessions."},
+    {q:"A TARIFF is",opts:["A. a ban on imports","B. a tax on imported goods","C. a subsidy for exports","D. an import quota"],ans:"B",exp:"A tariff is a tax imposed on imports, typically to protect domestic industries."},
+    {q:"ECONOMIC GROWTH is best measured by an increase in",opts:["A. population size","B. government expenditure","C. real GDP over time","D. money supply"],ans:"C",exp:"Economic growth is measured by an increase in the real (inflation-adjusted) GDP over time."},
+    {q:"The concept of DEAD WEIGHT LOSS in economics refers to",opts:["A. loss of a firm due to competition","B. welfare loss from market inefficiency such as monopoly or taxation","C. goods that have no value","D. losses from inflation"],ans:"B",exp:"Deadweight loss is the loss of economic efficiency when equilibrium is not achievable—often from taxes, monopolies, or price controls."},
+    {q:"PURCHASING POWER PARITY (PPP) theory states that",opts:["A. exchange rates are fixed by governments","B. exchange rates should equalize price levels between countries","C. trade balances determine exchange rates","D. richer countries always have stronger currencies"],ans:"B",exp:"PPP theory holds that in the long run, exchange rates adjust so that identical goods cost the same in different countries."},
+  ],
+
+  crk: [
+    {q:"The concept of COVENANT in the Old Testament is best illustrated by",opts:["A. the Tower of Babel","B. God's agreement with Abraham","C. the building of the Temple","D. the story of Samson"],ans:"B",exp:"God established a covenant with Abraham (Gen 12, 15, 17) promising land, descendants, and blessing."},
+    {q:"In the New Testament, the concept of JUSTIFICATION BY FAITH was central to the theology of",opts:["A. James","B. Peter","C. Paul","D. John"],ans:"C",exp:"Paul's letters (especially Romans and Galatians) develop the doctrine that faith, not works, justifies sinners before God."},
+    {q:"The TEN COMMANDMENTS were given to Moses on",opts:["A. Mount Zion","B. Mount Sinai","C. Mount Carmel","D. Mount Olive"],ans:"B",exp:"The Ten Commandments (Decalogue) were given to Moses on Mount Sinai (Exodus 20)."},
+    {q:"Jesus' Sermon on the Mount is recorded in",opts:["A. Luke 6","B. Matthew 5-7","C. John 4","D. Mark 3"],ans:"B",exp:"The Sermon on the Mount is found in Matthew chapters 5 through 7."},
+    {q:"The FRUIT OF THE SPIRIT listed by Paul does NOT include",opts:["A. love","B. faith","C. prophecy","D. self-control"],ans:"C",exp:"The fruit of the Spirit (Galatians 5:22-23) includes love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, and self-control—not prophecy."},
+    {q:"The betrayal of Jesus for thirty pieces of silver was by",opts:["A. Peter","B. Thomas","C. Judas Iscariot","D. Matthew"],ans:"C",exp:"Judas Iscariot betrayed Jesus for thirty pieces of silver (Matthew 26:14-16)."},
+    {q:"The miracle of FEEDING THE FIVE THOUSAND appears in",opts:["A. Only Matthew","B. Only John","C. Matthew and Luke only","D. All four Gospels"],ans:"D",exp:"The feeding of the 5,000 is the only miracle recorded in all four Gospels (Matt 14, Mark 6, Luke 9, John 6)."},
+    {q:"In the story of Joseph, the coat of many colors was given to him by",opts:["A. Moses","B. His brothers","C. His father Jacob","D. Pharaoh"],ans:"C",exp:"Jacob gave Joseph a richly ornamented robe (coat of many colors) as a sign of his favor (Genesis 37:3)."},
+    {q:"The concept of AGAPE as described in 1 Corinthians 13 is",opts:["A. brotherly love","B. romantic love","C. selfless, unconditional divine love","D. love for wisdom"],ans:"C",exp:"Agape in 1 Corinthians 13 represents the highest form of love—selfless, sacrificial, unconditional."},
+    {q:"PENTECOST in Acts 2 is significant because it marks",opts:["A. The ascension of Jesus","B. The coming of the Holy Spirit and birth of the Church","C. The Last Supper","D. The resurrection of Jesus"],ans:"B",exp:"Pentecost marks the descent of the Holy Spirit on the disciples, often called the birthday of the Christian Church."},
+    {q:"The PRODIGAL SON parable teaches primarily about",opts:["A. financial responsibility","B. God's forgiveness and restoration","C. the danger of leaving home","D. the importance of hard work"],ans:"B",exp:"The parable illustrates God's unconditional love and willingness to receive repentant sinners."},
+    {q:"The first Christian martyr was",opts:["A. Paul","B. Peter","C. Stephen","D. James"],ans:"C",exp:"Stephen, a deacon, was the first Christian martyr, stoned to death (Acts 7:54-60)."},
+    {q:"MONOTHEISM means belief in",opts:["A. many gods","B. no god","C. one God","D. nature spirits"],ans:"C",exp:"Monotheism is the belief in a single, all-powerful God."},
+    {q:"The book of PSALMS is attributed primarily to",opts:["A. Solomon","B. Moses","C. David","D. Isaiah"],ans:"C",exp:"David is traditionally credited with writing most of the Psalms, though they have multiple authors."},
+    {q:"In Paul's theology, SANCTIFICATION refers to",opts:["A. salvation by works","B. the ongoing process of being made holy","C. the final judgment","D. baptism"],ans:"B",exp:"Sanctification is the process by which believers are progressively transformed into the likeness of Christ."},
+    {q:"The BEATITUDES begin with",opts:["A. 'Do not worry'","B. 'Blessed are the poor in spirit'","C. 'Love your enemies'","D. 'You are the light of the world'"],ans:"B",exp:"The Beatitudes (Matthew 5:3-12) begin with 'Blessed are the poor in spirit, for theirs is the kingdom of heaven.'"},
+    {q:"The GOLDEN RULE as stated by Jesus is",opts:["A. Love God above all","B. Do to others what you would have them do to you","C. Honor your father and mother","D. Keep the Sabbath holy"],ans:"B",exp:"'Do to others as you would have them do to you' (Matthew 7:12, Luke 6:31)."},
+    {q:"The COUNCIL OF JERUSALEM in Acts 15 was convened to resolve the issue of",opts:["A. whether gentiles needed circumcision to be saved","B. who would lead the church after Jesus","C. the distribution of food to widows","D. Paul's missionary journeys"],ans:"A",exp:"The Jerusalem Council addressed whether Gentile believers needed to be circumcised and follow Mosaic Law for salvation."},
+    {q:"In CRK, ESCHATOLOGY deals with",opts:["A. the study of holy books","B. the study of last things—death, judgment, heaven, hell","C. church organization","D. sacraments and rituals"],ans:"B",exp:"Eschatology is the branch of theology concerned with the final events of history, including death, judgment, and the afterlife."},
+    {q:"The TRANSFIGURATION of Jesus took place on",opts:["A. Mount Sinai","B. Mount Carmel","C. Mount of Olives","D. a high mountain (traditionally Tabor or Hermon)"],ans:"D",exp:"The Transfiguration occurred on 'a high mountain' (Matthew 17:1-9), traditionally identified as Mount Tabor or Hermon."},
+    {q:"'The wages of sin is death' is found in",opts:["A. Galatians 5","B. Romans 6:23","C. 1 Corinthians 15","D. Ephesians 2"],ans:"B",exp:"Romans 6:23: 'For the wages of sin is death, but the gift of God is eternal life in Christ Jesus our Lord.'"},
+    {q:"The EXODUS from Egypt is primarily recorded in the book of",opts:["A. Genesis","B. Leviticus","C. Exodus","D. Numbers"],ans:"C",exp:"The book of Exodus narrates the Israelites' departure from Egypt under Moses' leadership."},
+    {q:"The concept of KENOSIS refers to",opts:["A. God's omnipotence","B. Christ's self-emptying or humbling in the Incarnation","C. the church's authority","D. baptism"],ans:"B",exp:"Kenosis (Philippians 2:7) refers to Christ 'emptying himself' of divine prerogatives to take on human form."},
+    {q:"The PARABLE OF THE TALENTS teaches about",opts:["A. the importance of wealth","B. stewardship and accountability for gifts given","C. charitable giving","D. the dangers of greed"],ans:"B",exp:"The Parable of the Talents emphasizes faithful stewardship and the accountability of believers for gifts entrusted to them."},
+    {q:"THEOCRACY is a form of government where",opts:["A. priests own all property","B. divine authority is the source of all civil authority","C. elections are held every year","D. a king rules absolutely"],ans:"B",exp:"Theocracy is a system of government where priests or a holy book rules in the name of God."},
+    {q:"The author of most of the New Testament epistles is",opts:["A. Peter","B. John","C. Paul","D. Luke"],ans:"C",exp:"Paul wrote at least 13 of the 27 New Testament books—more than any other author."},
+    {q:"BAPTISM in the New Testament is primarily a sign of",opts:["A. church membership","B. repentance and new life in Christ","C. social acceptance","D. adult maturity"],ans:"B",exp:"Baptism symbolizes death to sin and resurrection to new life in Christ (Romans 6:3-4)."},
+    {q:"The BOOK OF REVELATION was written by",opts:["A. Paul","B. Peter","C. John the Apostle","D. Luke"],ans:"C",exp:"Revelation was written by John, traditionally identified as the Apostle John, while in exile on Patmos."},
+    {q:"RECONCILIATION in Paul's theology means",opts:["A. keeping the law","B. restored relationship between God and humanity through Christ","C. making financial restitution","D. returning to Judaism"],ans:"B",exp:"Reconciliation (2 Corinthians 5:18-21) refers to the restoration of the broken relationship between God and humanity through Christ's atoning work."},
+    {q:"The COVENANT WITH NOAH after the flood is symbolized by",opts:["A. a temple","B. circumcision","C. a rainbow","D. the Sabbath"],ans:"C",exp:"God established the Noahic covenant (Genesis 9) with the rainbow as its sign."},
+    {q:"The ANNUNCIATION refers to",opts:["A. Jesus' public ministry","B. the angel Gabriel's announcement to Mary of Jesus' birth","C. John the Baptist's proclamation","D. the Pentecost sermon"],ans:"B",exp:"The Annunciation (Luke 1:26-38) is the angel Gabriel's announcement to Mary that she would conceive and bear the Son of God."},
+    {q:"In the Old Testament, PROPHETS primarily served as",opts:["A. temple musicians","B. God's messengers to call the people back to covenant faithfulness","C. military commanders","D. tax collectors"],ans:"B",exp:"Old Testament prophets were God's spokespersons, calling Israel to repentance and covenant fidelity."},
+    {q:"Jesus declared 'I am the resurrection and the life' to",opts:["A. Mary Magdalene","B. Martha","C. His disciples","D. the Pharisees"],ans:"B",exp:"Jesus spoke these words to Martha before raising her brother Lazarus (John 11:25)."},
+    {q:"The GREAT COMMISSION in Matthew 28:19-20 commands disciples to",opts:["A. heal the sick","B. build churches","C. make disciples of all nations","D. feed the poor"],ans:"C",exp:"The Great Commission commands the disciples to go and make disciples of all nations, baptizing and teaching them."},
+    {q:"ORIGINAL SIN as a theological concept refers to",opts:["A. the first sin committed in Eden affecting all humanity","B. sins committed as a child","C. sins against nature","D. the first sin of each person"],ans:"A",exp:"Original sin is the theological doctrine that humanity inherits a corrupted nature and guilt from Adam and Eve's fall."},
+    {q:"The HOLY TRINITY doctrine affirms",opts:["A. three separate gods","B. one God in three distinct persons—Father, Son, Holy Spirit","C. God appears in three forms at different times","D. Jesus is subordinate to the Father"],ans:"B",exp:"The Trinity is the Christian doctrine that God is one being existing eternally in three co-equal, co-eternal persons."},
+    {q:"The SERMON ON THE PLAIN is found in",opts:["A. Matthew 5","B. Luke 6","C. Mark 4","D. John 10"],ans:"B",exp:"Luke 6:17-49 contains the Sermon on the Plain, which parallels Matthew's Sermon on the Mount."},
+    {q:"In CRK, SOTERIOLOGY is the study of",opts:["A. saints","B. salvation","C. church history","D. prayer"],ans:"B",exp:"Soteriology is the branch of theology dealing with the doctrine of salvation."},
+    {q:"The story of RUTH demonstrates the virtue of",opts:["A. political leadership","B. loyalty and faithfulness across cultural boundaries","C. military courage","D. prophetic ministry"],ans:"B",exp:"Ruth's story exemplifies steadfast loyalty (chesed)—she remained faithful to Naomi despite the opportunity to return to her own people."},
+    {q:"Paul's letter to the GALATIANS was primarily written to address",opts:["A. sexual immorality","B. false teaching that required circumcision for salvation","C. disorderly worship","D. political oppression"],ans:"B",exp:"Galatians combats Judaizing teachers who insisted Gentile believers must be circumcised to be fully saved."},
+  ],
+
+  history: [
+    {q:"The SCRAMBLE FOR AFRICA was formalized at the",opts:["A. Treaty of Paris","B. Berlin Conference 1884-85","C. Treaty of Westphalia","D. Congress of Vienna"],ans:"B",exp:"The Berlin Conference (1884-85) established rules for European colonization of Africa."},
+    {q:"The HAUSA-FULANI JIHAD of 1804 was led by",opts:["A. Mansa Musa","B. Sunni Ali","C. Usman dan Fodio","D. Rabih az-Zubayr"],ans:"C",exp:"Usman dan Fodio led the Fulani jihad that established the Sokoto Caliphate in 1804."},
+    {q:"The ATLANTIC SLAVE TRADE lasted approximately",opts:["A. 50 years","B. 100 years","C. 400 years","D. 200 years"],ans:"C",exp:"The Atlantic Slave Trade lasted from the late 15th century to the 19th century—approximately 400 years."},
+    {q:"The SOKOTO CALIPHATE was established in",opts:["A. 1804","B. 1820","C. 1860","D. 1900"],ans:"A",exp:"The Sokoto Caliphate was founded in 1804 by Usman dan Fodio following the successful jihad."},
+    {q:"The TREATY OF BERLIN (1885) resulted in",opts:["A. end of World War I","B. partition of Africa among European powers","C. creation of the League of Nations","D. abolition of slavery"],ans:"B",exp:"The Berlin Act of 1885 facilitated the partition of Africa among European colonial powers."},
+    {q:"The INDIRECT RULE policy was most associated with British colonial administrator",opts:["A. Frederick Lugard","B. Cecil Rhodes","C. Joseph Chamberlain","D. Herbert Macaulay"],ans:"A",exp:"Lord Frederick Lugard implemented and theorized the system of indirect rule in Nigeria."},
+    {q:"APARTHEID in South Africa was officially dismantled in",opts:["A. 1980","B. 1990","C. 1994","D. 1998"],ans:"C",exp:"Apartheid officially ended in 1994 when South Africa held its first fully democratic elections."},
+    {q:"The FIRST WORLD WAR began in",opts:["A. 1900","B. 1914","C. 1918","D. 1939"],ans:"B",exp:"World War I began in July/August 1914, triggered by the assassination of Archduke Franz Ferdinand."},
+    {q:"The COLD WAR was primarily a conflict between",opts:["A. China and Japan","B. Germany and France","C. USA and Soviet Union","D. UK and USA"],ans:"C",exp:"The Cold War was the geopolitical tension between the USA and Soviet Union from 1947 to 1991."},
+    {q:"The MFECANE refers to",opts:["A. West African trade routes","B. the period of warfare and migrations in southern Africa triggered by Zulu expansion","C. the Ashanti Empire's wars","D. East African coastal trade"],ans:"B",exp:"The Mfecane (meaning 'crushing') describes the period of widespread chaos and warfare among Bantu ethnic communities in southern Africa."},
+    {q:"COLONIALISM in Africa formally began after",opts:["A. the Industrial Revolution only","B. the Berlin Conference of 1884-85","C. World War I","D. the abolition of slavery"],ans:"B",exp:"The Berlin Conference (1884-85) marked the beginning of formal European colonization and partition of Africa."},
+    {q:"The TRANS-SAHARAN TRADE ROUTE connected",opts:["A. West Africa and North Africa","B. East Africa and Asia","C. South Africa and Europe","D. Central Africa and the Americas"],ans:"A",exp:"Trans-Saharan trade routes connected West African kingdoms (Mali, Songhai) with North African and Mediterranean civilizations."},
+    {q:"Nigeria achieved independence from Britain in",opts:["A. 1957","B. 1958","C. 1960","D. 1963"],ans:"C",exp:"Nigeria gained independence from Britain on October 1, 1960."},
+    {q:"The SECOND WORLD WAR ended in",opts:["A. 1943","B. 1944","C. 1945","D. 1946"],ans:"C",exp:"World War II ended in 1945—Germany surrendered in May and Japan in September."},
+    {q:"The LEAGUE OF NATIONS was established after",opts:["A. World War II","B. World War I","C. the Napoleonic Wars","D. the Cold War"],ans:"B",exp:"The League of Nations was founded in 1920 as part of the Treaty of Versailles after World War I."},
+    {q:"The BRITISH EAST INDIA COMPANY began trading in India in",opts:["A. 1500","B. 1600","C. 1700","D. 1800"],ans:"B",exp:"The British East India Company was established in 1600 and began trading in India shortly after."},
+    {q:"The SLAVE TRADE was abolished in the British Empire in",opts:["A. 1807","B. 1833","C. 1865","D. 1900"],ans:"A",exp:"The Slave Trade Act of 1807 abolished the slave trade in the British Empire; slavery itself was abolished in 1833."},
+    {q:"DECOLONIZATION in Africa was largely completed by",opts:["A. 1945","B. 1955","C. 1965","D. 1975"],ans:"C",exp:"Most African nations gained independence between 1955 and 1965—the peak of decolonization."},
+    {q:"The FRENCH REVOLUTION began in",opts:["A. 1776","B. 1789","C. 1800","D. 1848"],ans:"B",exp:"The French Revolution began in 1789 with the storming of the Bastille on July 14."},
+    {q:"The BIAFRA-NIGERIA CIVIL WAR lasted from",opts:["A. 1960-1963","B. 1966-1970","C. 1967-1970","D. 1967-1975"],ans:"C",exp:"The Nigerian Civil War (Biafran War) lasted from July 6, 1967 to January 15, 1970."},
+    {q:"The ASANTE EMPIRE was located in present-day",opts:["A. Nigeria","B. Senegal","C. Ghana","D. Mali"],ans:"C",exp:"The Asante (Ashanti) Empire was located in what is now Ghana, reaching its peak in the 18th-19th centuries."},
+    {q:"The BERLIN WALL fell in",opts:["A. 1985","B. 1987","C. 1989","D. 1991"],ans:"C",exp:"The Berlin Wall fell on November 9, 1989, marking the symbolic end of the Cold War."},
+    {q:"The concept of MERCANTILISM in European colonial policy refers to",opts:["A. free trade between colonies","B. maximizing exports and accumulating wealth for the mother country","C. democratic governance of colonies","D. missionary activity"],ans:"B",exp:"Mercantilism was the economic theory that a nation's wealth depended on accumulating precious metals through favorable trade balances."},
+    {q:"The MAGNA CARTA was signed in",opts:["A. 1066","B. 1215","C. 1348","D. 1400"],ans:"B",exp:"King John of England signed Magna Carta on June 15, 1215, limiting royal power."},
+    {q:"The RWANDAN GENOCIDE occurred in",opts:["A. 1990","B. 1992","C. 1994","D. 1996"],ans:"C",exp:"The Rwandan genocide occurred from April to July 1994, killing an estimated 800,000 people in 100 days."},
+    {q:"The OTTOMAN EMPIRE collapsed after",opts:["A. World War I","B. World War II","C. the French Revolution","D. the Crimean War"],ans:"A",exp:"The Ottoman Empire was dissolved following its defeat in World War I, formally ending in 1922."},
+    {q:"The AMERICAN DECLARATION OF INDEPENDENCE was signed in",opts:["A. 1774","B. 1776","C. 1783","D. 1787"],ans:"B",exp:"The Declaration of Independence was adopted on July 4, 1776."},
+    {q:"The MARATHA EMPIRE was located in",opts:["A. China","B. Persia","C. India","D. Arabia"],ans:"C",exp:"The Maratha Empire was a Hindu empire based in the Indian subcontinent, reaching its zenith in the 18th century."},
+    {q:"The policy of ASSIMILATION in French colonialism meant",opts:["A. giving colonies full independence","B. integrating Africans into French culture and citizenship","C. exploiting only African resources","D. using chiefs to administer colonies"],ans:"B",exp:"French assimilation policy aimed to make Africans culturally French, granting citizenship to those who adopted French culture."},
+    {q:"The INDUSTRIAL REVOLUTION began in",opts:["A. France","B. Germany","C. United States","D. Britain"],ans:"D",exp:"The Industrial Revolution began in Britain in the late 18th century and spread globally in the 19th century."},
+    {q:"IMPERIALISM as practiced in the 19th century means",opts:["A. equal trade among nations","B. extension of power through diplomacy only","C. extension of a nation's power over others through force, economics, or culture","D. building democratic institutions abroad"],ans:"C",exp:"19th-century imperialism involved powerful nations extending dominance over weaker territories through multiple means."},
+    {q:"The GREAT DEPRESSION began in",opts:["A. 1919","B. 1929","C. 1933","D. 1939"],ans:"B",exp:"The Great Depression began with the Wall Street Crash in October 1929."},
+    {q:"The SLAVE COAST of West Africa roughly corresponds to modern-day",opts:["A. Senegal and Gambia","B. Nigeria and Benin Republic","C. Ghana and Ivory Coast","D. Angola and Congo"],ans:"B",exp:"The Slave Coast was the region along the Gulf of Guinea, corresponding to modern Benin, Togo, and southwestern Nigeria."},
+    {q:"The ABOLITIONIST MOVEMENT in Britain was led partly by",opts:["A. Cecil Rhodes","B. William Wilberforce","C. Frederick Lugard","D. Henry Morton Stanley"],ans:"B",exp:"William Wilberforce was the leading parliamentary voice of the abolitionist movement that ended the British slave trade."},
+    {q:"The concept of SOCIAL DARWINISM was used to justify",opts:["A. workers' rights","B. democratic revolution","C. European colonial domination","D. religious freedom"],ans:"C",exp:"Social Darwinism—applying Darwin's 'survival of the fittest' to social policy—was misused to justify colonial domination and racial hierarchies."},
+    {q:"NATIONALISM in Africa after World War II was fueled by",opts:["A. colonial governments encouraging independence","B. African veterans demanding rights after fighting for European powers","C. religious conversions","D. increased foreign investment"],ans:"B",exp:"African soldiers who fought in WWII returned having fought for democracy abroad but denied it at home, fueling nationalist movements."},
+    {q:"The OAU (Organisation of African Unity) was founded in",opts:["A. 1957","B. 1960","C. 1963","D. 1975"],ans:"C",exp:"The Organisation of African Unity was founded on May 25, 1963 in Addis Ababa, Ethiopia."},
+    {q:"The SUEZ CANAL CRISIS of 1956 was caused by",opts:["A. Israeli invasion of Egypt","B. Nasser's nationalization of the canal","C. Soviet occupation of Egypt","D. British attack on Libya"],ans:"B",exp:"Egyptian President Nasser nationalized the Suez Canal in 1956, triggering a military response from Britain, France, and Israel."},
+    {q:"The concept of TRUSTEESHIP in colonial history means",opts:["A. colonial powers legally owning colonies","B. colonial powers administering territories in the interests of the inhabitants","C. indigenous people governing themselves","D. joint colonial administration"],ans:"B",exp:"Trusteeship was the idea—often more theoretical than practical—that colonial powers were responsible stewards acting in the colonized people's interest."},
+    {q:"The FULANI JIHAD in Yorubaland (early 19th century) led to",opts:["A. the founding of Ibadan","B. complete Fulani conquest of Yorubaland","C. peace between Yoruba and Hausa","D. British colonial intervention"],ans:"A",exp:"Fulani attacks that sacked Old Oyo led Yoruba refugees to found Ibadan around 1829 as a war camp."},
+  ],
+
+  yoruba: [
+    {q:"Oriki jẹ iru ewi wo?",opts:["A. Ewì ìdánilẹ́kọ̀ọ́","B. Ewì ìdíbò","C. Ewì ìdúpẹ́","D. Ewì ìmọlara"],ans:"A",exp:"Oriki jẹ ewì ìdánilẹ́kọ̀ọ́ tàbí àpẹẹrẹ àwọn ohun tí ó ṣe pàtàkì nípa ẹni tàbí ohun tí a ń yìn."},
+    {q:"Ìwé àsàyàn Yorùbá fún JAMB máa ń san àkíyèsí sí ìlà méloo fún orin?",opts:["A. Métàdínlọ́gbọ̀n","B. Ogún ìlà","C. Mẹ́wàá ìlà","D. Àárọ̀-ìlà"],ans:"A",exp:"Nínú ọ̀pọ̀lọpọ̀ àdánwò, orin Yorùbá máa ń ní àárọ̀ ìlà to bí métàdínlọ́gbọ̀n tàbí ju bẹ́ẹ̀ lọ."},
+    {q:"Kí ni ohun àsán nínú àpólà aṣà Yorùbá?",opts:["A. Ìwà rere","B. Ẹ̀ṣẹ̀ tàbí ohun alábùkù","C. Ìmọ̀ oye","D. Ọlọ́run"],ans:"B",exp:"Ohun àsán jẹ ohun tó ní àbùkù tàbí ẹ̀ṣẹ̀ nínú ìgbàgbọ́ àti àṣà àwọn Yorùbá."},
+    {q:"Ewì Yorùbá ti D.O. Fagunwa tó gbajúmọ̀ jùlọ ni",opts:["A. Ogboju Ode Ninu Igbo Irunmole","B. Irinkerindo Ninu Igbo Elegbeje","C. Igbo Olodumare","D. Aditu Olodumare"],ans:"A",exp:"Ogboju Ode Ninu Igbo Irunmole (1938) ni iwe akọkọ àti olokiki jùlọ ti D.O. Fagunwa."},
+    {q:"Nínú àṣà Yorùbá, Ògún jẹ òrìṣà ọ̀pọlọ̀pọ̀",opts:["A. Omi àti ipẹja","B. Irin, ogun, àti iṣẹ́ àgbẹ̀","C. Ọrun àti imọlẹ","D. Ìyẹ̀fun àti ọjà"],ans:"B",exp:"Ògún ni òrìṣà irin, ogun, iṣẹ́ àgbẹ̀, àti gbogbo awọn tó lo irin nínú iṣẹ́ wọn."},
+    {q:"Ìtàn àrọ̀-ìnú jẹ ìtàn tí a máa ń sọ",opts:["A. Lóòru nìkan","B. Nígbà ọjọ́ nìkan","C. Ní ibùdó ìdánilẹ́kọ̀ọ́","D. Lọ́dọ̀ ọlọ́run"],ans:"A",exp:"Ìtàn àrọ̀-ìnú (ìtàn alẹ) jẹ ìtàn tí a máa ń sọ lọ́sàn-án òru, nígbàtí àwọn ọmọdé ba jókòó gbọ́."},
+    {q:"Orúkọ wo ni a ń fún ẹni tí ó jẹ akọni nínú oríkì?",opts:["A. Agbọ̀nrín","B. Àkọni","C. Alásọdún","D. Adílégbèdé"],ans:"B",exp:"Àkọni tàbí ẹni ìyìn ni a máa ń yìn nínú oríkì."},
+    {q:"Ẹni tí ó ń ṣe oríkì ni a ń pè ní",opts:["A. Akéwì","B. Akọrin","C. Asọtẹlẹ","D. Adánwò"],ans:"A",exp:"Akéwì ni ẹni tó ṣe àpèjúwe, sọ oríkì, tàbí kọ ewì nínú èdè Yorùbá."},
+    {q:"Àṣà ìbí ọmọ nínú àṣà Yorùbá ní ìjẹkọ àwọn nǹkan wo?",opts:["A. Ìdúpẹ́ ìsọmọbí, ìdánilẹ́kọ̀ọ́ ọmọ, ìfọmọjẹ","B. Ẹbọ nìkan","C. Ìbáwí nìkan","D. Títọ́ ọmọ sílé kékeré"],ans:"A",exp:"Ìbí ọmọ nínú àṣà Yorùbá pẹ̀lú àwọn ìsìn: ìdúpẹ́, ìfọmọjẹ, àti ìpínlẹ̀ orúkọ."},
+    {q:"Ewì méjì tí Akin Isola kọ ni",opts:["A. Efunsetan Aniwura àti Madam Tinubu","B. Ogboju Ode àti Igbo Olodumare","C. Emi O Sebi àti Ife Ojumo","D. Àgbàdo àti Ìṣu"],ans:"A",exp:"Akinwumi Isola kọ eré ìtàn Efunsetan Aniwura (1970) àti Madam Tinubu—àwọn obìnrin akíkanjú ní ìtàn Yorùbá."},
+    {q:"Ìfẹ̀ ẹni sí ẹni mìíràn laísí èrè ni a ń pè ní",opts:["A. Ojúkọkọrò","B. Ìfẹ̀ tọ̀tọ̀","C. Ìkẹ́","D. Àánú"],ans:"B",exp:"Ìfẹ̀ tọ̀tọ̀ ni ìfẹ̀ tó jẹ mímọ́, tó wà láìsí èrè tàbí ojúkọkọrò."},
+    {q:"Ìpamọ́ èdè Yorùbá jẹ pàtàkì nítorí",opts:["A. ó jẹ èdè Gẹ̀ẹ́sì","B. ó gbé ìmọ̀ àti àṣà wa wọ ọjọ́ iwájú","C. ó jẹ orúkọ orílẹ̀-èdè","D. kò sí ìdí pàtàkì"],ans:"B",exp:"Ìpamọ́ èdè Yorùbá ṣe pàtàkì nítorí pé àwọn ìmọ̀, àṣà, àti ìjìnlẹ̀ wa wà nínú rẹ̀."},
+    {q:"Tonaliter mẹ́ta tí Yorùbá ní ni",opts:["A. Giga, Àárọ̀, Kekere","B. Àárọ̀ (mid), Giga (high), Kekere (low)","C. Fún, Rò, Dúró","D. Ko si ohun afetipalẹ"],ans:"B",exp:"Yorùbá ní ohùn mẹ́ta: ohùn àárọ̀ (mid tone), ohùn giga (high tone), àti ohùn kekere (low tone)."},
+    {q:"'Àgbàdo' nínú iwe D.O. Fagunwa jẹ àpẹẹrẹ iru ẹ̀dá wo?",opts:["A. Ẹranko igbó","B. Ẹ̀dá inú omi","C. Àjẹ tàbí àràn ìyanu","D. Ènìyàn lásán"],ans:"C",exp:"Nínú àwọn iwe Fagunwa, àwọn ẹ̀dá àgbàdo tàbí ẹranko ìyanu máa ń wà nínú ìgbó ìyanu."},
+    {q:"Ohùn tó ń ya àwọn ọrọ̀ Yorùbá sọ tótọ̀ ni",opts:["A. Àmì ohùn","B. Ìtumọ̀ ọrọ̀","C. Ẹ̀ṣẹ̀","D. Àwọn álùfáà"],ans:"A",exp:"Àmì ohùn (tonal markers) ní àkóbá ńlá sí ìtumọ̀ àwọn ọrọ̀ Yorùbá."},
+    {q:"Ìtọ́jú àṣà Yorùbá nínú ìgbàlódé ẹ̀kọ́ ní ìpilẹ̀ṣẹ̀ wọnyi ÀYÀFI",opts:["A. Ìkọ́ ewì","B. Ìkọ́ orin ìbílẹ̀","C. Ìjókòó fún àgbàlagbà","D. Lílo Gẹ̀ẹ́sì nìkan"],ans:"D",exp:"Lílo Gẹ̀ẹ́sì nìkan yóò bà àṣà Yorùbá jẹ, kì í ṣe ìtọ́jú rẹ̀."},
+    {q:"Ìgbéyàwó nínú àṣà Yorùbá máa ń bẹ̀rẹ̀ pẹ̀lú",opts:["A. Ìgbéjókòó","B. Ìbẹ̀wò ẹbí","C. Ìfẹ̀ ẹni méjì nìkan","D. Ilé-ẹjọ́ ìgbéyàwó"],ans:"B",exp:"Ìbẹ̀wò ẹbí (family introduction) ni ìbẹ̀rẹ̀ ìgbéyàwó Yorùbá, níbi tí ẹbí méjèèjì ti pàdé."},
+    {q:"Àṣà Ègúngún nínú àṣà Yorùbá jẹ",opts:["A. Àṣà ìsìn omi","B. Ìsìn àwọn baba tí ó ti kú","C. Ìjó ìgbádùn nìkan","D. Àṣà àjọdún Kérésìmesì"],ans:"B",exp:"Ègúngún jẹ ìsìn àwọn baba tí ó ti kú—ó gbàgbọ́ pé àwọn baba máa ń padà bọ̀ wá bí Ègúngún."},
+    {q:"Ọ̀wọ̀ fún àgbàlagbà nínú àṣà Yorùbá ní àpẹẹrẹ",opts:["A. Ẹni tó dàgbà jù ni olórí","B. Ìdúró tàbí ìforíbalẹ̀ fún àgbàlagbà","C. Àwọn ọmọdé ń jẹun kọ́","D. Àwọn àgbàlagbà ò fẹ́ ìwà"],ans:"B",exp:"Nínú àṣà Yorùbá, a máa ń fi ọwọ́ ìdúró tàbí ìforíbalẹ̀ jọwọ̀ ọ̀wọ̀ hàn fún àwọn àgbàlagbà."},
+    {q:"Ọ̀rọ̀-ìṣe nínú gírámà Yorùbá jẹ",opts:["A. Ọrọ̀ tí ó ń ṣàpèjúwe ìṣẹ̀lẹ̀","B. Ọrọ̀ tí ó ń ṣàpèjúwe ẹni","C. Ọrọ̀ tí ó ń ṣàpèjúwe orúkọ","D. Ọrọ̀ àsopọ̀"],ans:"A",exp:"Ọ̀rọ̀-ìṣe (verb) ni ọ̀rọ̀ tó ṣàpèjúwe ìṣẹ̀lẹ̀ tàbí àgbára nínú gírámà."},
+    {q:"Ọrọ̀ 'alaafia' ní ìtumọ̀",opts:["A. Ìdùnnú","B. Àlàáfíà tàbí ìlera"],ans:"B",exp:"'Alaafia' ní ìtumọ̀ àlàáfíà, ìlera, àti ìdùnnú gbogbogbò nínú Yorùbá."},
+    {q:"Ẹni tí ó jẹ àkọbi nínú ẹbí Yorùbá ní ipa",opts:["A. Jẹ́ aráàlú akọ́kọ́ nínú ẹbí","B. Mú irú ẹsẹ bí olórí kékeré ẹbí","C. Padà sẹbí méjì lẹ́yìn ìgbéyàwó","D. Kò ní ipa àkànṣe"],ans:"B",exp:"Àkọbi máa ń ṣe àkóso àwọn ìṣẹ̀lẹ̀ ẹbí àti ọ̀dọ̀ àwọn ìbárapẹjọ nínú ẹbí Yorùbá."},
+    {q:"Àṣà Gẹ̀lẹ̀dé nínú àṣà Yorùbá jẹ àṣà tó bọwọ̀ fún",opts:["A. Àwọn obìnrin àgbà àti àwọn àjẹ","B. Àwọn ọkùnrin nìkan","C. Àwọn ọba","D. Àwọn baba"],ans:"A",exp:"Gẹ̀lẹ̀dé jẹ àṣà Yorùbá tó ń ṣèbọwọ̀ fún àwọn obìnrin àgbà àti agbára àwọn ìyá."},
+    {q:"Nínú ewì Yorùbá, ìyọ̀ jẹ́ ohun tó máa ń wáyé nípa",opts:["A. Ọ̀rọ̀ tó ní ìtumọ̀ ìlọ̀po-méjì","B. Ohùn kékèkè","C. Ohùn àárọ̀","D. Àmì ìgbésẹ̀"],ans:"A",exp:"Ìyọ̀ (pun tàbí àmọ̀ ọrọ̀) wáyé nígbàtí a lò ọrọ̀ kan tó ní ìtumọ̀ méjì tàbí ti tí ó ń dàrú."},
+    {q:"'Ìjọba' ní ìtumọ̀ sí",opts:["A. Ilé","B. Òfin","C. Ìjọba tàbí ìdarí orílẹ̀-èdè","D. Ọjà"],ans:"C",exp:"'Ìjọba' jẹ ọrọ̀ Yorùbá fún ìjọba tàbí idarí ọ̀rọ̀ àwọn ènìyàn."},
+    {q:"Ẹ̀kọ́ àṣà ìbílẹ̀ Yorùbá ní ìpilẹ̀ṣẹ̀ wo nínú ẹbí?",opts:["A. Ilé-ẹ̀kọ́ gíga nìkan","B. Ẹbí àti àgbègbè ẹbí","C. Ìjọba nìkan","D. Ìjọ-ìsìn"],ans:"B",exp:"Nínú àṣà Yorùbá, ẹbí—pàápàá ìdílé àgbàdo—ni ilé-ẹ̀kọ́ àkọ́kọ́ tó máa ń kọ́ ọmọ àṣà àti ìwà."},
+    {q:"Àṣà Ìrókò nínú ìgbàgbọ́ Yorùbá jẹ igi tó gbàgbọ́ pé",opts:["A. Gbogbo àwọn ẹ̀mí wà nínú rẹ̀","B. Ẹ̀mí àwọn baba ń gbé ínú rẹ̀","C. O jẹ igi ìṣọ́","D. O kan jẹ igi ní ìgbẹ̀"],ans:"B",exp:"Igi Ìrókò ni a gbàgbọ́ pé ó jẹ ibùdó àwọn ẹ̀mí baba tàbí àwọn ẹ̀mí inú igbó nínú àṣà Yorùbá."},
+    {q:"Ede Yorùbá jẹ ti ìdílé èdè",opts:["A. Bantu","B. Nilo-Saharan","C. Afro-Asiatic","D. Niger-Congo"],ans:"D",exp:"Yorùbá jẹ ti ìdílé Niger-Congo, tó jẹ ọ̀kan nínú àwọn ìdílé èdè tó tóbi jùlọ ní Áfríkà."},
+    {q:"Nínú àṣà Yorùbá, 'Orí' ní ìtumọ̀",opts:["A. Orí ara nìkan","B. Ìpilẹ̀ṣẹ̀ tàbí ìpinnu tàbí ìrìn-àjò ènìyàn ní ayé","C. Àjẹ tàbí ẹ̀mí ìkà","D. Olórun"],ans:"B",exp:"Orí jẹ ìpìlẹ̀ àti ìpinnu ènìyàn—ìdánimọ̀ tàbí ìrìn-àjò ìpilẹ̀ṣẹ̀ ẹni—nínú ìgbàgbọ́ Yorùbá."},
+    {q:"Àtọnà àpèjúwe ìjẹkọ ewì Yorùbá tẹ̀ lé ìlànà",opts:["A. Àpèjúwe ohùn, ọ̀pọlọ̀pọ̀ àpẹẹrẹ, ìdáhùn sí ìjẹkọ","B. Kíkọ sọ̀rọ̀ aláfin nìkan","C. Kíkà ìwé àkọsílẹ̀ nìkan","D. Ìdáhùn sàájú kíkà ewì"],ans:"A",exp:"Àtọ̀nà ewì Yorùbá máa ń bẹ̀rẹ̀ pẹ̀lú àpèjúwe ohùn àti ìmọ̀-ọ̀nà, lẹ́yìn náà ni àpèjúwe àti ìjẹkọ."},
+    {q:"Àpẹẹrẹ oríkì àwọn Yorùbá pẹ̀lú",opts:["A. Oríkì ẹni, oríkì ìdílé, oríkì ìlú","B. Oríkì Gẹ̀ẹ́sì nìkan","C. Oríkì tó kọ́kọ́ dé nínú Bíbélì","D. Oríkì àtijọ́ àti ìgbàlódé nìkan"],ans:"A",exp:"Àwọn oriki Yorùbá pẹ̀lú: oríkì ẹni (àpèjúwe ènìyàn kan), oríkì ìdílé (àpèjúwe ẹbí), àti oríkì ìlú (àpèjúwe ìlú tàbí ọba)."},
+    {q:"Àṣà Odun tó máa ń wáyé lọ́dọọdún nínú aṣà Yorùbá ni",opts:["A. Odun Ìbọ, Odun Ẹlẹ́gbọn, Odun Ògún","B. Odun Kérésìmesì nìkan","C. Odun Tí Ilé-Ẹjọ́ Ń Ṣe","D. Odun Ìjọba"],ans:"A",exp:"Àwọn àjọdún Yorùbá tó gbajúmọ̀ pẹ̀lú Odun Ògún, Ògbóni, Ìṣinmi àti bẹ́ẹ̀ bẹ́ẹ̀ lọ."},
+    {q:"Nínú àṣà Yorùbá, 'Ògbéri' ní ìtumọ̀",opts:["A. Ọlọ́gbọ́n","B. Aláàánú","C. Ẹni tí kò mọ̀ (alágbèrè)","D. Akọni"],ans:"C",exp:"Ògbéri ní ìtumọ̀ ẹni tí kò mọ̀ ọ̀nà Ìjọ̀sìn tàbí aṣà kan—alágbèrè nínú ọ̀pọlọ̀pọ̀ ọ̀rọ̀."},
+    {q:"Ìjẹkọ àwọn iwe Yorùbá nínú JAMB máa ń fi ìtọ́kasí sí",opts:["A. Ìgbáradì ẹni fún aṣà mẹ́ta nìkan","B. Orin, ewì, eré ìtàn, àti ìtàn àròsọ","C. Gírámà Gẹ̀ẹ́sì nìkan","D. Ọrọ̀ ìjọba"],ans:"B",exp:"Ìjẹkọ Yorùbá nínú àdánwò JAMB máa ń wà ní àwọn ìpín: orin (poetry), ewì, eré ìtàn (drama), àti ìtàn àròsọ."},
+    {q:"Àṣà ìdílé Yorùbá máa ń fi ẹnì kan tó ti parí ẹ̀kọ́ sílẹ̀ nígbàtí",opts:["A. O kò lọ ilé-ẹ̀kọ́","B. Ó ti ń gbádùn àǹfààní àwọn ẹbí","C. O ti de àgbàlagbà àti ìdúróṣinṣin ìwà","D. O jẹ́ àkọbi"],ans:"C",exp:"Nínú àṣà Yorùbá, ẹni tó ti dàgbà àti tó ti ṣe àfihàn ìwà rere àti ìdúróṣinṣin ni a ka sí ẹni tó ti parí ẹ̀kọ̀ àṣà."},
+    {q:"'Ẹni tí ó bá sun ara wọn kò ní ṣeún' jẹ",opts:["A. Ìwé","B. Òwe Yorùbá","C. Orin","D. Ìtàn"],ans:"B",exp:"Gbólóhùn yí jẹ àpẹẹrẹ òwe Yorùbá—ìlànà ìmọ̀ tó ní ìtumọ̀ jinlẹ̀ nínú ọ̀rọ̀ kékeré."},
+    {q:"Ìtàn àtẹlẹwọ Yorùbá (ìtàn àrọ̀-ìnú) máa ń ní àwọn ohun ÀYÀFI",opts:["A. Àwọn ẹranko ń sọ̀rọ̀","B. Ohun ìyanu wáyé","C. Ìtàn ìṣẹ̀lẹ̀ ìtàn àkọsílẹ̀ òtítọ́","D. Ẹ̀kọ́ ìwà wà nínú rẹ̀"],ans:"C",exp:"Ìtàn àrọ̀-ìnú jẹ ìtàn àṣà, kì í ṣe ìtàn òtítọ́—ó ní àwọn ẹranko ń sọ̀rọ̀, àwọn ẹ̀mí, àti àwọn ẹ̀kọ́ ìwà."},
+    {q:"Ọrọ̀ Yorùbá 'Ẹnìyàn' jẹ àpapọ̀",opts:["A. Ẹni + ọyàn","B. Ẹni + iyàn","C. Ènìyàn + ọmọ","D. Ẹni + àràn"],ans:"B",exp:"'Ẹnìyàn' (ènìyàn) máa ń wá láti àpapọ̀ 'ẹni' (person) + 'iyàn' (pounded yam)—ìsọ̀rí àwọn tí o jẹun papọ̀."},
+    {q:"Àṣà Yorùbá ń fi ohun wọnyi hàn ÀYÀFI",opts:["A. Bíbọwọ̀ fún àgbàlagbà","B. Ìfẹ̀ àárọ̀","C. Ìjẹun papọ̀","D. Ìkórira àárọ̀"],ans:"D",exp:"Ìkórira (hatred/animosity) kò jẹ apakan àṣà Yorùbá—bíbọwọ̀, ìfẹ̀, àti ìjẹun papọ̀ ni àwọn ohun tó ṣe pàtàkì."},
+  ],
+
+  commerce: [
+    {q:"The BALANCE SHEET of a business shows its",opts:["A. profit and loss for a period","B. assets, liabilities, and owner's equity at a point in time","C. cash received and paid during the year","D. sales and purchases only"],ans:"B",exp:"A balance sheet (statement of financial position) shows what a business owns (assets), owes (liabilities), and equity at a specific date."},
+    {q:"WORKING CAPITAL is calculated as",opts:["A. Fixed assets minus long-term liabilities","B. Current assets minus current liabilities","C. Total assets minus total liabilities","D. Revenue minus expenses"],ans:"B",exp:"Working capital = Current Assets − Current Liabilities; it measures short-term liquidity."},
+    {q:"The PRIMARY function of a COMMERCIAL BANK is",opts:["A. Printing money","B. Accepting deposits and granting loans","C. Managing pension funds","D. Regulating insurance"],ans:"B",exp:"Commercial banks primarily accept deposits from the public and provide loans to individuals and businesses."},
+    {q:"DEPRECIATION in accounting refers to",opts:["A. decline in market value","B. systematic allocation of an asset's cost over its useful life","C. inflation effect on assets","D. loss from fire or theft"],ans:"B",exp:"Depreciation is the methodical spread of a fixed asset's cost over its expected useful life."},
+    {q:"A BILL OF EXCHANGE is",opts:["A. a receipt for goods","B. an unconditional order to pay a specified sum","C. a warehouse receipt","D. an insurance document"],ans:"B",exp:"A bill of exchange is a written, unconditional order by one party to another to pay a specified sum on demand or on a stated date."},
+    {q:"The ACID TEST RATIO measures",opts:["A. profitability","B. ability to meet short-term obligations without selling stock","C. long-term solvency","D. return on investment"],ans:"B",exp:"The acid test (quick) ratio = (Current Assets − Inventories) ÷ Current Liabilities; it tests immediate liquidity."},
+    {q:"CAVEAT EMPTOR means",opts:["A. the seller beware","B. the buyer beware","C. goods are guaranteed","D. contracts are binding"],ans:"B",exp:"Caveat emptor is the Latin principle meaning 'let the buyer beware'—buyers purchase at their own risk."},
+    {q:"A CONSIGNMENT in trade refers to",opts:["A. an order to a manufacturer","B. goods sent to an agent for sale on behalf of the owner","C. a fixed-price sale","D. a contract of employment"],ans:"B",exp:"Consignment involves sending goods to a consignee (agent) who sells them on behalf of the consignor (owner)."},
+    {q:"The CASH FLOW STATEMENT shows",opts:["A. assets and liabilities","B. profit earned during the year","C. inflows and outflows of cash during a period","D. changes in equity"],ans:"C",exp:"The cash flow statement reports a company's cash receipts and payments during an accounting period."},
+    {q:"DEBENTURES are",opts:["A. shares in a company","B. long-term loan instruments issued by companies","C. government savings bonds","D. insurance policies"],ans:"B",exp:"Debentures are long-term debt instruments issued by companies, carrying a fixed interest rate."},
+    {q:"The principle of DOUBLE ENTRY in bookkeeping states that",opts:["A. every transaction is recorded twice in the same account","B. every debit entry has a corresponding credit entry","C. assets equal liabilities","D. revenue must equal expenses"],ans:"B",exp:"The double-entry principle holds that every transaction affects at least two accounts—a debit in one equals a credit in another."},
+    {q:"INSURANCE operates on the principle of",opts:["A. profit maximization","B. indemnity, insurable interest, and utmost good faith","C. caveat emptor","D. laissez-faire"],ans:"B",exp:"Core insurance principles include indemnity (restoring to pre-loss position), insurable interest, and utmost good faith (uberrimae fidei)."},
+    {q:"A SOLE PROPRIETORSHIP has the disadvantage of",opts:["A. complex management structure","B. unlimited personal liability","C. double taxation","D. slow decision-making"],ans:"B",exp:"A sole proprietor bears unlimited liability—personal assets can be claimed to settle business debts."},
+    {q:"The MEMORANDUM OF ASSOCIATION contains",opts:["A. rules for internal management","B. the company's name, objectives, and capital structure","C. employee contracts","D. shareholder resolutions"],ans:"B",exp:"The Memorandum of Association is the company's external charter, stating its name, registered address, objects, and authorized capital."},
+    {q:"FACTORING as a financial service means",opts:["A. breaking products into components","B. selling trade debts to a financial institution at a discount","C. investing in factories","D. franchising a brand"],ans:"B",exp:"Factoring involves a business selling its receivables to a factor (financial company) at a discount for immediate cash."},
+    {q:"The DIFFERENCE between a public and private limited company is",opts:["A. public companies pay more tax","B. public companies can offer shares to the public; private companies cannot","C. private companies have more shareholders","D. public companies are government-owned"],ans:"B",exp:"Public limited companies (PLCs) can sell shares to the general public through a stock exchange; private limited companies cannot."},
+    {q:"PREFERENCE SHARES differ from ORDINARY SHARES in that",opts:["A. preference shareholders vote more","B. preference shareholders receive fixed dividends before ordinary shareholders","C. preference shares are more volatile","D. ordinary shares earn fixed returns"],ans:"B",exp:"Preference shareholders receive a fixed dividend paid before any dividend is paid to ordinary shareholders."},
+    {q:"The CONCEPT OF GOING CONCERN in accounting assumes",opts:["A. the business will be sold soon","B. the business will continue operating indefinitely","C. assets are valued at market price","D. liabilities exceed assets"],ans:"B",exp:"The going concern concept assumes a business will continue operations for the foreseeable future, justifying normal accounting practices."},
+    {q:"HIRE PURCHASE differs from outright purchase in that",opts:["A. goods are delivered faster","B. ownership transfers only after all installments are paid","C. prices are lower","D. no interest is charged"],ans:"B",exp:"In hire purchase, the buyer uses goods immediately but ownership passes only after the final installment payment."},
+    {q:"The ARTICLES OF ASSOCIATION govern",opts:["A. external trading activities","B. internal management and procedures of a company","C. share prices","D. international trade"],ans:"B",exp:"The Articles of Association regulate the internal affairs and management procedures of a company."},
+    {q:"OPPORTUNITY COST in business decision-making is best illustrated by",opts:["A. paying taxes","B. choosing one investment over another and foregoing the latter's benefit","C. bank charges","D. depreciation of equipment"],ans:"B",exp:"Opportunity cost in business is the benefit forgone by choosing one alternative over the next best alternative."},
+    {q:"A COOPERATIVE SOCIETY differs from a limited company mainly in that",opts:["A. cooperatives make more profit","B. cooperatives are based on mutual benefit and one-member-one-vote","C. cooperatives are government-owned","D. limited companies have no shareholders"],ans:"B",exp:"Cooperatives operate on the principles of mutual benefit, democratic control (one member, one vote), and surplus distribution to members."},
+    {q:"The CURRENT RATIO is calculated as",opts:["A. Net profit ÷ Total assets","B. Current assets ÷ Current liabilities","C. Sales ÷ Capital","D. Gross profit ÷ Sales"],ans:"B",exp:"Current Ratio = Current Assets ÷ Current Liabilities; a ratio of 2:1 is generally considered healthy."},
+    {q:"FRANCHISE in commerce means",opts:["A. free trade between countries","B. the right to operate a business using another's brand and system","C. a government monopoly","D. a type of insurance"],ans:"B",exp:"A franchise is a license that allows the franchisee to operate using the franchisor's brand, products, and business model."},
+    {q:"OVERHEAD COSTS in business are",opts:["A. direct material costs","B. indirect costs not directly linked to production","C. profits from operations","D. costs of raw materials"],ans:"B",exp:"Overheads are indirect costs (rent, utilities, administrative salaries) not directly tied to production of a specific product."},
+    {q:"The PAYBACK PERIOD in investment appraisal measures",opts:["A. total profit over project life","B. time taken for an investment to generate enough cash to recover its initial cost","C. net present value","D. rate of return on capital"],ans:"B",exp:"Payback period is the length of time required to recover the cost of an investment from its net cash inflows."},
+    {q:"A LETTER OF CREDIT in international trade is",opts:["A. a personal letter guaranteeing payment","B. a document from a bank guaranteeing payment to a seller on behalf of a buyer","C. an export license","D. a bill of lading"],ans:"B",exp:"A letter of credit is a bank's guarantee to a seller that payment will be made when the terms and conditions are fulfilled."},
+    {q:"The GROSS PROFIT is calculated as",opts:["A. Net sales minus all expenses","B. Net sales minus cost of goods sold","C. Total revenue minus taxes","D. Operating profit minus interest"],ans:"B",exp:"Gross Profit = Net Sales − Cost of Goods Sold (COGS). It does not include operating expenses."},
+    {q:"MULTINATIONAL CORPORATIONS are characterized by",opts:["A. operating in one country only","B. having operations and assets in multiple countries","C. government ownership","D. trading only in raw materials"],ans:"B",exp:"Multinationals are companies that produce or sell goods/services in more than one country."},
+    {q:"The STOCK EXCHANGE serves the function of",opts:["A. storing goods","B. providing a market for buying and selling existing securities","C. printing currency","D. regulating commercial banks"],ans:"B",exp:"A stock exchange provides a regulated marketplace where existing shares and other securities are bought and sold."},
+    {q:"TRADE CREDIT is a form of",opts:["A. bank loan","B. short-term credit extended by suppliers to buyers","C. government grant","D. overdraft"],ans:"B",exp:"Trade credit is when a supplier allows a buyer to purchase goods and pay for them at a later date."},
+    {q:"The concept of ECONOMIES OF SCALE in production means",opts:["A. reducing output to cut costs","B. reducing average costs as production scale increases","C. equal costs at all output levels","D. increasing costs with output"],ans:"B",exp:"Economies of scale are cost advantages that arise when production volume increases, reducing the average cost per unit."},
+    {q:"In commerce, DEMURRAGE refers to",opts:["A. a discount on goods","B. charges for delaying a vessel or container beyond agreed time","C. damage to goods in transit","D. import duties"],ans:"B",exp:"Demurrage is the penalty charged for failing to load or unload cargo within the agreed time period."},
+    {q:"The PRIMARY market in capital markets is where",opts:["A. used securities are sold","B. new securities are issued for the first time","C. commodities are traded","D. foreign exchange is bought"],ans:"B",exp:"The primary market is where new securities are created and sold directly to investors for the first time (e.g., IPOs)."},
+    {q:"RETAINED EARNINGS in a company refer to",opts:["A. dividends paid to shareholders","B. profits kept in the business after dividends","C. loans from shareholders","D. fixed assets"],ans:"B",exp:"Retained earnings are net profits that remain in the business after dividends are paid to shareholders."},
+    {q:"The BREAK-EVEN POINT is where",opts:["A. profit is maximized","B. total revenue equals total costs","C. variable costs equal fixed costs","D. sales equal purchases"],ans:"B",exp:"The break-even point is the level of output/sales at which total revenue exactly equals total costs—neither profit nor loss."},
+    {q:"A BANK OVERDRAFT is",opts:["A. excess cash deposited in a bank","B. spending more than what is in a bank account up to an agreed limit","C. a long-term bank loan","D. a savings account"],ans:"B",exp:"A bank overdraft allows account holders to withdraw more money than is currently available, up to a pre-agreed limit."},
+    {q:"VENTURE CAPITAL refers to",opts:["A. government startup grants","B. risk investment provided to startups with high growth potential","C. stock exchange listing","D. traditional bank loans"],ans:"B",exp:"Venture capital is financing provided to early-stage, high-potential companies in exchange for equity."},
+    {q:"The SOLVENCY of a business is its ability to",opts:["A. make short-term payments only","B. meet its long-term financial obligations","C. pay dividends","D. achieve maximum profit"],ans:"B",exp:"Solvency refers to a company's ability to meet its long-term debt and financial obligations as they fall due."},
+    {q:"CARTEL in commerce is when",opts:["A. manufacturers compete aggressively","B. rival firms collude to fix prices or control supply","C. a monopoly buys out competitors","D. government controls all supply"],ans:"B",exp:"A cartel is a formal agreement among competing firms to coordinate prices, output, or market share—often illegal."},
+  ],
+
+  accounting: [
+    {q:"The ACCOUNTING EQUATION is",opts:["A. Assets = Revenue + Expenses","B. Assets = Liabilities + Owner's Equity","C. Revenue = Assets - Liabilities","D. Profit = Assets + Equity"],ans:"B",exp:"The fundamental accounting equation: Assets = Liabilities + Owner's Equity (or Capital)."},
+    {q:"ACCRUAL BASIS accounting records transactions",opts:["A. when cash is received or paid","B. when they are earned or incurred, regardless of cash flow","C. only at year end","D. based on bank statements"],ans:"B",exp:"Accrual accounting recognises revenues when earned and expenses when incurred, not when cash changes hands."},
+    {q:"GOODWILL in accounting is classified as",opts:["A. a current asset","B. an intangible fixed asset","C. a current liability","D. a revenue item"],ans:"B",exp:"Goodwill is an intangible asset representing the value of a business's reputation, brand, and customer relationships."},
+    {q:"The purpose of a TRIAL BALANCE is to",opts:["A. show profit and loss","B. verify that total debits equal total credits","C. calculate tax payable","D. determine cash flow"],ans:"B",exp:"A trial balance checks that the ledger's total debits equal total credits, helping to detect arithmetical errors."},
+    {q:"STRAIGHT-LINE DEPRECIATION is calculated as",opts:["A. Cost × Depreciation rate","B. (Cost − Residual value) ÷ Useful life in years","C. Book value × Rate","D. Cost × Useful life"],ans:"B",exp:"Straight-line depreciation spreads the depreciable amount (cost minus residual value) equally over the asset's useful life."},
+    {q:"LIFO inventory method assumes",opts:["A. first items purchased are sold first","B. last items purchased are sold first","C. items are sold randomly","D. average cost for all items"],ans:"B",exp:"LIFO (Last In, First Out) assumes the most recently purchased inventory is sold first."},
+    {q:"A PROVISION FOR BAD DEBTS is created to",opts:["A. increase profit","B. account for receivables unlikely to be collected","C. reduce tax liability","D. increase assets"],ans:"B",exp:"A bad debt provision reduces receivables to a realistic recoverable amount, reflecting debts unlikely to be paid."},
+    {q:"The PETTY CASH BOOK records",opts:["A. large capital purchases","B. small, routine cash payments","C. bank transactions only","D. credit sales"],ans:"B",exp:"The petty cash book is used to record small day-to-day cash expenditures, managed using the imprest system."},
+    {q:"COST OF GOODS SOLD is calculated as",opts:["A. Opening stock + Purchases - Closing stock","B. Sales - Gross profit","C. Both A and B","D. Total expenses - Overheads"],ans:"C",exp:"COGS = Opening Stock + Purchases − Closing Stock. Since Gross Profit = Sales − COGS, both A and B are correct methods."},
+    {q:"SHARE PREMIUM ACCOUNT arises when",opts:["A. shares are issued below par value","B. shares are issued above their nominal (par) value","C. dividends are paid","D. the company makes extra profit"],ans:"B",exp:"Share premium is the excess amount received over a share's nominal value when shares are issued."},
+    {q:"The REDUCING BALANCE depreciation method charges",opts:["A. equal amounts each year","B. more depreciation in early years, declining over time","C. depreciation only in the last year","D. depreciation based on sales"],ans:"B",exp:"The reducing balance method applies a fixed percentage to the book value each year, resulting in higher depreciation early on."},
+    {q:"CAPITAL EXPENDITURE differs from REVENUE EXPENDITURE in that",opts:["A. capital expenditure is tax-deductible","B. capital expenditure acquires or improves long-term assets","C. revenue expenditure is for investments","D. capital expenditure appears in the income statement"],ans:"B",exp:"Capital expenditure improves or acquires fixed assets; revenue expenditure maintains day-to-day operations and is expensed immediately."},
+    {q:"A SUSPENSE ACCOUNT is opened when",opts:["A. a business needs extra funds","B. there is a difference in the trial balance that must be investigated","C. a debtor cannot pay","D. a bank account is opened"],ans:"B",exp:"A suspense account temporarily holds the difference when a trial balance does not agree, pending investigation and correction."},
+    {q:"The MATCHING CONCEPT in accounting states that",opts:["A. assets must equal liabilities","B. expenses should be matched to the revenues they helped generate in the same period","C. debits must match credits","D. tax must match profit"],ans:"B",exp:"The matching (accruals) concept requires expenses to be recognised in the same period as the revenues they relate to."},
+    {q:"FIFO inventory method assumes",opts:["A. newest items are sold first","B. oldest items purchased are sold first","C. average cost for all items","D. random selection of items"],ans:"B",exp:"FIFO (First In, First Out) assumes inventory acquired earliest is sold first."},
+    {q:"The NET BOOK VALUE of an asset is",opts:["A. original cost only","B. cost minus accumulated depreciation","C. market value","D. replacement cost"],ans:"B",exp:"Net Book Value (NBV) = Cost − Accumulated Depreciation. It represents the asset's current carrying value in the books."},
+    {q:"BANK RECONCILIATION STATEMENT is prepared to",opts:["A. close the bank account","B. identify and explain differences between the cash book and bank statement","C. determine profit","D. audit the company"],ans:"B",exp:"A bank reconciliation statement reconciles the differences between a company's cash book and the bank statement."},
+    {q:"RETURN ON CAPITAL EMPLOYED (ROCE) measures",opts:["A. current asset efficiency","B. the profitability of capital invested in the business","C. liquidity","D. solvency"],ans:"B",exp:"ROCE = Operating Profit ÷ Capital Employed. It measures how efficiently a business generates profits from its capital base."},
+    {q:"An IMPREST SYSTEM in petty cash means",opts:["A. petty cash is unlimited","B. petty cash is topped up to a fixed amount at regular intervals","C. petty cash is deposited in the bank","D. petty cash handles large expenses"],ans:"B",exp:"The imprest system restores petty cash to a fixed float amount by reimbursing the total spent at each period end."},
+    {q:"SOLE TRADER accounts show all EXCEPT",opts:["A. Trading account","B. Profit and loss account","C. Appropriation account","D. Balance sheet"],ans:"C",exp:"Appropriation accounts are used by partnerships and limited companies to show profit distribution—not by sole traders."},
+    {q:"The PRUDENCE (CONSERVATISM) concept states that",opts:["A. all expected profits should be recognised immediately","B. potential losses should be anticipated; potential gains should only be recognised when realised","C. assets should be valued at market price","D. liabilities should be understated"],ans:"B",exp:"Prudence means recognising anticipated losses immediately but only recording gains when they are certain and realised."},
+    {q:"PARTNERSHIP GOODWILL is normally valued at",opts:["A. net asset value","B. an agreed valuation, often based on super-profits or multiple of average profits","C. market price","D. total capital of partners"],ans:"B",exp:"Goodwill in a partnership is valued by agreement—often using methods like super-profits capitalisation or average profits multiplied by a factor."},
+    {q:"The REALISATION CONCEPT means",opts:["A. revenue is recorded when cash is received","B. revenue is recorded when it is earned and reasonably certain to be received","C. assets are valued at cost","D. expenses are recorded when paid"],ans:"B",exp:"The realisation concept states that revenue should be recognised when it is earned, not necessarily when cash is received."},
+    {q:"CONTROL ACCOUNTS are used to",opts:["A. control employee expenses","B. provide a summary check on the accuracy of personal ledger accounts","C. record fixed assets","D. manage petty cash"],ans:"B",exp:"Control accounts (e.g., debtors' control, creditors' control) summarise the subsidiary ledger, allowing for a check on its accuracy."},
+    {q:"DRAWING ACCOUNT in a sole trader's books records",opts:["A. money borrowed from the bank","B. amounts withdrawn by the owner for personal use","C. sales revenue","D. depreciation"],ans:"B",exp:"The drawings account records the owner's withdrawals of cash or goods from the business for personal use."},
+    {q:"INCOMPLETE RECORDS in accounting occur when",opts:["A. the business has too many transactions","B. a business does not maintain a full double-entry system","C. accounts are audited","D. the trial balance does not agree"],ans:"B",exp:"Incomplete records situations arise when a business, typically small, keeps only partial records rather than full double-entry accounts."},
+    {q:"The CONSISTENCY CONCEPT requires that",opts:["A. all businesses use the same accounting method","B. a business uses the same accounting policies from year to year","C. accounts are prepared monthly","D. profits remain the same each year"],ans:"B",exp:"The consistency concept requires a business to apply the same accounting policies consistently across periods for comparability."},
+    {q:"PARTNERSHIP DISSOLUTION involves",opts:["A. adding a new partner only","B. winding up the partnership and distributing assets after paying all liabilities","C. converting to a company","D. paying all profits to partners"],ans:"B",exp:"Dissolution of a partnership means ending the partnership, realising assets, paying creditors, and distributing any remaining balance to partners."},
+    {q:"CREDIT NOTE is issued by a seller to",opts:["A. confirm receipt of payment","B. acknowledge a reduction in the amount owed by a buyer (e.g., for returned goods)","C. request payment","D. offer a discount for early payment"],ans:"B",exp:"A credit note reduces the buyer's debt to the seller, typically issued when goods are returned or an overcharge is corrected."},
+    {q:"The MATERIALITY CONCEPT allows businesses to",opts:["A. omit all small transactions","B. treat immaterial items in the simplest practical way rather than following strict rules","C. record only large transactions","D. avoid taxes on small items"],ans:"B",exp:"Materiality means that accounting standards need not be strictly applied to items so small that they would not influence decisions."},
+    {q:"DEFERRED REVENUE in accounting represents",opts:["A. revenue earned but not yet received","B. cash received in advance for goods or services not yet delivered","C. long-term investments","D. tax payable in future"],ans:"B",exp:"Deferred revenue is a liability representing cash received before the related goods or services are delivered."},
+    {q:"A MANUFACTURING ACCOUNT is prepared to show",opts:["A. profit from trading","B. the cost of goods manufactured during a period","C. overhead expenses only","D. sales revenue"],ans:"B",exp:"A manufacturing account calculates the total cost of goods produced in a period, including prime cost and factory overheads."},
+    {q:"PROFIT AND LOSS APPROPRIATION ACCOUNT in a partnership shows",opts:["A. total revenue earned","B. how the net profit is divided among partners","C. total expenses","D. capital introduced"],ans:"B",exp:"The appropriation account shows how partnership profits are distributed—interest on capital, salaries, and residual profit sharing."},
+    {q:"The HISTORICAL COST concept means",opts:["A. assets are valued at current market price","B. assets are recorded at their original purchase price","C. liabilities are valued at current rates","D. accounts are adjusted for inflation"],ans:"B",exp:"The historical cost concept requires assets to be recorded and maintained at their original acquisition cost."},
+    {q:"An ACCRUED EXPENSE is",opts:["A. an expense paid in advance","B. an expense incurred but not yet paid","C. a future capital cost","D. an optional expense"],ans:"B",exp:"An accrued expense is a cost that has been incurred but not yet paid at the end of the accounting period."},
+    {q:"PREPAID EXPENSES appear in the balance sheet as",opts:["A. current liabilities","B. current assets","C. long-term assets","D. equity"],ans:"B",exp:"Prepaid expenses (expenses paid in advance) are current assets because they represent economic benefits not yet consumed."},
+    {q:"The CASH BOOK in accounting serves as both",opts:["A. a journal and a ledger account","B. a trial balance and income statement","C. a bank statement and cash receipt","D. a balance sheet and cash flow statement"],ans:"A",exp:"The cash book functions as both a book of original entry (journal) and a ledger account for cash and bank transactions."},
+    {q:"NET PROFIT MARGIN is calculated as",opts:["A. (Gross Profit ÷ Sales) × 100","B. (Net Profit ÷ Sales) × 100","C. (Operating Cost ÷ Sales) × 100","D. (Net Profit ÷ Total Assets) × 100"],ans:"B",exp:"Net Profit Margin = (Net Profit ÷ Sales) × 100. It shows the percentage of revenue remaining after all expenses."},
+    {q:"A DEBIT NOTE is issued by a buyer to",opts:["A. confirm payment","B. notify the seller of a reduction in the amount owed, typically for returned goods","C. request new goods","D. offer credit to the seller"],ans:"B",exp:"A debit note is sent by a buyer to a seller to formally request a credit note following the return of goods or an overcharge."},
+    {q:"STOCK TURNOVER RATIO measures",opts:["A. how quickly a company pays its debts","B. the number of times inventory is sold and replaced in a period","C. profitability of stock","D. market value of shares"],ans:"B",exp:"Stock Turnover = Cost of Goods Sold ÷ Average Stock. It shows how efficiently inventory is managed."},
+  ],
+};
+
+// ===== SUBJECTS CONFIG =====
+const ARTS_SUBJECTS = [
+  {id:'literature', name:'Literature in English', icon:'📚', desc:'Drama, poetry & prose'},
+  {id:'history', name:'History', icon:'🏛️', desc:'African & world history'},
+  {id:'government', name:'Government', icon:'⚖️', desc:'Political science & civics'},
+  {id:'crk', name:'Christian Religious Knowledge', icon:'✝️', desc:'Old & New Testament'},
+  {id:'yoruba', name:'Yoruba Language', icon:'🌍', desc:'Language, culture & literature'},
+];
+const COMMERCIAL_SUBJECTS = [
+  {id:'economics', name:'Economics', icon:'📊', desc:'Micro & macroeconomics'},
+  {id:'commerce', name:'Commerce', icon:'🏪', desc:'Trade & business'},
+  {id:'accounting', name:'Accounting', icon:'🧮', desc:'Financial accounting'},
+];
+
+// ===== STATE =====
+let selectedSubjects = ['english'];
+let examQuestions = [];
+let answers = {};
+let currentQ = 0;
+let currentSubjectTab = 'english';
+let timerInterval = null;
+let secondsLeft = 7200;
+let sessionSeed = Date.now();
+
+// ===== HELPERS =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function seededRandom(seed) {
+  let s = seed;
+  return function() {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
+
+function shuffleWithSeed(arr, seed) {
+  const rng = seededRandom(seed);
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pick40(subjectId, seed) {
+  const pool = QUESTION_BANK[subjectId] || [];
+  const shuffled = shuffleWithSeed(pool, seed + subjectId.charCodeAt(0) * 31337);
+  return shuffled.slice(0, 40);
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  ['arts-grid','commercial-grid'].forEach(id => {
+    const grid = document.getElementById(id);
+    const subjects = id === 'arts-grid' ? ARTS_SUBJECTS : COMMERCIAL_SUBJECTS;
+    grid.innerHTML = subjects.map(s => `
+      <div class="subject-card ${selectedSubjects.includes(s.id)?'selected':''}" id="card-${s.id}" onclick="toggleSubject('${s.id}')">
+        <span class="optional-tag">Optional</span>
+        <div class="subject-icon">${s.icon}</div>
+        <div class="subject-name">${s.name}</div>
+        <div class="subject-desc">${s.desc}</div>
+      </div>
+    `).join('');
+  });
+  updateSelectionInfo();
+}
+
+function toggleSubject(id) {
+  if (selectedSubjects.includes(id)) {
+    selectedSubjects = selectedSubjects.filter(s => s !== id);
+  } else {
+    if (selectedSubjects.length >= 4) { 
+      alert('You can only select 3 optional subjects (4 total including English).'); 
+      return; 
+    }
+    selectedSubjects.push(id);
+  }
+  renderDashboard();
+}
+
+function updateSelectionInfo() {
+  const optional = selectedSubjects.filter(s => s !== 'english').length;
+  const info = document.getElementById('selection-info');
+  const btn = document.getElementById('start-btn');
+  info.innerHTML = `<strong>${optional} of 3</strong> optional subjects selected. ${optional < 3 ? 'Pick exactly 3 to start.' : 'Ready to begin!'}`;
+  if (optional === 3) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  } else {
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+  }
+}
+
+// ===== EXAM =====
+function startExam() {
+  sessionSeed = Date.now();
+  answers = {};
+  currentQ = 0;
+  examQuestions = [];
+
+  selectedSubjects.forEach(subId => {
+    const qs = pick40(subId, sessionSeed);
+    qs.forEach((q, i) => {
+      examQuestions.push({ ...q, subjectId: subId, globalIndex: examQuestions.length });
+    });
+  });
+
+  currentSubjectTab = selectedSubjects[0];
+  renderTabs();
+  renderQGrid();
+  renderQuestion();
+  showScreen('exam');
+  startTimer();
+}
+
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  secondsLeft = 7200;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    updateTimerDisplay();
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval);
+      submitExam();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const h = Math.floor(secondsLeft / 3600);
+  const m = Math.floor((secondsLeft % 3600) / 60);
+  const s = secondsLeft % 60;
+  const el = document.getElementById('timer-display');
+  el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className = secondsLeft < 300 ? 'danger' : secondsLeft < 900 ? 'warning' : '';
+}
+
+function getSubjectName(id) {
+  const all = [...ARTS_SUBJECTS, ...COMMERCIAL_SUBJECTS, {id:'english',name:'English Language'}];
+  return (all.find(s => s.id === id) || {}).name || id;
+}
+
+function renderTabs() {
+  const tabs = document.getElementById('subject-tabs');
+  tabs.innerHTML = selectedSubjects.map(id => `
+    <div class="subject-tab ${currentSubjectTab === id ? 'active' : ''}" onclick="switchTab('${id}')">${getSubjectName(id)}</div>
+  `).join('');
+}
+
+function switchTab(id) {
+  currentSubjectTab = id;
+  renderTabs();
+  const firstQ = examQuestions.findIndex(q => q.subjectId === id);
+  if (firstQ >= 0) { currentQ = firstQ; renderQuestion(); renderQGrid(); }
+}
+
+function renderQGrid() {
+  const subjectQs = examQuestions.filter(q => q.subjectId === currentSubjectTab);
+  const grid = document.getElementById('q-grid');
+  grid.innerHTML = subjectQs.map((q, i) => {
+    const gi = q.globalIndex;
+    const answered = answers[gi] !== undefined;
+    const isCurrent = gi === currentQ;
+    return `<div class="q-dot ${answered?'answered':''} ${isCurrent?'current':''}" onclick="goToQ(${gi})">${i+1}</div>`;
+  }).join('');
+  
+  const total = examQuestions.length;
+  const ans = Object.keys(answers).length;
+  document.getElementById('answered-count').textContent = `${ans} of ${total} answered`;
+  document.getElementById('exam-progress-text').textContent = `Q ${currentQ+1} of ${total}`;
+}
+
+function goToQ(gi) {
+  currentQ = gi;
+  const subId = examQuestions[gi].subjectId;
+  if (subId !== currentSubjectTab) {
+    currentSubjectTab = subId;
+    renderTabs();
+  }
+  renderQuestion();
+  renderQGrid();
+}
+
+function renderQuestion() {
+  const q = examQuestions[currentQ];
+  if (!q) return;
+  const area = document.getElementById('question-area');
+  const letters = ['A','B','C','D'];
+  area.innerHTML = `
+    <div class="question-card">
+      <div class="q-num">Question ${currentQ+1} — ${getSubjectName(q.subjectId)}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((opt, i) => `
+          <div class="option ${answers[q.globalIndex] === letters[i] ? 'selected' : ''}" onclick="selectAnswer(${q.globalIndex}, '${letters[i]}')">
+            <span class="option-letter">${letters[i]}.</span>
+            <span>${opt.replace(/^[A-D]\. /,'')}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function selectAnswer(gi, letter) {
+  answers[gi] = letter;
+  renderQuestion();
+  renderQGrid();
+}
+
+function prevQ() {
+  if (currentQ > 0) goToQ(currentQ - 1);
+}
+
+function nextQ() {
+  if (currentQ < examQuestions.length - 1) goToQ(currentQ + 1);
+}
+
+function confirmSubmit() {
+  const ans = Object.keys(answers).length;
+  const total = examQuestions.length;
+  if (confirm(`You have answered ${ans} of ${total} questions. Submit now?`)) {
+    submitExam();
+  }
+}
+
+function submitExam() {
+  if (timerInterval) clearInterval(timerInterval);
+  showScreen('results');
+  renderResults();
+}
+
+// ===== RESULTS =====
+function renderResults() {
+  let totalCorrect = 0;
+  const subjectStats = {};
+  selectedSubjects.forEach(id => { subjectStats[id] = { correct: 0, total: 0 }; });
+
+  examQuestions.forEach(q => {
+    subjectStats[q.subjectId].total++;
+    if (answers[q.globalIndex] === q.ans) {
+      totalCorrect++;
+      subjectStats[q.subjectId].correct++;
+    }
+  });
+
+  const pct = Math.round((totalCorrect / examQuestions.length) * 100);
+  const verdict = pct >= 70 ? '🎉 Excellent! JAMB ready!' : pct >= 50 ? '👍 Good effort—keep studying!' : '📖 More practice needed.';
+  const verdictColor = pct >= 70 ? '#3B6D11' : pct >= 50 ? '#BA7517' : '#A32D2D';
+
+  const subjectScoreCards = selectedSubjects.map(id => {
+    const st = subjectStats[id];
+    const sp = Math.round((st.correct/st.total)*100);
+    const cls = sp >= 70 ? 'high' : sp >= 50 ? 'mid' : 'low';
+    return `<div class="score-card">
+      <div class="score-card-name">${getSubjectName(id)}</div>
+      <div class="score-card-num ${cls}">${st.correct}/${st.total}</div>
+      <div style="font-size:0.78rem;color:var(--color-text-secondary);margin-top:2px;">${sp}%</div>
+    </div>`;
+  }).join('');
+
+  const reviewSections = selectedSubjects.map(id => {
+    const qs = examQuestions.filter(q => q.subjectId === id);
+    const qsHTML = qs.map((q, i) => {
+      const userAns = answers[q.globalIndex];
+      const isCorrect = userAns === q.ans;
+      const letters = ['A','B','C','D'];
+      return `<div class="review-q">
+        <div class="review-q-text"><strong>Q${i+1}.</strong> ${q.q}</div>
+        ${q.opts.map((opt, oi) => {
+          const letter = letters[oi];
+          let cls = '';
+          if (letter === q.ans) cls = 'correct';
+          else if (letter === userAns && !isCorrect) cls = 'wrong';
+          if (!cls) return '';
+          return `<div class="review-answer ${cls}">${opt} ${letter === q.ans ? '✓ Correct answer' : '✗ Your answer'}</div>`;
+        }).join('')}
+        ${!userAns ? '<div class="review-answer wrong">Not answered</div>' : ''}
+        ${q.exp ? `<div class="explanation">💡 ${q.exp}</div>` : ''}
+      </div>`;
+    }).join('');
+
+    const st = subjectStats[id];
+    return `<div class="review-section">
+      <div class="review-header" onclick="toggleReview(this)">
+        <span>${getSubjectName(id)} — ${st.correct}/${st.total} correct</span>
+        <span>▼ Show review</span>
+      </div>
+      <div class="review-body">${qsHTML}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('results-body').innerHTML = `
+    <div class="score-hero">
+      <div class="score-big">${totalCorrect}/${examQuestions.length}</div>
+      <div class="score-label">${pct}% overall score</div>
+      <div class="score-verdict" style="color:${verdictColor}">${verdict}</div>
+    </div>
+    <div class="subject-scores">${subjectScoreCards}</div>
+    <h3 style="font-size:1rem;font-weight:500;margin-bottom:1rem;">Detailed Answer Review</h3>
+    ${reviewSections}
+    <div class="results-actions" style="margin-top:1.5rem;">
+      <button class="btn-primary" onclick="retakeExam()">Retake with New Questions</button>
+      <button class="btn-secondary" onclick="showScreen('dashboard')">Change Subjects</button>
+    </div>
+    <div style="margin-top:1.5rem;padding:1rem;background:var(--color-background-secondary);border-radius:10px;font-size:0.82rem;color:var(--color-text-secondary);text-align:center;">
+      Prepared by <a href="https://solomonadegoke.vercel.app/" target="_blank" style="color:#185FA5;">Solomon Adegoke</a> &mdash; JAMB CBT Practice Platform
+    </div>
+  `;
+}
+
+function toggleReview(el) {
+  const body = el.nextElementSibling;
+  body.classList.toggle('open');
+  el.querySelector('span:last-child').textContent = body.classList.contains('open') ? '▲ Hide review' : '▼ Show review';
+}
+
+function retakeExam() {
+  showScreen('dashboard');
+}
+
+// ===== INIT =====
+renderDashboard();
+</script>
+</body>
+</html>
