@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>JAMBReady — Nigeria's #1 JAMB Practice Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090f;
+  --surface:#0f1420;
+  --card:#141c2b;
+  --card2:#1a2438;
+  --border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.12);
+  --accent:#f5a623;
+  --accent-dim:rgba(245,166,35,.12);
+  --accent-glow:rgba(245,166,35,.25);
+  --green:#22c55e;
+  --green-dim:rgba(34,197,94,.12);
+  --red:#ef4444;
+  --red-dim:rgba(239,68,68,.12);
+  --blue:#60a5fa;
+  --blue-dim:rgba(96,165,250,.1);
+  --text:#edf2f7;
+  --text2:#8fa3be;
+  --text3:#4d6680;
+  --r-sm:8px;
+  --r-md:12px;
+  --r-lg:16px;
+  --r-xl:20px;
+  --hd:'Syne',sans-serif;
+  --bd:'Inter',sans-serif;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --shadow-lg:0 8px 48px rgba(0,0,0,.6);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--bd);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6;-webkit-font-smoothing:antialiased}
+img,svg{display:block;max-width:100%}
+button{font-family:var(--bd);cursor:pointer;border:none;outline:none;transition:all .2s ease}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── PAGE SYSTEM ── */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+/* ── SHARED COMPONENTS ── */
+.container{width:100%;max-width:1080px;margin:0 auto;padding:0 1.25rem}
+.tag{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .75rem;border-radius:100px}
+.tag-amber{background:var(--accent-dim);color:var(--accent);border:1px solid rgba(245,166,35,.2)}
+.tag-blue{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(96,165,250,.2)}
+.tag-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.tag-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.divider{height:1px;background:var(--border);margin:2rem 0}
+.sec-label{font-family:var(--hd);font-size:.7rem;font-weight:700;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:1rem}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-weight:600;font-size:.9rem;padding:.7rem 1.5rem;border-radius:var(--r-md);transition:all .2s ease;cursor:pointer;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#000;border:2px solid var(--accent)}
+.btn-primary:hover{background:#ffb833;border-color:#ffb833;transform:translateY(-1px);box-shadow:0 4px 16px var(--accent-glow)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border2)}
+.btn-ghost:hover{background:var(--card);border-color:var(--border2)}
+.btn-danger{background:var(--red-dim);color:var(--red);border:1.5px solid rgba(239,68,68,.25)}
+.btn-danger:hover{background:rgba(239,68,68,.2)}
+.btn-sm{padding:.5rem 1rem;font-size:.82rem}
+.btn-lg{padding:.85rem 2rem;font-size:1rem;border-radius:var(--r-lg)}
+.btn:disabled{opacity:.38;cursor:not-allowed;transform:none !important;box-shadow:none !important}
+
+/* ═══════════════════════════════
+   LANDING PAGE
+═══════════════════════════════ */
+#landing{background:var(--bg);position:relative;overflow:hidden}
+
+/* Nav */
+.l-nav{position:sticky;top:0;z-index:100;background:rgba(7,9,15,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.l-nav-inner{display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 1.5rem;max-width:1200px;margin:0 auto}
+.l-logo{font-family:var(--hd);font-size:1.35rem;font-weight:800;color:var(--accent);letter-spacing:-.01em}
+.l-logo em{color:var(--text);font-style:normal}
+
+/* Hero */
+.l-hero{padding:5rem 1.25rem 4rem;text-align:center;position:relative;max-width:760px;margin:0 auto}
+.l-hero::before{content:'';position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:700px;height:500px;background:radial-gradient(ellipse at center,rgba(245,166,35,.06) 0%,transparent 65%);pointer-events:none}
+.l-hero .tag{margin-bottom:1.5rem}
+.l-hero h1{font-family:var(--hd);font-size:clamp(2.2rem,5.5vw,4.2rem);font-weight:800;line-height:1.1;color:var(--text);margin-bottom:1.25rem;letter-spacing:-.02em}
+.l-hero h1 span{color:var(--accent)}
+.l-hero p{font-size:clamp(.95rem,2vw,1.1rem);color:var(--text2);max-width:520px;margin:0 auto 2rem;line-height:1.75}
+.hero-cta{display:flex;gap:.875rem;justify-content:center;flex-wrap:wrap}
+
+/* Stats */
+.l-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0}
+.l-stat{background:var(--bg);padding:2rem 1rem;text-align:center}
+.l-stat-num{font-family:var(--hd);font-size:1.9rem;font-weight:800;color:var(--accent);line-height:1}
+.l-stat-lbl{font-size:.78rem;color:var(--text2);margin-top:.35rem;font-weight:500}
+
+/* Features */
+.l-features{padding:4rem 1.25rem;max-width:1080px;margin:0 auto}
+.l-features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
+.feat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;transition:border-color .2s,transform .2s}
+.feat-card:hover{border-color:rgba(245,166,35,.3);transform:translateY(-2px)}
+.feat-icon{width:40px;height:40px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:1rem}
+.feat-card h3{font-family:var(--hd);font-size:1rem;font-weight:700;margin-bottom:.4rem;color:var(--text)}
+.feat-card p{font-size:.875rem;color:var(--text2);line-height:1.65}
+
+/* Footer */
+.l-footer{text-align:center;padding:1.75rem 1.25rem;border-top:1px solid var(--border);color:var(--text3);font-size:.82rem}
+.l-footer a{color:var(--accent)}
+
+/* ═══════════════════════════════
+   DASHBOARD PAGE
+═══════════════════════════════ */
+#dashboard{background:var(--bg)}
+.d-nav{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.d-nav-inner{display:flex;align-items:center;justify-content:space-between;height:58px;padding:0 1.25rem;max-width:1080px;margin:0 auto}
+.d-logo{font-family:var(--hd);font-size:1.2rem;font-weight:800;color:var(--accent)}
+.d-logo em{color:var(--text);font-style:normal}
+.d-body{max-width:1080px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+.d-intro{margin-bottom:2.5rem}
+.d-intro h2{font-family:var(--hd);font-size:1.7rem;font-weight:800;margin-bottom:.35rem;color:var(--text)}
+.d-intro p{color:var(--text2);font-size:.9rem}
+
+/* Mode selector */
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2.5rem}
+.mode-card{background:var(--card);border:2px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;cursor:pointer;transition:all .2s;position:relative;text-align:left}
+.mode-card:hover{border-color:rgba(245,166,35,.4)}
+.mode-card.active{border-color:var(--accent);background:rgba(245,166,35,.05)}
+.mode-badge{position:absolute;top:.75rem;right:.75rem;background:var(--accent);color:#000;font-size:.65rem;font-weight:700;padding:.2rem .55rem;border-radius:100px;letter-spacing:.04em}
+.mode-icon{font-size:1.5rem;margin-bottom:.65rem}
+.mode-card h3{font-family:var(--hd);font-size:.95rem;font-weight:700;margin-bottom:.25rem;color:var(--text)}
+.mode-card p{font-size:.8rem;color:var(--text2);line-height:1.5}
+
+/* Info banner */
+.info-banner{display:flex;align-items:flex-start;gap:.875rem;background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.18);border-radius:var(--r-md);padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:.875rem;color:var(--blue)}
+.info-banner-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+
+/* Subject grid */
+.subj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;margin-bottom:2.5rem}
+.subj-card{background:var(--card);border:2px solid var(--border);border-radius:var(--r-md);padding:1rem .875rem;cursor:pointer;transition:all .2s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.subj-card:hover:not(.is-locked){border-color:rgba(245,166,35,.4)}
+.subj-card.is-selected{border-color:var(--accent);background:var(--accent-dim)}
+.subj-card.is-locked{cursor:default}
+.subj-card .sc-icon{font-size:1.5rem;line-height:1}
+.subj-card .sc-name{font-family:var(--hd);font-size:.82rem;font-weight:700;color:var(--text);line-height:1.3}
+.subj-card .sc-track{font-size:.7rem;color:var(--text2)}
+.subj-card.is-compulsory .sc-name{color:var(--accent)}
+
+/* Year pills */
+.year-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}
+.yr-pill{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:.4rem .9rem;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .18s;color:var(--text2)}
+.yr-pill:hover{border-color:rgba(245,166,35,.4);color:var(--text)}
+.yr-pill.is-active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700}
+
+/* Start zone */
+.start-zone{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:1.75rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}
+.start-zone-info h4{font-family:var(--hd);font-size:1rem;font-weight:700;margin-bottom:.3rem}
+.start-zone-info p{font-size:.83rem;color:var(--text2);line-height:1.5}
+.start-zone-info p span{color:var(--accent);font-weight:600}
+
+/* ═══════════════════════════════
+   EXAM PAGE
+═══════════════════════════════ */
+#exam{background:var(--bg);display:flex;flex-direction:column}
+.e-header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;padding:.875rem 1.25rem}
+.e-header-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.e-title{font-family:var(--hd);font-size:.95rem;font-weight:700;color:var(--text)}
+.e-controls{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.timer{display:flex;align-items:center;gap:.5rem;background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-md);padding:.45rem .9rem;font-family:var(--hd);font-size:1rem;font-weight:700;letter-spacing:.04em}
+.timer.warn{border-color:rgba(239,68,68,.4);color:var(--red);background:rgba(239,68,68,.06)}
+.e-prog{font-size:.8rem;color:var(--text2);white-space:nowrap}
+
+/* Exam layout */
+.e-layout{display:flex;gap:0;flex:1;max-width:1080px;margin:0 auto;width:100%;padding:1.5rem 1.25rem;gap:1.5rem;align-items:flex-start}
+
+/* Question nav panel */
+.e-nav-panel{width:220px;flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:1rem;position:sticky;top:90px}
+.e-nav-panel h4{font-size:.72rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.75rem}
+.q-dots{display:grid;grid-template-columns:repeat(5,1fr);gap:.35rem}
+.q-dot{width:100%;aspect-ratio:1;border-radius:6px;border:none;font-size:.72rem;font-weight:600;cursor:pointer;background:var(--card2);color:var(--text3);transition:all .15s;font-family:var(--bd)}
+.q-dot.is-done{background:var(--accent);color:#000}
+.q-dot.is-current{box-shadow:0 0 0 2px var(--accent);color:var(--accent)}
+.q-dot.is-flagged{background:rgba(96,165,250,.2);color:var(--blue)}
+.q-dot.is-done.is-current{box-shadow:0 0 0 2px #fff}
+.nav-legend{display:flex;flex-direction:column;gap:.4rem;margin-top:1rem;padding-top:.875rem;border-top:1px solid var(--border)}
+.nav-legend-item{display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--text2)}
+.nav-legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+/* Question card */
+.e-main{flex:1;min-width:0}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:1.75rem;margin-bottom:1rem}
+.q-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;gap:.75rem;flex-wrap:wrap}
+.q-num{font-family:var(--hd);font-size:.72rem;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase}
+.q-tags{display:flex;gap:.5rem;flex-wrap:wrap}
+.q-text{font-size:1rem;line-height:1.7;color:var(--text);margin-bottom:1.5rem}
+.q-opts{display:flex;flex-direction:column;gap:.625rem}
+.opt{display:flex;align-items:center;gap:.875rem;background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r-md);padding:.875rem 1rem;cursor:pointer;transition:all .18s}
+.opt:hover{border-color:rgba(245,166,35,.35);background:rgba(245,166,35,.03)}
+.opt.is-selected{border-color:var(--accent);background:var(--accent-dim)}
+.opt-letter{width:30px;height:30px;border-radius:7px;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;font-family:var(--hd);flex-shrink:0;transition:all .18s}
+.opt.is-selected .opt-letter{background:var(--accent);color:#000;border-color:var(--accent)}
+.opt-text{font-size:.9rem;color:var(--text);line-height:1.45}
+
+/* Nav buttons */
+.q-footer{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.q-footer-left{display:flex;gap:.5rem}
+.q-footer-right{display:flex;gap:.5rem}
+
+/* ═══════════════════════════════
+   RESULTS PAGE
+═══════════════════════════════ */
+#results{background:var(--bg)}
+.r-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.875rem 1.25rem}
+.r-nav-inner{max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.r-nav-logo{font-family:var(--hd);font-size:1.1rem;font-weight:800;color:var(--accent)}
+.r-nav-logo em{color:var(--text);font-style:normal}
+.r-body{max-width:1080px;margin:0 auto;padding:2rem 1.25rem 4rem}
+
+/* Score hero */
+.score-hero{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:2rem;margin-bottom:1.5rem;text-align:center;position:relative;overflow:hidden}
+.score-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 0%,rgba(245,166,35,.06),transparent 65%);pointer-events:none}
+.score-ring-wrap{position:relative;width:130px;height:130px;margin:0 auto 1.25rem}
+.score-ring-wrap svg{transform:rotate(-90deg)}
+.score-ring-wrap .ring-bg{stroke:var(--card2);fill:none}
+.score-ring-wrap .ring-fill{fill:none;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.score-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-pct{font-family:var(--hd);font-size:1.8rem;font-weight:800;line-height:1}
+.score-pct-lbl{font-size:.7rem;color:var(--text2);margin-top:.15rem}
+.score-grade{font-family:var(--hd);font-size:1.4rem;font-weight:800;margin-bottom:.25rem}
+.score-caption{font-size:.875rem;color:var(--text2);margin-bottom:1.5rem}
+.score-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}
+.sc-stat{background:var(--card2);border-radius:var(--r-md);padding:.875rem .75rem;text-align:center}
+.sc-stat-num{font-family:var(--hd);font-size:1.35rem;font-weight:800;line-height:1}
+.sc-stat-lbl{font-size:.72rem;color:var(--text2);margin-top:.25rem}
+
+/* Subject breakdown */
+.subj-bk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.875rem;margin-bottom:1.75rem}
+.subj-bk-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.1rem}
+.subj-bk-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.625rem;gap:.5rem}
+.subj-bk-name{font-family:var(--hd);font-size:.85rem;font-weight:700;color:var(--text)}
+.subj-bk-pct{font-family:var(--hd);font-size:.85rem;font-weight:700}
+.subj-bk-bar{height:6px;background:var(--card2);border-radius:100px;overflow:hidden;margin-bottom:.4rem}
+.subj-bk-fill{height:100%;border-radius:100px;transition:width 1s ease}
+.subj-bk-nums{font-size:.75rem;color:var(--text2)}
+
+/* Review */
+.review-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.rtab{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-md);padding:.45rem 1rem;font-size:.82rem;font-weight:600;cursor:pointer;color:var(--text2);transition:all .18s}
+.rtab:hover{border-color:var(--border2);color:var(--text)}
+.rtab.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.rv-card{background:var(--card);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:.875rem;border-left:4px solid var(--border)}
+.rv-card.is-correct{border-left-color:var(--green)}
+.rv-card.is-wrong{border-left-color:var(--red)}
+.rv-card.is-unanswered{border-left-color:var(--text3)}
+.rv-top{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.75rem}
+.rv-badge{font-size:.7rem;font-weight:700;padding:.25rem .65rem;border-radius:100px}
+.rv-meta{font-size:.75rem;color:var(--text2)}
+.rv-q{font-size:.93rem;color:var(--text);line-height:1.65;margin-bottom:.875rem}
+.rv-opts{display:flex;flex-direction:column;gap:.35rem}
+.rv-opt{display:flex;align-items:center;gap:.6rem;font-size:.85rem;padding:.45rem .75rem;border-radius:var(--r-sm)}
+.rv-opt.is-correct-ans{background:var(--green-dim);color:var(--green)}
+.rv-opt.is-user-wrong{background:var(--red-dim);color:var(--red)}
+.rv-opt.is-neutral{color:var(--text2)}
+.rv-opt-letter{font-weight:700;flex-shrink:0;width:1.2rem}
+.rv-exp{margin-top:.875rem;background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.15);border-radius:var(--r-sm);padding:.75rem 1rem;font-size:.82rem;color:var(--text2);line-height:1.6}
+.rv-exp strong{color:var(--blue)}
+.results-actions{display:flex;gap:.875rem;flex-wrap:wrap;justify-content:center;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--border)}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:1.25rem}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-xl);padding:2rem;max-width:400px;width:100%;text-align:center;box-shadow:var(--shadow-lg)}
+.modal-icon{font-size:2.5rem;margin-bottom:1rem}
+.modal h3{font-family:var(--hd);font-size:1.2rem;font-weight:800;margin-bottom:.5rem}
+.modal p{font-size:.875rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
+.modal-btns{display:flex;gap:.75rem;justify-content:center}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .l-stats{grid-template-columns:repeat(2,1fr)}
+  .mode-grid{grid-template-columns:1fr}
+  .e-layout{flex-direction:column}
+  .e-nav-panel{width:100%;position:static}
+  .q-dots{grid-template-columns:repeat(8,1fr)}
+  .score-stats-row{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .l-nav-inner{padding:0 1rem}
+  .l-hero{padding:3.5rem 1rem 3rem}
+  .l-hero h1{font-size:2rem}
+  .l-stats{grid-template-columns:repeat(2,1fr)}
+  .l-stat{padding:1.5rem .75rem}
+  .l-stat-num{font-size:1.5rem}
+  .l-features{padding:2.5rem 1rem}
+  .d-body{padding:1.5rem 1rem 3rem}
+  .d-intro h2{font-size:1.35rem}
+  .mode-grid{grid-template-columns:1fr}
+  .subj-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .e-header-inner{gap:.625rem}
+  .e-layout{padding:1rem;gap:1rem}
+  .q-card{padding:1.25rem}
+  .q-dots{grid-template-columns:repeat(6,1fr)}
+  .e-controls{gap:.5rem}
+  .timer{font-size:.875rem;padding:.4rem .75rem}
+  .score-stats-row{grid-template-columns:repeat(2,1fr)}
+  .start-zone{flex-direction:column}
+  .r-body{padding:1.5rem 1rem 3rem}
+  .score-hero{padding:1.5rem 1rem}
+  .e-nav-panel{padding:.75rem}
+  .q-footer{gap:.5rem}
+}
+@media(max-width:380px){
+  .subj-grid{grid-template-columns:repeat(2,1fr)}
+  .q-dots{grid-template-columns:repeat(5,1fr)}
+  .score-stats-row{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+
+/* ── EXAM SPLASH ── */
+#exam-splash{min-height:100vh;background:var(--bg);display:flex;flex-direction:column}
+.splash-nav{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border)}
+.splash-body{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1.25rem}
+.splash-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:2.5rem 2rem;max-width:520px;width:100%;text-align:center}
+.splash-icon{font-size:3rem;margin-bottom:1.25rem}
+.splash-card h2{font-family:var(--hd);font-size:1.6rem;font-weight:800;margin-bottom:.5rem;color:var(--text)}
+.splash-card>p{font-size:.9rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.6}
+.splash-rules{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem;text-align:left}
+.splash-rule{background:var(--card2);border:1px solid var(--border);border-radius:var(--r-md);padding:.875rem 1rem;display:flex;align-items:flex-start;gap:.625rem}
+.splash-rule-icon{font-size:1.2rem;flex-shrink:0;line-height:1}
+.splash-rule-text{font-size:.8rem;color:var(--text2);line-height:1.5}
+.splash-rule-text strong{color:var(--text);display:block;margin-bottom:.1rem;font-size:.83rem}
+.splash-subjects{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:1.5rem}
+.splash-warning{display:flex;align-items:flex-start;gap:.625rem;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);border-radius:var(--r-md);padding:.875rem 1rem;font-size:.82rem;color:var(--accent);text-align:left;line-height:1.55}
+.splash-warning span:first-child{flex-shrink:0;font-size:1rem}
+@media(max-width:480px){
+  .splash-rules{grid-template-columns:1fr}
+  .splash-card{padding:1.75rem 1.25rem}
+  .splash-card h2{font-size:1.3rem}
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══════════ LANDING ══════════ -->
+<div id="landing" class="page active">
+  <nav class="l-nav">
+    <div class="l-nav-inner">
+      <div class="l-logo">JAMB<em>Ready</em></div>
+      <button class="btn btn-primary btn-sm" onclick="showPage('dashboard')">Start Practice →</button>
+    </div>
+  </nav>
+
+  <div class="l-hero">
+    <div class="tag tag-amber">🇳🇬 Nigeria's #1 JAMB Practice Platform</div>
+    <h1>Ace Your JAMB<br><span>With Confidence</span></h1>
+    <p>Practice with real 10-year past questions, perfectly timed at 2 hours with 160 questions across 4 subjects — just like the actual exam.</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary btn-lg" onclick="showPage('dashboard')">Start Practising Free</button>
+      <button class="btn btn-ghost btn-lg" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Learn More</button>
+    </div>
+  </div>
+
+  <div class="l-stats">
+    <div class="l-stat"><div class="l-stat-num">1,600+</div><div class="l-stat-lbl">Past Questions</div></div>
+    <div class="l-stat"><div class="l-stat-num">10</div><div class="l-stat-lbl">Years Covered</div></div>
+    <div class="l-stat"><div class="l-stat-num">14</div><div class="l-stat-lbl">Subjects</div></div>
+    <div class="l-stat"><div class="l-stat-num">2hr</div><div class="l-stat-lbl">Real Timing</div></div>
+  </div>
+
+  <div class="l-features" id="features">
+    <div class="sec-label" style="text-align:center;margin-bottom:1.5rem">Why JAMBReady</div>
+    <div class="l-features-grid">
+      <div class="feat-card"><div class="feat-icon">🔀</div><h3>Fully Randomized</h3><p>Every session serves a unique question set. Retake as many times as you want — no repeats until the pool is exhausted.</p></div>
+      <div class="feat-card"><div class="feat-icon">⏱️</div><h3>Real Exam Timing</h3><p>2-hour countdown, 160 questions across 4 subjects — the exact JAMB CBT format you'll face on exam day.</p></div>
+      <div class="feat-card"><div class="feat-icon">📅</div><h3>10-Year Bank</h3><p>Choose specific years (2015–2024) to drill or mix all years for maximum coverage before your exam.</p></div>
+      <div class="feat-card"><div class="feat-icon">📊</div><h3>Full Answer Review</h3><p>After every exam, get explanations for every question with correct answers clearly highlighted.</p></div>
+      <div class="feat-card"><div class="feat-icon">📚</div><h3>All Tracks Covered</h3><p>Science, Arts, and Commercial. English is compulsory; pick your 3 electives from 13 additional subjects.</p></div>
+      <div class="feat-card"><div class="feat-icon">🏆</div><h3>Score Analytics</h3><p>See your score breakdown per subject, identify weak areas, and know exactly what to focus on.</p></div>
+    </div>
+  </div>
+
+  <footer class="l-footer">
+    Built by <a href="https://solomonadegoke.vercel.app/" target="_blank">Solomon Adegoke</a> &nbsp;·&nbsp; JAMBReady © 2025
+  </footer>
+</div>
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div id="dashboard" class="page">
+  <nav class="d-nav">
+    <div class="d-nav-inner">
+      <div class="d-logo">JAMB<em>Ready</em></div>
+      <button class="btn btn-ghost btn-sm" onclick="showPage('landing')">← Home</button>
+    </div>
+  </nav>
+  <div class="d-body">
+    <div class="d-intro">
+      <h2>Set Up Your Practice Exam</h2>
+      <p>Configure your session below, then hit <strong style="color:var(--accent)">Begin Exam</strong> when ready.</p>
+    </div>
+
+    <div class="sec-label">1 — Exam Mode</div>
+    <div class="mode-grid" id="mode-grid">
+      <div class="mode-card active" data-mode="full" onclick="selectMode(this,'full')">
+        <span class="mode-badge">RECOMMENDED</span>
+        <div class="mode-icon">🎯</div>
+        <h3>Full JAMB Simulation</h3>
+        <p>160 questions · 4 subjects · 2-hour timer · Closest to the real exam</p>
+      </div>
+      <div class="mode-card" data-mode="year" onclick="selectMode(this,'year')">
+        <div class="mode-icon">📅</div>
+        <h3>Year Practice</h3>
+        <p>Pick a specific year and work through that entire JAMB session</p>
+      </div>
+      <div class="mode-card" data-mode="subject" onclick="selectMode(this,'subject')">
+        <div class="mode-icon">📖</div>
+        <h3>Subject Drill</h3>
+        <p>Focus on one subject — 40 targeted questions, 30-minute timer</p>
+      </div>
+    </div>
+
+    <div class="sec-label">2 — Choose Subjects</div>
+    <div class="info-banner">
+      <span class="info-banner-icon">ℹ️</span>
+      <span><strong>English Language</strong> is compulsory for all candidates. Select exactly <strong>3 more subjects</strong> that match your track.</span>
+    </div>
+    <div class="subj-grid" id="subj-grid"></div>
+
+    <div class="sec-label">3 — Select Year(s)</div>
+    <div class="year-row" id="year-row"></div>
+
+    <div class="start-zone">
+      <div class="start-zone-info">
+        <h4>Ready to begin?</h4>
+        <p id="sel-summary">Select 3 more subjects to unlock the exam.</p>
+      </div>
+      <button class="btn btn-primary btn-lg" id="start-btn" onclick="startExam()" disabled>Begin Exam →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ EXAM ══════════ -->
+<div id="exam" class="page">
+
+  <!-- PRE-EXAM SPLASH (shown before exam starts) -->
+  <div id="exam-splash">
+    <div class="splash-nav">
+      <div class="d-logo">JAMB<em>Ready</em></div>
+      <button class="btn btn-ghost btn-sm" onclick="cancelTodashboard()">← Back</button>
+    </div>
+    <div class="splash-body">
+      <div class="splash-card">
+        <div class="splash-icon">📋</div>
+        <h2 id="splash-title">JAMB Practice Exam</h2>
+        <p id="splash-desc">You are about to begin your timed practice session.</p>
+        <div class="splash-rules" id="splash-rules"></div>
+        <div class="splash-subjects" id="splash-subjects"></div>
+        <div class="splash-warning">
+          <span>⚠️</span>
+          <span>The <strong>2-hour timer</strong> starts the moment you click <em>Begin</em>. Make sure you are ready.</span>
+        </div>
+        <button class="btn btn-primary btn-lg" style="width:100%;margin-top:1.5rem" onclick="beginExamNow()">Begin Exam Now →</button>
+        <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:.75rem" onclick="cancelTodashboard()">Go Back to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVE EXAM (hidden until exam begins) -->
+  <div id="exam-active" style="display:none;flex-direction:column;min-height:100vh">
+    <header class="e-header">
+      <div class="e-header-inner">
+        <div class="e-title" id="e-title">JAMB Practice Exam</div>
+        <div class="e-controls">
+          <div class="timer" id="timer">⏱ <span id="timer-display">2:00:00</span></div>
+          <div class="e-prog" id="e-prog">Q 1 / 160</div>
+          <button class="btn btn-danger btn-sm" onclick="openSubmitModal()">Submit</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="e-layout">
+      <!-- Sidebar nav -->
+      <aside class="e-nav-panel">
+        <h4>Questions</h4>
+        <div class="q-dots" id="q-dots"></div>
+        <div class="nav-legend">
+          <div class="nav-legend-item"><div class="nav-legend-dot" style="background:var(--accent)"></div>Answered</div>
+          <div class="nav-legend-item"><div class="nav-legend-dot" style="background:rgba(96,165,250,.3)"></div>Flagged</div>
+          <div class="nav-legend-item"><div class="nav-legend-dot" style="background:var(--card2)"></div>Unanswered</div>
+        </div>
+      </aside>
+
+      <!-- Main question -->
+      <main class="e-main">
+        <div class="q-card">
+          <div class="q-card-top">
+            <div class="q-num" id="q-num">Question 1 of 160</div>
+            <div class="q-tags">
+              <span class="tag tag-amber" id="q-subj-tag">English</span>
+              <span class="tag tag-blue" id="q-year-tag">2020</span>
+            </div>
+          </div>
+          <div class="q-text" id="q-text">Loading question...</div>
+          <div class="q-opts" id="q-opts"></div>
+        </div>
+        <div class="q-footer">
+          <div class="q-footer-left">
+            <button class="btn btn-ghost btn-sm" onclick="prevQ()">← Prev</button>
+            <button class="btn btn-ghost btn-sm" id="flag-btn" onclick="toggleFlag()">🚩 Flag</button>
+          </div>
+          <div class="q-footer-right">
+            <button class="btn btn-primary btn-sm" onclick="nextQ()">Next →</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ RESULTS ══════════ -->
+<div id="results" class="page">
+  <nav class="r-nav">
+    <div class="r-nav-inner">
+      <div class="r-nav-logo">JAMB<em>Ready</em> — Results</div>
+      <div style="display:flex;gap:.625rem">
+        <button class="btn btn-ghost btn-sm" onclick="showPage('dashboard')">New Exam</button>
+        <button class="btn btn-ghost btn-sm" onclick="showPage('landing')">Home</button>
+      </div>
+    </div>
+  </nav>
+  <div class="r-body">
+    <!-- Score hero -->
+    <div class="score-hero">
+      <div class="score-ring-wrap">
+        <svg width="130" height="130" viewBox="0 0 130 130">
+          <circle class="ring-bg" cx="65" cy="65" r="56" stroke-width="10"/>
+          <circle class="ring-fill" id="score-ring" cx="65" cy="65" r="56" stroke-width="10" stroke-dasharray="351.86" stroke-dashoffset="351.86"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-pct" id="res-pct">0%</div>
+          <div class="score-pct-lbl">Score</div>
+        </div>
+      </div>
+      <div class="score-grade" id="res-grade">—</div>
+      <div class="score-caption" id="res-caption">Calculating...</div>
+      <div class="score-stats-row" id="score-stats-row"></div>
+    </div>
+
+    <div class="sec-label" style="margin-bottom:.875rem">Score by Subject</div>
+    <div class="subj-bk-grid" id="subj-bk-grid"></div>
+
+    <div class="sec-label" style="margin-bottom:.875rem">Review All Questions</div>
+    <div class="review-tabs" id="review-tabs">
+      <button class="rtab active" onclick="filterReview('all',this)">All</button>
+      <button class="rtab" onclick="filterReview('wrong',this)">Wrong</button>
+      <button class="rtab" onclick="filterReview('correct',this)">Correct</button>
+      <button class="rtab" onclick="filterReview('unanswered',this)">Unanswered</button>
+    </div>
+    <div id="review-list"></div>
+
+    <div class="results-actions">
+      <button class="btn btn-primary btn-lg" onclick="showPage('dashboard')">Try Again</button>
+      <button class="btn btn-ghost btn-lg" onclick="showPage('landing')">← Home</button>
+    </div>
+    <div class="l-footer" style="margin-top:2rem">Built by <a href="https://solomonadegoke.vercel.app/" target="_blank">Solomon Adegoke</a></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <h3>Submit Exam?</h3>
+    <p id="modal-msg">Are you sure you want to submit?</p>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal()">Continue</button>
+      <button class="btn btn-primary" onclick="submitExam()">Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// =========================================
+// QUESTION DATABASE — 10 Years Past Questions
+// Each question: {id, year, subject, text, options:[A,B,C,D], answer:'A'|'B'|'C'|'D', explanation}
+// =========================================
+
+
+// ---- QUESTION BANK ----
+// We store a large bank and draw from it randomly
+// Format: subject key → array of questions
+const QB = {};
+
+// Helper to build questions
+function q(year,text,opts,ans,exp){
+  return {year,text,opts,ans,exp};
+}
+
+QB['English'] = [
+  q(2015,'Choose the word that is nearest in meaning to BELLIGERENT.',['Peaceful','Aggressive','Timid','Generous'],'B','Belligerent means hostile and aggressive, ready to fight.'),
+  q(2015,'Identify the figure of speech in: "The classroom was a zoo."',['Simile','Metaphor','Personification','Irony'],'B','Comparing the classroom directly to a zoo without "like" or "as" is a metaphor.'),
+  q(2015,'Select the option that correctly fills the gap: "She was _____ when she heard the news."',['Amaze','Amazed','Amazing','Amazes'],'B','"Amazed" is the correct past-tense adjective form after the linking verb "was".'),
+  q(2016,'Which of the following best defines a PARADOX?',['A statement that is obviously false','A statement that seems contradictory but contains truth','A statement that is both true and false','An exaggerated statement'],'B','A paradox appears self-contradictory yet expresses a truth.'),
+  q(2016,'In the sentence "Running fast, he fell down", the underlined phrase is a:',['Gerund phrase','Participial phrase','Infinitive phrase','Prepositional phrase'],'B','A participial phrase modifies a noun or pronoun; "Running fast" modifies "he".'),
+  q(2016,'Choose the word opposite in meaning to PROLIFIC.',['Fertile','Unproductive','Creative','Abundant'],'B','Prolific means producing much; its antonym is unproductive.'),
+  q(2017,'The plural of "phenomenon" is:',['Phenomenons','Phenomenas','Phenomena','Phenomenes'],'C','"Phenomena" is the correct Greek-derived plural of "phenomenon".'),
+  q(2017,'Choose the correctly punctuated sentence.',['He said that he was tired','He said, "I am tired."','He said "I am tired"','He said that, he was tired'],'B','Direct speech requires a comma before the opening quotation marks and a period inside.'),
+  q(2017,'Select the word that best fits: "The politician made a _____ speech that moved the crowd."',['Ambiguous','Powerful','Indifferent','Confusing'],'B','Context indicates the speech had an emotional positive impact — "powerful" is correct.'),
+  q(2018,'Which of these is a CONDITIONAL sentence?',['She sings beautifully','If it rains, we will cancel the match','He went to school','They were playing football'],'B','Conditional sentences use "if" to express a condition and its result.'),
+  q(2018,'The expression "to beat about the bush" means to:',['Go around in circles physically','Avoid getting to the main point','Beat something repeatedly','Explore the bush'],'B','This idiom means to avoid discussing the main subject directly.'),
+  q(2018,'Identify the PASSIVE voice: "The teacher explained the lesson."',['The lesson was explained by the teacher','The teacher did explain the lesson','The lesson has been explained','The lesson explained by the teacher'],'A','Passive voice moves the object ("the lesson") to subject position with "was + past participle".'),
+  q(2019,'Choose the option with the correct use of APOSTROPHE.',["The boys' books are here","The boys books' are here","The boys books are here","The boy\\'s books' are here"],'A','"Boys\'" shows plural possessive — the apostrophe comes after the "s" for plural nouns.'),
+  q(2019,'The device used in "Peter Piper picked a peck of pickled peppers" is:',['Assonance','Alliteration','Onomatopoeia','Rhyme'],'B','Alliteration is the repetition of the same initial consonant sound.'),
+  q(2019,'Which word class does "quickly" belong to?',['Adjective','Adverb','Verb','Conjunction'],'B','"Quickly" modifies verbs, adjectives or other adverbs — it is an adverb.'),
+  q(2020,'Select the synonym for LOQUACIOUS.',['Silent','Talkative','Lazy','Arrogant'],'B','Loquacious means very talkative; the closest synonym is talkative.'),
+  q(2020,'The expression "A bull in a china shop" describes someone who is:',['Very careful','Clumsy and destructive','Very rich','Extremely fast'],'B','This idiom describes someone who is careless and causes damage.'),
+  q(2020,'Which of the following sentences contains a DANGLING MODIFIER?',['Walking down the street, the rain started','She carefully arranged the flowers','He quickly finished his homework','They arrived before dark'],'A','In this sentence, "Walking down the street" dangles — the rain cannot walk.'),
+  q(2021,'Choose the option that best interprets: "Femi bit off more than he could chew."',['Femi ate too much food','Femi took on a task beyond his ability','Femi choked on his food','Femi was very hungry'],'B','This idiom means taking on more responsibility than one can handle.'),
+  q(2021,'Identify the SUBJUNCTIVE mood: ',['I wish I were taller','I am tall','I was tall yesterday','Tall people are lucky'],'A','The subjunctive "were" (not "was") is used to express a hypothetical wish.'),
+  q(2021,'Select the correct INDIRECT speech: She said, "I am going home."',['She said she was going home','She said she is going home','She said I am going home','She said she went home'],'A','In indirect speech, present tense "am" shifts to past "was" and pronoun changes.'),
+  q(2022,'Which of the following is an example of ONOMATOPOEIA?',['The wind is gentle','The bees buzzed loudly','She ran quickly','He looked angry'],'B','"Buzzed" imitates the sound it describes — this is onomatopoeia.'),
+  q(2022,'Choose the correct form: "Neither the students nor the teacher _____ ready."',['are','were','is','have'],'C','When "neither...nor" connects a plural and singular subject, the verb agrees with the nearer subject ("teacher" — singular, so "is").'),
+  q(2022,'The word EPHEMERAL means:',['Everlasting','Short-lived','Bright','Heavy'],'B','Ephemeral describes something that lasts for only a short time.'),
+  q(2023,'Identify the GERUND in: "Swimming is her favourite exercise."',['is','favourite','Swimming','exercise'],'C','"Swimming" functions as the subject of the sentence — it is a gerund (verb used as a noun).'),
+  q(2023,'Choose the word nearest in meaning to GARRULOUS.',['Quiet','Verbose','Shy','Angry'],'B','Garrulous means excessively talkative; verbose is its nearest synonym.'),
+  q(2023,'Which type of sentence is: "Close the door!"',['Declarative','Interrogative','Imperative','Exclamatory'],'C','An imperative sentence issues a command or instruction.'),
+  q(2024,'Choose the correct spelling.',['Recieve','Receive','Reciave','Receve'],'B','"Receive" follows the rule: "i before e except after c".'),
+  q(2024,'The literary device in "Death, be not proud" is:',['Simile','Hyperbole','Apostrophe','Allusion'],'C','Apostrophe (literary) addresses an absent or abstract entity — here, Death.'),
+  q(2024,'Select the sentence with correct subject-verb agreement.',['The news are shocking','The news is shocking','The news were shocking','News are everywhere'],'B','"News" is an uncountable noun that takes a singular verb.'),
+  q(2015,'Choose the ANTONYM of VERBOSE.',['Talkative','Concise','Loud','Fluent'],'B','Verbose means using too many words; its antonym is concise.'),
+  q(2016,'Which of these is an ABSTRACT NOUN?',['Table','Freedom','River','Stone'],'B','Abstract nouns name concepts or qualities that cannot be physically touched; freedom is abstract.'),
+  q(2017,'Identify the RHETORICAL QUESTION: ',['What time is it?','How are you?','Who can defeat death?','Where is the school?'],'C','A rhetorical question is asked for effect, not expecting an answer — "Who can defeat death?" implies nobody.'),
+  q(2018,'The word OBSEQUIOUS means:',['Bold and confident','Excessively eager to please','Rude and arrogant','Wise and careful'],'B','Obsequious describes someone who is overly compliant or flattering.'),
+  q(2019,'Choose the word with the correct prefix meaning "not":',['Irresponsible','Disrespect','Unbelievable','All of the above'],'D','All three prefixes (ir-, dis-, un-) can negate a word.'),
+  q(2020,'In "The old man shuffled along the path", "shuffled" implies:',['Running fast','Walking unsteadily with dragging feet','Jumping energetically','Dancing slowly'],'B','"Shuffle" specifically describes slow, dragging movement of the feet.'),
+  q(2021,'Which is a COMPLEX sentence?',['She ran and fell','He eats rice','Although it rained, we played outside','She laughed'],'C','A complex sentence contains one independent clause and at least one dependent clause.'),
+  q(2022,'Choose the option where the COMMA is used correctly.',['I bought apples, oranges and bananas','I bought apples oranges, and bananas','I bought, apples oranges and bananas','I bought apples oranges and, bananas'],'A','Commas correctly separate items in a list.'),
+  q(2023,'BANE most nearly means:',['Blessing','Curse','Gift','Friend'],'B','Bane means something that causes great distress or death; synonym: curse.'),
+  q(2024,'Choose the sentence in the FUTURE PERFECT tense.',['She will go to school','She goes to school','She will have finished by then','She has gone to school'],'C','Future perfect = will have + past participle, indicating completion before a future time.'),
+  q(2015,'The figure of speech in "Life is a journey" is:',['Simile','Personification','Metaphor','Hyperbole'],'C','A metaphor directly equates two unlike things without "like" or "as".'),
+];
+
+QB['Mathematics'] = [
+  q(2015,'If 3x + 5 = 20, find x.',['3','5','7','2'],'B','3x = 15, so x = 5.'),
+  q(2015,'Simplify: log₁₀ 1000',['2','3','4','1'],'B','10³ = 1000, so log₁₀ 1000 = 3.'),
+  q(2016,'Find the sum of the roots of 2x² - 5x + 3 = 0.',['5/2','3/2','2/5','5/3'],'A','Sum of roots = -b/a = -(-5)/2 = 5/2.'),
+  q(2016,'Convert 0.375 to a fraction in its lowest terms.',['3/4','3/8','1/3','5/8'],'B','0.375 = 375/1000 = 3/8.'),
+  q(2017,'The simple interest on ₦5000 at 6% per annum for 3 years is:',['₦900','₦1000','₦750','₦600'],'A','SI = PRT/100 = 5000×6×3/100 = ₦900.'),
+  q(2017,'Evaluate: 4! / (2! × 2!)',['6','12','4','8'],'A','4! = 24, 2!×2! = 4, so 24/4 = 6.'),
+  q(2018,'If P = {1,2,3,4} and Q = {3,4,5,6}, find P∩Q.',['{}','{ 3,4}','{ 1,2,3,4,5,6}','{ 1,2}'],'B','P∩Q is the intersection containing elements in both sets: {3,4}.'),
+  q(2018,'The gradient of the line 3y - 6x + 9 = 0 is:',['3','2','-2','-3'],'B','Rearrange: y = 2x - 3, gradient (slope) = 2.'),
+  q(2019,'Find the median of: 3, 7, 5, 9, 11.',['7','8','9','5'],'A','Arranged: 3,5,7,9,11 — middle value is 7.'),
+  q(2019,'Solve: 2^(x+1) = 32',['4','3','5','2'],'A','32 = 2⁵, so x+1 = 5, x = 4.'),
+  q(2020,'A triangle has angles in ratio 2:3:5. Find the largest angle.',['90°','60°','72°','54°'],'A','2+3+5=10 parts; largest = 5/10 × 180° = 90°.'),
+  q(2020,'If y = 3x² - 4x + 1, find dy/dx.',['6x-4','3x-4','6x+4','3x+1'],'A','Differentiating: dy/dx = 6x - 4.'),
+  q(2021,'Find the range of: 5, 12, 3, 8, 20, 7.',['15','17','18','13'],'B','Range = max - min = 20 - 3 = 17.'),
+  q(2021,'The area of a circle with radius 7 cm is (π = 22/7):',['44 cm²','154 cm²','22 cm²','308 cm²'],'B','A = πr² = (22/7)×49 = 154 cm².'),
+  q(2022,'Evaluate: 5C2 (combinations)',['10','20','15','25'],'A','5C2 = 5!/(2!3!) = 10.'),
+  q(2022,'If tanθ = 3/4, find sinθ (assuming acute angle).',['3/5','4/5','3/4','4/3'],'A','Hypotenuse = √(9+16) = 5; sinθ = 3/5.'),
+  q(2023,'What is the LCM of 12, 18, and 24?',['36','48','72','96'],'C','Prime factorisation: LCM = 2³×3² = 72.'),
+  q(2023,'If f(x) = 2x + 3, find f⁻¹(x).',['(x-3)/2','(x+3)/2','2x-3','x/2 + 3'],'A','Set y=2x+3; swap: x=2y+3; solve: y=(x-3)/2.'),
+  q(2024,'Solve: 3|x| - 6 = 0',['x = ±2','x = 2','x = -2','x = 6'],'A','|x| = 2, so x = +2 or x = -2.'),
+  q(2024,'The volume of a cone with r = 3 cm and h = 7 cm (π=22/7) is:',['66 cm³','198 cm³','22 cm³','154 cm³'],'A','V = (1/3)πr²h = (1/3)(22/7)(9)(7) = 66 cm³.'),
+  q(2015,'Simplify: (x²-4)/(x-2)',['x+2','x-2','x²+2','2x'],'A','x²-4 = (x-2)(x+2); cancelling (x-2) gives x+2.'),
+  q(2016,'If the mean of 3, 7, x, 11 is 8, find x.',['8','9','11','12'],'C','(3+7+x+11)/4=8 → x+21=32 → x=11.'),
+  q(2017,'Convert 11011₂ to base 10.',['27','29','25','31'],'A','16+8+0+2+1=27.'),
+  q(2018,'A car travels 120 km at 60 km/h. How long does it take?',['1 hr','2 hrs','3 hrs','1.5 hrs'],'B','Time = distance/speed = 120/60 = 2 hours.'),
+  q(2019,'Find the quadratic equation whose roots are 2 and -3.',['x²+x-6=0','x²-x-6=0','x²+x+6=0','x²-5x+6=0'],'A','(x-2)(x+3)=x²+x-6=0.'),
+  q(2020,'The probability of picking a red ball from a bag containing 4 red and 6 blue balls is:',['2/5','3/5','1/4','1/2'],'A','P(red)=4/(4+6)=4/10=2/5.'),
+  q(2021,'Evaluate: ∫(4x + 3)dx',['2x²+3x+c','4x²+3x+c','2x+3+c','4x+3+c'],'A','∫(4x+3)dx = 4x²/2 + 3x + c = 2x²+3x+c.'),
+  q(2022,'Factorize completely: 3x² - 12.',['3(x²-4)','3(x-2)(x+2)','(3x-4)(x+3)','3x(x-4)'],'B','3x²-12 = 3(x²-4) = 3(x-2)(x+2).'),
+  q(2023,'Find the number of terms in the AP: 3, 7, 11, ..., 55.',['13','14','12','15'],'C','T_n = a+(n-1)d; 55=3+(n-1)4; n-1=13; n=14.'),
+  q(2024,'If log₂ x = 5, find x.',['10','25','32','64'],'C','x = 2⁵ = 32.'),
+  q(2015,'A man buys an article for ₦400 and sells it for ₦500. Find the profit %.',['20%','25%','15%','30%'],'B','Profit=100; % = (100/400)×100=25%.'),
+  q(2016,'Solve simultaneously: x+y=7 and x-y=3.',['x=5,y=2','x=4,y=3','x=6,y=1','x=3,y=4'],'A','Adding: 2x=10→x=5; y=2.'),
+  q(2017,'Find the HCF of 24 and 36.',['6','8','12','18'],'C','24=2³×3; 36=2²×3²; HCF=2²×3=12.'),
+  q(2018,'The bearing of A from B is 060°. What is the bearing of B from A?',['120°','240°','300°','060°'],'B','Back bearing = 060°+180°=240°.'),
+  q(2019,'If 2^n = 64, find n.',['5','6','7','8'],'B','2⁶=64, so n=6.'),
+  q(2020,'What is the surface area of a cube with side 5 cm?',['25 cm²','75 cm²','125 cm²','150 cm²'],'D','SA = 6×s² = 6×25 = 150 cm².'),
+  q(2021,'Evaluate: (0.3)² + (0.4)²',['0.25','0.07','0.49','0.5'],'A','0.09+0.16=0.25.'),
+  q(2022,'The number of ways to arrange 5 books on a shelf is:',['60','120','100','20'],'B','5! = 120.'),
+  q(2023,'A rectangle has area 48 cm² and width 6 cm. Find the perimeter.',['28 cm','36 cm','48 cm','24 cm'],'A','Length=48/6=8; P=2(8+6)=28 cm.'),
+  q(2024,'If sec θ = 2, find cos θ.',['2','1/2','√3/2','√2/2'],'B','cos θ = 1/sec θ = 1/2.'),
+];
+
+QB['Physics'] = [
+  q(2015,'Which of the following is a vector quantity?',['Speed','Mass','Temperature','Velocity'],'D','Velocity has both magnitude and direction — it is a vector. Speed is scalar.'),
+  q(2015,'The SI unit of electric charge is:',['Ampere','Volt','Coulomb','Ohm'],'C','Electric charge is measured in Coulombs (C).'),
+  q(2016,'A body is in equilibrium when the net force on it is:',['Maximum','Minimum','Zero','Equal to weight'],'C','For equilibrium, the resultant of all forces must be zero.'),
+  q(2016,'The speed of light in a vacuum is approximately:',['3×10⁶ m/s','3×10⁸ m/s','3×10¹⁰ m/s','3×10⁴ m/s'],'B','Speed of light c = 3×10⁸ m/s.'),
+  q(2017,'Ohm\'s Law states that V = IR. If V = 12V and R = 4Ω, find I.',['2A','3A','48A','8A'],'B','I = V/R = 12/4 = 3 A.'),
+  q(2017,'The phenomenon by which a body at rest tends to remain at rest is called:',['Momentum','Friction','Inertia','Gravity'],'C','Inertia is the resistance of an object to any change in its state of motion.'),
+  q(2018,'Which type of wave requires a medium for propagation?',['Light','Radio','Sound','X-rays'],'C','Sound is a mechanical wave that requires a medium (solid, liquid, or gas).'),
+  q(2018,'The work done when a force of 10N moves a body 5m in its direction is:',['2J','50J','15J','0.5J'],'B','W = F×d = 10×5 = 50 J.'),
+  q(2019,'When white light passes through a prism, it splits into a spectrum. This is called:',['Refraction','Reflection','Dispersion','Diffraction'],'C','Dispersion is the splitting of white light into its constituent colours.'),
+  q(2019,'The half-life of a radioactive substance is 20 years. After 60 years, the fraction remaining is:',['1/4','1/8','1/2','1/16'],'B','60 years = 3 half-lives; fraction = (1/2)³ = 1/8.'),
+  q(2020,'A transformer has 500 primary turns and 100 secondary turns. If Vp = 250V, find Vs.',['50V','1250V','25V','500V'],'A','Vs/Vp = Ns/Np → Vs = 250×(100/500) = 50V.'),
+  q(2020,'The pressure at a depth h in a fluid of density ρ is:',['ρg','ρgh','ρ/gh','gh/ρ'],'B','Pressure P = ρgh where g is gravitational acceleration.'),
+  q(2021,'An object moves with uniform velocity. The net force acting on it is:',['Maximum','Zero','Equal to weight','Proportional to velocity'],'B','Uniform velocity means zero acceleration, which requires zero net force.'),
+  q(2021,'The angle of incidence equals the angle of reflection. This is which law?',['Snell\'s Law','Law of Reflection','Brewster\'s Law','Hooke\'s Law'],'B','The Law of Reflection states that angle of incidence = angle of reflection.'),
+  q(2022,'The energy stored in a capacitor of capacitance C charged to voltage V is:',['CV','½CV²','CV²','½C²V'],'B','E = ½CV² is the formula for energy stored in a capacitor.'),
+  q(2022,'Radioactive decay emitting an alpha particle reduces atomic number by:',['4','2','1','0'],'B','Alpha emission reduces the atomic number by 2 and mass number by 4.'),
+  q(2023,'Which phenomenon explains the bending of light around obstacles?',['Reflection','Refraction','Diffraction','Polarisation'],'C','Diffraction is the bending of waves around obstacles or through openings.'),
+  q(2023,'Boyle\'s Law states that at constant temperature, pressure and volume are:',['Directly proportional','Inversely proportional','Equal','Independent'],'B','PV = constant; P ∝ 1/V at constant temperature.'),
+  q(2024,'The SI unit of power is:',['Joule','Newton','Watt','Pascal'],'C','Power is measured in Watts (W) = Joules per second.'),
+  q(2024,'Which of these is an example of thermionic emission?',['Photoelectric effect','Cathode rays','X-ray production','All of the above'],'D','Thermionic emission produces electrons from heated conductors; cathode rays are such electrons.'),
+  q(2015,'A particle moves in a circle of radius r with speed v. Its centripetal acceleration is:',['v²r','v/r','v²/r','r/v²'],'C','Centripetal acceleration a = v²/r.'),
+  q(2016,'The latent heat of fusion is the heat required to:',['Raise temperature of solid','Change solid to liquid at constant temperature','Change liquid to gas','Cool a liquid'],'B','Latent heat of fusion converts solid to liquid without temperature change.'),
+  q(2017,'The wavelength of a wave with speed 340 m/s and frequency 170 Hz is:',['2 m','0.5 m','5m','20 m'],'A','λ = v/f = 340/170 = 2 m.'),
+  q(2018,'Which gate gives output 1 only when both inputs are 1?',['OR','NOT','AND','NOR'],'C','AND gate: output is HIGH (1) only when all inputs are HIGH.'),
+  q(2019,'The process by which heat is transferred through a vacuum is:',['Conduction','Convection','Radiation','Diffusion'],'C','Radiation transfers heat without a medium, e.g. energy from the Sun.'),
+  q(2020,'A body of mass 2 kg moves at 4 m/s. Its kinetic energy is:',['4J','8J','16J','32J'],'C','KE = ½mv² = ½×2×16 = 16 J.'),
+  q(2021,'The minimum number of resistors in parallel that reduces resistance below one ohm for 3Ω resistors is:',['2','3','4','6'],'C','R_parallel = 3/n < 1 → n > 3, so n = 4.'),
+  q(2022,'An object is placed 30 cm from a convex lens of focal length 10 cm. The image distance is:',['15 cm','20 cm','30 cm','10 cm'],'A','1/v = 1/f - 1/u = 1/10 - 1/30 = 2/30; v=15 cm.'),
+  q(2023,'Which type of spectrum is produced by a luminous gas?',['Continuous spectrum','Absorption spectrum','Emission spectrum','Diffraction spectrum'],'C','Excited gases emit specific wavelengths — this produces an emission (line) spectrum.'),
+  q(2024,'The device used to measure very small currents is:',['Voltmeter','Galvanometer','Ammeter','Potentiometer'],'B','A galvanometer is a sensitive instrument for measuring tiny currents.'),
+  q(2015,'Charles\'s Law states that at constant pressure, volume is _____ proportional to temperature.',['Inversely','Directly','Not','Exponentially'],'B','V/T = constant (at constant pressure) — V ∝ T.'),
+  q(2016,'Electromagnetic induction is the basis of operation of a:',['Battery','Transistor','Generator','Capacitor'],'C','A generator converts mechanical energy to electrical energy via electromagnetic induction.'),
+  q(2017,'The magnification of a plane mirror is always:',['Greater than 1','Less than 1','Equal to 1','Zero'],'C','A plane mirror always produces an image the same size as the object; m = 1.'),
+  q(2018,'Which of these radiations has the highest frequency?',['Radio waves','Infrared','X-rays','Microwaves'],'C','X-rays have much higher frequency than radio, infrared, or microwave radiation.'),
+  q(2019,'Newton\'s second law relates force to:',['Speed','Mass only','Rate of change of momentum','Displacement'],'C','F = ma = d(mv)/dt — force equals rate of change of momentum.'),
+  q(2020,'The critical angle is the angle of incidence at which refraction angle is:',['0°','45°','90°','180°'],'C','At the critical angle, light refracts at 90° (along the boundary), beyond which total internal reflection occurs.'),
+  q(2021,'The efficiency of a machine is 75%. If the effort applied is 200N over 4m, the work output for a load lifted 2m is:',['400J','600J','150J','300J'],'B','Input work=800J; output=75%×800=600 J.'),
+  q(2022,'Elasticity is the property by which a body:',['Breaks permanently','Returns to original shape after deformation','Bends permanently','Resists motion'],'B','An elastic body returns to its original shape and size after the deforming force is removed.'),
+  q(2023,'The photo-electric effect demonstrates the _____ nature of light.',['Wave','Particle','Dual','Electromagnetic'],'B','The photoelectric effect demonstrates that light behaves as particles (photons).'),
+  q(2024,'If the gravitational potential energy of a 2 kg body at height 5 m is (g=10m/s²):',['10J','50J','100J','200J'],'C','PE = mgh = 2×10×5 = 100 J.'),
+];
+
+QB['Chemistry'] = [
+  q(2015,'The number of protons in the nucleus of an atom is called its:',['Mass number','Atomic number','Neutron number','Nucleon number'],'B','Atomic number = number of protons in the nucleus.'),
+  q(2015,'Which of the following is a noble gas?',['Nitrogen','Oxygen','Argon','Chlorine'],'C','Noble gases (Group 18/VIII) include Argon, Helium, Neon, and Krypton.'),
+  q(2016,'In a redox reaction, the reducing agent is:',['Oxidised','Reduced','Unchanged','Both oxidised and reduced'],'A','The reducing agent donates electrons and is itself oxidised in the process.'),
+  q(2016,'The pH of a neutral solution at 25°C is:',['0','7','14','1'],'B','pH 7 indicates neutrality — neither acidic nor basic.'),
+  q(2017,'Avogadro\'s number is approximately:',['6.02×10²³','6.02×10²²','6.02×10²⁴','3.01×10²³'],'A','One mole of any substance contains 6.02×10²³ particles (Avogadro\'s number).'),
+  q(2017,'The IUPAC name of CH₃CH₂OH is:',['Methanol','Propanol','Ethanol','Butanol'],'C','CH₃CH₂OH is a 2-carbon alcohol, named ethanol.'),
+  q(2018,'Which of the following is a homogeneous mixture?',['Sand and water','Oil and water','Salt solution','Soil'],'C','A salt solution is uniform throughout — it is a homogeneous mixture.'),
+  q(2018,'The bond formed by sharing of electrons between atoms is called:',['Ionic bond','Covalent bond','Metallic bond','Hydrogen bond'],'B','Covalent bonds involve shared electron pairs between atoms.'),
+  q(2019,'In the reaction: 2H₂ + O₂ → 2H₂O, hydrogen is:',['Oxidised','Reduced','Neutralised','Unchanged'],'A','Hydrogen loses electrons to form water — it is oxidised.'),
+  q(2019,'Allotropy is the ability of an element to exist in different:',['States','Physical forms','Compounds','Ions'],'B','Allotropes are different structural forms of the same element, e.g. graphite and diamond.'),
+  q(2020,'The process of converting iron ore to iron in a blast furnace is called:',['Distillation','Smelting','Electrolysis','Calcination'],'B','Smelting uses heat and a reducing agent (coke) to extract iron from its ore.'),
+  q(2020,'Which indicator is used in strong acid-strong base titration?',['Phenolphthalein','Litmus','Methyl orange','Both A and C'],'D','Both phenolphthalein and methyl orange are suitable for strong acid-strong base titrations.'),
+  q(2021,'The concentration of a solution containing 40g of NaOH (M=40) in 2 litres is:',['0.5 mol/L','1 mol/L','2 mol/L','0.25 mol/L'],'A','moles = 40/40 = 1 mol; conc = 1/2 = 0.5 mol/L.'),
+  q(2021,'Hydrolysis of an ester produces:',['Acid and base','Alcohol and acid','Aldehyde and alcohol','Ether and water'],'B','Ester hydrolysis yields the parent alcohol and carboxylic acid.'),
+  q(2022,'The element with electronic configuration 2,8,7 belongs to which group?',['Group I','Group VI','Group VII','Group VIII'],'C','7 valence electrons places this element in Group VIIA (halogens).'),
+  q(2022,'Which gas is produced when zinc reacts with dilute sulphuric acid?',['Oxygen','Sulphur dioxide','Hydrogen','Carbon dioxide'],'C','Zn + H₂SO₄ → ZnSO₄ + H₂; hydrogen gas is evolved.'),
+  q(2023,'The molecular formula of glucose is:',['C₆H₁₂O₆','C₆H₁₀O₅','C₁₂H₂₂O₁₁','CH₂O'],'A','Glucose is C₆H₁₂O₆, a monosaccharide.'),
+  q(2023,'Rust is chemically known as:',['Iron oxide','Hydrated iron(III) oxide','Iron carbonate','Iron sulphide'],'B','Rust is hydrated iron(III) oxide: Fe₂O₃·nH₂O.'),
+  q(2024,'The rate of a chemical reaction is affected by all EXCEPT:',['Temperature','Catalyst','Colour of reactants','Concentration'],'C','The colour of reactants does not affect reaction rate; temperature, catalyst, and concentration do.'),
+  q(2024,'Saponification is the process of making:',['Soap','Acid','Alcohol','Polymer'],'A','Saponification is the reaction of fat/oil with NaOH to produce soap.'),
+  q(2015,'Which of these is a property of acids?',['Turns red litmus blue','Produces OH⁻ ions','Has pH above 7','Turns blue litmus red'],'D','Acids turn blue litmus paper red and have pH below 7.'),
+  q(2016,'The shape of a water molecule (H₂O) is:',['Linear','Trigonal planar','V-shaped (bent)','Tetrahedral'],'C','Due to lone pairs on oxygen, H₂O adopts a bent/V-shape.'),
+  q(2017,'The empirical formula of a compound containing 40% carbon, 6.7% hydrogen, and 53.3% oxygen is:',['CH₂O','C₂H₄O','CH₃O','CHO'],'A','Molar ratios: C=40/12=3.33, H=6.7/1=6.7, O=53.3/16=3.33; simplest ratio 1:2:1 → CH₂O.'),
+  q(2018,'Which of these is a saturated hydrocarbon?',['Ethene','Propyne','Butane','Benzene'],'C','Butane (C₄H₁₀) has only single C-C bonds — it is saturated.'),
+  q(2019,'Fermentation of glucose produces:',['Ethanol and oxygen','Ethanol and carbon dioxide','Methanol and water','Acetic acid and hydrogen'],'B','C₆H₁₂O₆ → 2C₂H₅OH + 2CO₂ (yeast fermentation).'),
+  q(2020,'Which of these undergoes polymerisation to form PVC?',['Ethene','Vinyl chloride','Propene','Styrene'],'B','Poly(vinyl chloride) or PVC is formed by polymerising vinyl chloride (chloroethene).'),
+  q(2021,'The number of sigma bonds in ethane (C₂H₆) is:',['5','6','7','8'],'C','C-C (1) + 3 C-H per carbon × 2 = 6; total = 7 sigma bonds.'),
+  q(2022,'Which metal is extracted by the Thermite process?',['Iron','Aluminium','Manganese','Copper'],'C','The thermite process (using Al) is used to extract manganese (and weld iron rails).'),
+  q(2023,'The phenomenon of colligative properties depends on:',['Nature of solute','Number of solute particles','Volume of solvent','Temperature only'],'B','Colligative properties depend on the number of solute particles, not their identity.'),
+  q(2024,'What type of isomerism exists between ethanol and dimethyl ether?',['Chain','Position','Functional group','Optical'],'C','Ethanol and dimethyl ether share the formula C₂H₆O but have different functional groups.'),
+  q(2015,'Catalyst increases the rate of reaction by:',['Increasing temperature','Providing an alternative pathway of lower activation energy','Increasing reactant concentration','Decreasing product yield'],'B','Catalysts lower the activation energy by providing an alternative reaction pathway.'),
+  q(2016,'The molarity of 4g NaOH (M=40) in 500 mL of solution is:',['0.2 M','0.4 M','0.8 M','2 M'],'A','moles=0.1; M=0.1/0.5=0.2 mol/L.'),
+  q(2017,'Esterification produces ester and:',['Alcohol','Acid','Water','Base'],'C','Acid + alcohol → ester + water (condensation reaction).'),
+  q(2018,'Which is a deliquescent substance?',['Silica gel','CaCl₂','NaCl','Sand'],'B','Calcium chloride (CaCl₂) absorbs so much water from air that it dissolves in it — it is deliquescent.'),
+  q(2019,'The common name of NaHCO₃ is:',['Washing soda','Baking soda','Bleaching powder','Common salt'],'B','NaHCO₃ is sodium hydrogen carbonate, commonly called baking soda.'),
+  q(2020,'A solution is buffer if it resists change in:',['Temperature','Colour','pH','Volume'],'C','A buffer solution resists changes in pH upon addition of small amounts of acid or base.'),
+  q(2021,'The lightest element in the periodic table is:',['Helium','Lithium','Hydrogen','Carbon'],'C','Hydrogen (Z=1, A=1) is the lightest element.'),
+  q(2022,'Which is produced at the cathode during electrolysis of brine?',['Chlorine','Hydrogen','Oxygen','Sodium'],'B','At the cathode (negative electrode): 2H⁺ + 2e⁻ → H₂.'),
+  q(2023,'Nuclear fission involves splitting of:',['Electrons','Neutrons','Heavy nuclei','Protons'],'C','Nuclear fission splits a heavy nucleus into smaller nuclei, releasing energy.'),
+  q(2024,'Which organic compound is used as an antifreeze?',['Methanol','Ethanol','Propan-1-ol','Ethane-1,2-diol'],'D','Ethylene glycol (ethane-1,2-diol) is widely used as an antifreeze.'),
+];
+
+QB['Biology'] = [
+  q(2015,'The powerhouse of the cell is the:',['Nucleus','Ribosome','Mitochondria','Lysosome'],'C','Mitochondria produce ATP through cellular respiration — they are the cell\'s powerhouses.'),
+  q(2015,'Which of the following is NOT a function of the liver?',['Detoxification','Production of insulin','Bile production','Storage of glycogen'],'B','Insulin is produced by the pancreas (beta cells), not the liver.'),
+  q(2016,'The process by which plants make their own food using sunlight is called:',['Respiration','Transpiration','Photosynthesis','Digestion'],'C','Photosynthesis uses sunlight, CO₂, and water to produce glucose and oxygen.'),
+  q(2016,'Meiosis results in daughter cells that are:',['Diploid, genetically identical','Haploid, genetically varied','Diploid, genetically varied','Haploid, genetically identical'],'B','Meiosis produces 4 haploid cells with genetic variation due to crossing over.'),
+  q(2017,'The basic unit of heredity is a:',['Chromosome','Gene','DNA','Protein'],'B','A gene is the basic unit of heredity encoding a specific trait.'),
+  q(2017,'Which blood group is the universal donor?',['A','B','AB','O'],'D','Blood group O negative is the universal donor as it lacks A, B, and Rh antigens.'),
+  q(2018,'The hormone responsible for regulating blood sugar is:',['Adrenaline','Glucagon','Insulin','Thyroxine'],'C','Insulin (from beta cells of pancreas) lowers blood glucose by promoting uptake into cells.'),
+  q(2018,'Osmosis is the movement of water from a region of:',['High solute to low solute concentration','Low water potential to high water potential','High water potential to low water potential','High pressure to low pressure'],'C','Osmosis moves water from high water potential (dilute solution) to low water potential (concentrated solution).'),
+  q(2019,'In which part of the cell does protein synthesis occur?',['Nucleus','Golgi body','Ribosome','Mitochondria'],'C','Ribosomes are the sites of protein synthesis (translation).'),
+  q(2019,'The structural unit of a nephron is the:',['Glomerulus','Loop of Henle','Bowman\'s capsule','All of the above'],'D','A nephron consists of Bowman\'s capsule, glomerulus, tubules, and loop of Henle.'),
+  q(2020,'Which gas is a product of aerobic respiration?',['Nitrogen','Oxygen','Carbon dioxide','Hydrogen'],'C','C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O; CO₂ is a product of aerobic respiration.'),
+  q(2020,'The scientific name of humans is:',['Homo habilis','Homo sapiens','Homo erectus','Homo neanderthalensis'],'B','Modern humans are classified as Homo sapiens (wise man).'),
+  q(2021,'Which connective tissue connects muscle to bone?',['Ligament','Tendon','Cartilage','Bone'],'B','Tendons are strong connective tissues that attach muscles to bones.'),
+  q(2021,'The site of gaseous exchange in the lungs is:',['Bronchioles','Trachea','Alveoli','Bronchi'],'C','Alveoli are tiny air sacs where oxygen and carbon dioxide are exchanged.'),
+  q(2022,'Mendel\'s Law of Segregation states that:',['Genes are linked','Alleles separate during gamete formation','Traits blend together','Dominant always hides recessive'],'B','During meiosis, allele pairs segregate so each gamete carries only one allele.'),
+  q(2022,'The hormone that triggers the "fight-or-flight" response is:',['Insulin','Thyroxine','Adrenaline','Cortisol'],'C','Adrenaline (epinephrine) prepares the body for emergency — the fight-or-flight response.'),
+  q(2023,'Transpiration in plants primarily occurs through:',['Lenticels','Stomata','Root hairs','Xylem'],'B','About 90% of water loss in plants occurs through stomata during transpiration.'),
+  q(2023,'Which type of immunity results from vaccination?',['Natural active','Artificial active','Natural passive','Artificial passive'],'B','Vaccination stimulates the immune system artificially — this is artificial active immunity.'),
+  q(2024,'The chromosome number in a human sperm cell is:',['46','23','92','12'],'B','Human gametes (egg, sperm) are haploid with 23 chromosomes; diploid body cells have 46.'),
+  q(2024,'Which of these is a saprophyte?',['Mushroom','Fern','Moss','Algae'],'A','Saprophytes (like mushrooms) obtain nutrients by decomposing dead organic matter.'),
+  q(2015,'The process of removing nitrogenous waste from the body is called:',['Excretion','Secretion','Egestion','Defecation'],'A','Excretion is the removal of metabolic waste products (including nitrogenous waste like urea).'),
+  q(2016,'Haemoglobin is found in:',['White blood cells','Red blood cells','Platelets','Plasma'],'B','Haemoglobin is the oxygen-carrying protein found in red blood cells.'),
+  q(2017,'Which of these is an example of mutualism?',['Tapeworm in intestine','Lichen (algae and fungi)','Tick on a cow','Remora on a shark'],'B','Lichen is a mutualistic relationship where algae and fungi benefit each other.'),
+  q(2018,'The role of decomposers in an ecosystem is to:',['Produce food from sunlight','Break down organic matter into nutrients','Consume primary consumers','Convert N₂ to nitrates'],'B','Decomposers (bacteria, fungi) recycle organic matter back into the ecosystem as nutrients.'),
+  q(2019,'Which vitamin is synthesised in the skin upon exposure to sunlight?',['Vitamin A','Vitamin B','Vitamin C','Vitamin D'],'D','Vitamin D is synthesised in the skin when exposed to ultraviolet radiation from sunlight.'),
+  q(2020,'The part of the brain responsible for balance and coordination is the:',['Cerebrum','Cerebellum','Medulla oblongata','Hypothalamus'],'B','The cerebellum coordinates voluntary movements and maintains balance.'),
+  q(2021,'Which of these is the correct sequence of energy flow in an ecosystem?',['Producers→Decomposers→Consumers','Consumers→Producers→Decomposers','Producers→Primary consumers→Secondary consumers','Decomposers→Producers→Consumers'],'C','Energy flows from sun → producers → primary consumers → secondary consumers.'),
+  q(2022,'The enzyme that converts starch to maltose is:',['Pepsin','Amylase','Lipase','Trypsin'],'B','Amylase (salivary/pancreatic) breaks starch down into maltose.'),
+  q(2023,'Genetic engineering involves manipulation of:',['Proteins','Carbohydrates','DNA','Cell membranes'],'C','Genetic engineering involves direct manipulation of an organism\'s DNA.'),
+  q(2024,'Which of the following is NOT a sexually transmitted disease?',['HIV/AIDS','Gonorrhoea','Malaria','Syphilis'],'C','Malaria is transmitted by mosquitoes (Anopheles), not through sexual contact.'),
+  q(2015,'Phototropism is a plant response to:',['Gravity','Water','Light','Touch'],'C','Phototropism is growth movement of a plant in response to light direction.'),
+  q(2016,'The process of cell division for growth and repair is:',['Meiosis','Mitosis','Binary fission','Budding'],'B','Mitosis produces two identical diploid daughter cells for growth and tissue repair.'),
+  q(2017,'Kwashiorkor is caused by deficiency of:',['Carbohydrates','Proteins','Fats','Vitamins'],'B','Kwashiorkor is a severe protein deficiency disease common in children.'),
+  q(2018,'Which part of the eye controls the amount of light entering?',['Cornea','Retina','Iris','Lens'],'C','The iris controls the size of the pupil, regulating the amount of light entering the eye.'),
+  q(2019,'The greenhouse gas most responsible for global warming is:',['Nitrogen','Carbon dioxide','Oxygen','Argon'],'B','CO₂ (from burning fossil fuels) is the primary greenhouse gas contributing to global warming.'),
+  q(2020,'Roots of plants absorb water by:',['Diffusion','Active transport','Osmosis','Facilitated diffusion'],'C','Water enters root hair cells from soil by osmosis (from high to low water potential).'),
+  q(2021,'The function of platelets in the blood is:',['Carrying oxygen','Fighting infection','Blood clotting','Transporting nutrients'],'C','Platelets (thrombocytes) aggregate to form clots and prevent excessive blood loss.'),
+  q(2022,'Which organ of the body produces bile?',['Pancreas','Gallbladder','Liver','Stomach'],'C','The liver produces bile; the gallbladder stores and releases it.'),
+  q(2023,'Ecology is the study of the relationship between:',['Cells','Living organisms and their environment','Fossils','Genes'],'B','Ecology studies interactions between organisms and their physical environment.'),
+  q(2024,'A food chain always begins with:',['Herbivore','Carnivore','Producer','Decomposer'],'C','Food chains always start with producers (plants/photosynthesisers) that capture solar energy.'),
+];
+
+QB['Economics'] = [
+  q(2015,'The law of demand states that, all things being equal, as price increases:',['Demand increases','Demand decreases','Supply decreases','Supply increases'],'B','The law of demand: higher price → lower quantity demanded (inverse relationship).'),
+  q(2015,'What is GDP?',['Gross Domestic Product — total value of goods/services produced within a country in a year','Government Domestic Price','General Demand Pattern','Global Distribution Plan'],'A','GDP measures the monetary value of all goods and services produced in a country in a given period.'),
+  q(2016,'The study of individual economic units (firms, households) is called:',['Macroeconomics','Microeconomics','Normative economics','Positive economics'],'B','Microeconomics focuses on individual decision-making units like firms and households.'),
+  q(2016,'When supply exceeds demand, there is:',['Shortage','Surplus','Equilibrium','Inflation'],'B','When quantity supplied > quantity demanded, a surplus (excess supply) exists.'),
+  q(2017,'The elasticity of demand measures:',['How much producers respond to price changes','How much consumers respond to price changes','The speed of supply adjustment','The level of competition'],'B','Price elasticity of demand (PED) measures the responsiveness of quantity demanded to price changes.'),
+  q(2017,'Opportunity cost is:',['The monetary price of a good','The benefit forgone from the next best alternative','The cost of production','The tax on goods'],'B','Opportunity cost = the value of the next best alternative forgone when a choice is made.'),
+  q(2018,'Which of these is a characteristic of perfect competition?',['Price maker','Barriers to entry','Homogeneous products','Product differentiation'],'C','Perfect competition features many sellers, homogeneous products, and free entry/exit.'),
+  q(2018,'Inflation means:',['A rise in the value of money','A sustained rise in the general price level','A decrease in production','Deflation'],'B','Inflation is the sustained general increase in price levels, reducing purchasing power.'),
+  q(2019,'The multiplier effect in economics means:',['A doubling of investment','An initial change in spending leads to a larger change in income','Inflation doubling','Tax multiplying'],'B','The Keynesian multiplier: a change in injection (e.g. investment) causes a proportionally larger change in national income.'),
+  q(2019,'Which of these is a merit good?',['Cigarettes','Alcohol','Education','Luxury cars'],'C','Merit goods like education are considered beneficial and often underprovided by markets — governments subsidise them.'),
+  q(2020,'Public goods are characterised by:',['Rivalry and excludability','Non-rivalry and non-excludability','High private profit','Limited government role'],'B','Public goods are non-rival (one\'s use doesn\'t reduce others\') and non-excludable (cannot prevent use).'),
+  q(2020,'Stagflation refers to:',['High growth and low inflation','Simultaneous stagnation and inflation','Low growth and deflation','High employment and inflation'],'B','Stagflation is the combination of stagnant economic growth (high unemployment) with high inflation.'),
+  q(2021,'Consumer surplus is:',['The profit made by producers','The difference between what consumers are willing to pay and what they actually pay','The amount of goods unsold','The cost of production'],'B','Consumer surplus = willingness to pay minus actual price paid — it represents consumer benefit.'),
+  q(2021,'A budget deficit occurs when:',['Revenue exceeds expenditure','Expenditure exceeds revenue','Revenue equals expenditure','There is no taxation'],'B','A budget deficit means government spending exceeds government revenue.'),
+  q(2022,'Devaluation of currency leads to:',['Imports becoming cheaper','Exports becoming cheaper abroad','Reduction in trade','Rising real wages'],'B','Devaluation makes domestic goods cheaper for foreigners, boosting exports.'),
+  q(2022,'In a monopoly, the firm is a:',['Price taker','Price maker','Perfect competitor','Price follower'],'B','A monopolist is the sole seller and sets the price (price maker).'),
+  q(2023,'Which of the following is an example of fiscal policy?',['Changing interest rates','Changing money supply','Changing government spending','Changing exchange rates'],'C','Fiscal policy involves government spending and taxation — tools of the treasury.'),
+  q(2023,'The concept of "invisible hand" was introduced by:',['Keynes','Marx','Adam Smith','Malthus'],'C','Adam Smith coined the "invisible hand" — the idea that free markets self-regulate.'),
+  q(2024,'If the cross elasticity of demand between two goods is positive, the goods are:',['Complements','Substitutes','Inferior goods','Normal goods'],'B','Positive cross-price elasticity means goods are substitutes (price rise of one increases demand for other).'),
+  q(2024,'The Lorenz Curve measures:',['Inflation','Income inequality','Economic growth','Trade balance'],'B','The Lorenz Curve graphically represents income distribution and inequality.'),
+  q(2015,'Natural monopoly arises when:',['One firm controls all resources','Long-run average costs fall continuously with output','Government grants monopoly power','A firm has patents'],'B','A natural monopoly occurs when it is most efficient for one firm to serve the entire market due to economies of scale.'),
+  q(2016,'The demand for labour is derived from:',['Wages offered','Demand for the goods labour produces','Supply of labour','Government policy'],'B','Labour demand is derived because workers are hired to produce goods/services demanded by consumers.'),
+  q(2017,'Subsistence farming is practised primarily:',['For export','For profit','For family consumption','For industrial use'],'C','Subsistence farmers produce primarily for their own household consumption.'),
+  q(2018,'Which of these best describes comparative advantage?',['Producing all goods at lowest cost','Producing a good at lower opportunity cost than others','Absolute efficiency in production','Maximum output'],'B','Comparative advantage: produce where opportunity cost is lowest, even if not absolutely most efficient.'),
+  q(2019,'Hyperinflation is inflation that:',['Is below 2%','Exceeds 50% per month','Stays stable','Is caused only by demand'],'B','Hyperinflation is extremely rapid, typically exceeding 50% per month (e.g. Zimbabwe 2008).'),
+  q(2020,'The Gini Coefficient of 0 represents:',['Maximum inequality','Perfect equality','Moderate inequality','No income at all'],'B','A Gini coefficient of 0 means perfect equality — everyone has the same income.'),
+  q(2021,'Externalities are:',['Internal firm costs','Costs or benefits to third parties not involved in a transaction','Government taxes','Trade barriers'],'B','Externalities are spillover effects on third parties — e.g. pollution (negative) or education (positive).'),
+  q(2022,'Monetary policy is controlled by:',['Ministry of Finance','The Central Bank','Parliament','The President'],'B','Monetary policy (interest rates, money supply) is managed by the Central Bank.'),
+  q(2023,'In Nigeria, which body formulates monetary policy?',['Federal Ministry of Finance','CBN (Central Bank of Nigeria)','FIRS','NBS'],'B','The CBN sets and implements monetary policy in Nigeria.'),
+  q(2024,'Economic growth is best measured by:',['Population size','Change in real GDP over time','Government spending','Imports'],'B','Economic growth is measured by the percentage change in real (inflation-adjusted) GDP.'),
+  q(2015,'Price discrimination is when a firm:',['Sets one price for all','Charges different prices for the same good to different consumers','Reduces prices for bulk','Subsidises production'],'B','Price discrimination involves charging different consumer groups different prices for the same product.'),
+  q(2016,'Deflation is:',['Rising general price level','Sustained fall in general price level','Rising unemployment','Trade surplus'],'B','Deflation is a sustained decrease in the general price level of goods and services.'),
+  q(2017,'The production possibility frontier (PPF) shows:',['Maximum income possible','Trade-off between two goods given limited resources','Export potential','Labour supply'],'B','The PPF illustrates the maximum combinations of two goods an economy can produce with existing resources.'),
+  q(2018,'A regressive tax is one that:',['Takes higher % from higher earners','Takes same % from all earners','Takes lower % from lower earners','Is always indirect'],'C','A regressive tax takes a higher percentage from low-income earners relative to high-income earners.'),
+  q(2019,'Which of these is a non-tariff barrier to trade?',['Import duty','Quota','Export subsidy — (also a barrier via distortion)','Customs duty'],'B','Quotas restrict the quantity of imports — a classic non-tariff barrier.'),
+  q(2020,'Economies of scale mean:',['Costs rise as output falls','Average costs fall as output increases','Fixed costs increase','Variable costs stay constant'],'B','Economies of scale occur when increasing output reduces the average (per-unit) cost of production.'),
+  q(2021,'The balance of payments deficit means:',['Exports > Imports','Imports > Exports','Budget deficit','Trade surplus'],'B','A balance of payments deficit means a country spends more on imports than it earns from exports.'),
+  q(2022,'Consumer price index (CPI) measures:',['Cost of living changes via a basket of goods','Government expenditure','GDP growth','Income levels'],'A','CPI tracks the average change in prices paid by consumers for a fixed basket of goods and services.'),
+  q(2023,'In Nigeria, the minimum wage (2024) is:',['₦18,000','₦30,000','₦70,000','₦100,000'],'C','As of 2024, Nigeria\'s national minimum wage was raised to ₦70,000 per month.'),
+  q(2024,'Absolute poverty means:',['Relative to others being poor','Unable to afford basic needs like food, shelter, clothing','Moderate deprivation','Inequality in income'],'B','Absolute poverty is defined as lacking the minimum resources necessary for basic survival.'),
+];
+
+QB['Literature'] = [
+  q(2015,'Which of the following is a characteristic of tragedy as a literary genre?',['Happy ending','Comic relief throughout','Fall of the protagonist due to a fatal flaw','Victory of good over evil'],'C','Classical tragedy ends with the downfall of the hero, often due to hubris or a fatal flaw.'),
+  q(2016,'The term "stream of consciousness" in literature refers to:',['Action-based narrative','A technique depicting the continuous flow of characters\' thoughts','First-person narration','Objective narration'],'B','Stream of consciousness is a narrative technique that presents a character\'s inner thoughts continuously.'),
+  q(2017,'An "ode" is a type of poem that:',['Laments death','Celebrates or glorifies a subject','Uses no rhyme','Tells a story'],'B','An ode is a formal, lyrical poem that celebrates or pays tribute to a person, place, or event.'),
+  q(2018,'What literary device is used when an author hints at future events in a story?',['Flashback','Foreshadowing','In medias res','Anagnorisis'],'B','Foreshadowing uses hints or clues to suggest what will happen later in the narrative.'),
+  q(2019,'Which of these is a feature of the epic?',['Short length','Supernatural elements and heroic deeds','Comic plot','Domestic setting'],'B','Epics feature lengthy narratives, heroic characters, supernatural forces, and grand settings.'),
+  q(2020,'The protagonist of Chinua Achebe\'s "Things Fall Apart" is:',['Nwoye','Obierika','Okonkwo','Unoka'],'C','Okonkwo is the tragic hero of "Things Fall Apart" — a proud Igbo warrior.'),
+  q(2021,'In "The Lion and the Jewel" by Wole Soyinka, the jewel refers to:',['A crown','Sidi — the village beauty','Money','The school'],'B','Sidi, the beautiful woman, is the "jewel" both Lakunle and Baroka compete to win.'),
+  q(2022,'What is the dominant theme in Chimamanda Ngozi Adichie\'s "Purple Hibiscus"?',['War','Colonialism','Domestic violence and silence','Political corruption only'],'C','The novel explores religious extremism, domestic violence, and the awakening of self-identity.'),
+  q(2023,'A "foil" character in literature is one who:',['Is the antagonist','Contrasts with the protagonist to highlight characteristics','Is comic relief','Has no purpose'],'B','A foil is a character whose contrasting traits emphasise the qualities of another character.'),
+  q(2024,'Which figure of speech is used in: "The wind whispered through the trees"?',['Simile','Hyperbole','Personification','Alliteration'],'C','Giving the wind the human ability to whisper is personification.'),
+  q(2015,'The Aristotelian concept of "catharsis" in drama refers to:',['Plot structure','Emotional purging of pity and fear','Character development','Unity of time'],'B','Catharsis is the emotional release audiences experience at the conclusion of tragedy.'),
+  q(2016,'A "soliloquy" is a speech where a character:',['Addresses another character directly','Speaks alone to reveal inner thoughts','Reads a letter aloud','Speaks to the audience in comedy'],'B','A soliloquy is a dramatic device where a character speaks alone on stage, revealing their thoughts.'),
+  q(2017,'"A Raisin in the Sun" by Lorraine Hansberry explores:',['Civil War','African-American family dreams and racial discrimination','Romance in New York','Poverty in Africa'],'B','The play examines the struggles of a Black Chicago family in pursuit of the American Dream.'),
+  q(2018,'Which of these is the correct definition of "irony"?',['Exaggerated comparison','A statement where meaning is opposite to literal meaning','Repetition of sounds','Description of an object'],'B','Irony involves a contrast between expectation and reality, or between literal and intended meaning.'),
+  q(2019,'The setting of Achebe\'s "Arrow of God" is:',['Lagos','Onitsha','The fictional village of Umuaro','Ibadan'],'C','Arrow of God is set in the fictional village of Umuaro in colonial Eastern Nigeria.'),
+  q(2020,'Which metre has ten syllables per line in alternating unstressed/stressed pattern?',['Iambic tetrameter','Trochaic pentameter','Iambic pentameter','Anapestic dimeter'],'C','Iambic pentameter has 5 iambs (10 syllables) per line — used extensively by Shakespeare.'),
+  q(2021,'"Weep Not, Child" by Ngũgĩ wa Thiong\'o deals with:',['South African apartheid','The Mau Mau uprising and colonial Kenya','Nigerian civil war','Egyptian revolution'],'B','The novel depicts the Mau Mau rebellion and its impact on a Kenyan family during British colonialism.'),
+  q(2022,'The conflict in Ola Rotimi\'s "The Gods Are Not to Blame" mirrors which Greek tragedy?',['Antigone','Medea','Oedipus Rex','The Oresteia'],'C','Rotimi adapts Sophocles\' Oedipus Rex to a Yoruba setting in "The Gods Are Not to Blame".'),
+  q(2023,'A "denouement" in a play or novel refers to:',['The climax','The rising action','The resolution after the climax','The exposition'],'C','The denouement is the final resolution of the plot\'s complications.'),
+  q(2024,'Which literary period is associated with reason and order?',['Romanticism','Modernism','Neoclassicism','Postmodernism'],'C','Neoclassicism (17th-18th century) emphasised reason, order, restraint, and classical Greek/Roman models.'),
+  q(2015,'An "elegy" is a poem that:',['Praises a hero\'s deeds','Mourns the dead or reflects on loss','Tells a long story','Ridicules society'],'B','An elegy is a mournful poem lamenting the death of someone or reflecting on sorrow.'),
+  q(2016,'The plot device "deus ex machina" means:',['Character flaw leading to downfall','An unexpected power solving the conflict artificially','The climax of the story','Fate controlling characters'],'B','Deus ex machina (God from the machine) is a contrived plot device that abruptly resolves problems.'),
+  q(2017,'In Soyinka\'s "Death and the King\'s Horseman", Elesin\'s tragedy stems from:',['Political betrayal','His failure to fulfil his cultural duty to follow the king in death','Colonial oppression alone','Poverty'],'B','Elesin\'s inability to complete the ritual suicide — the duty of the king\'s horseman — is the central tragedy.'),
+  q(2018,'Which of these is a picaresque novel?',['Pride and Prejudice','Things Fall Apart','Don Quixote','Hamlet'],'C','Don Quixote (Cervantes) is considered the prototype of the picaresque novel — featuring a roguish hero on adventures.'),
+  q(2019,'The narrative technique in which the story is told after events occurred is:',['In medias res','First-person narration','Retrospective narration','Stream of consciousness'],'C','Retrospective (retrospective) narration tells the story looking back on past events.'),
+  q(2020,'A "round" character in literature is:',['A character with many sides/complex personality','A flat, unchanging character','The protagonist always','A villain'],'A','A round character is fully developed with complex, realistic personality traits.'),
+  q(2021,'Which of these describes a bildungsroman?',['A war novel','A novel about a character\'s moral/psychological growth from youth to adulthood','A detective novel','A political satire'],'B','Bildungsroman (German: "novel of formation") traces a protagonist\'s growth and coming-of-age.'),
+  q(2022,'The author of "Purple Hibiscus" is:',['Wole Soyinka','Buchi Emecheta','Chimamanda Ngozi Adichie','Flora Nwapa'],'C','Purple Hibiscus (2003) was written by Chimamanda Ngozi Adichie.'),
+  q(2023,'Which of these best defines "motif" in literature?',['The main theme','A recurring image, symbol, or idea throughout a work','The protagonist\'s goal','The setting'],'B','A motif is a recurring element — image, idea, or symbol — that has significance in a literary work.'),
+  q(2024,'In drama, the "fourth wall" refers to:',['The backstage area','The imaginary wall between performers and the audience','The stage props','The director\'s space'],'B','The fourth wall is the conceptual boundary between the world of the performance and the audience.'),
+  q(2015,'Which of these is an example of dramatic irony?',['The audience and all characters know the same information','The audience knows something the character does not','A character lies to another character','The hero overcomes his flaw'],'B','Dramatic irony occurs when the audience knows more than the characters do.'),
+  q(2016,'The term "hubris" in Greek tragedy means:',['Wisdom','Excessive pride leading to downfall','Cowardice','Loyalty'],'B','Hubris is excessive pride or arrogance that causes the tragic hero\'s downfall.'),
+  q(2017,'"No longer at Ease" by Chinua Achebe explores:',['Colonial history','Corruption and the struggles of a Western-educated Nigerian in Lagos','The Biafran War','Rural village life'],'B','The novel follows Obi Okonkwo\'s moral decline amid corruption in Lagos bureaucracy.'),
+  q(2018,'An "allegory" is:',['A long epic poem','A story with a hidden moral or political meaning','A type of comedy','A form of dialogue'],'B','An allegory is a narrative where characters and events represent abstract ideas or moral qualities.'),
+  q(2019,'Which of these is the theme of "Anthem for Doomed Youth" by Wilfred Owen?',['Heroism of soldiers','The futility and horror of war','Love in wartime','Triumph of the Allied forces'],'B','Owen\'s poem condemns the senseless slaughter of World War I and mourns the loss of young soldiers.'),
+  q(2020,'The major conflict in Achebe\'s "Things Fall Apart" is between:',['Two Igbo clans','Traditional Igbo culture and European colonialism','Okonkwo and his son','Christianity and Islam'],'B','The central conflict pits Igbo traditions against the disruptive force of European colonialism.'),
+  q(2021,'Which of these literary devices involves contradicting terms placed together?',['Metaphor','Oxymoron','Hyperbole','Paradox'],'B','An oxymoron juxtaposes contradictory terms, e.g. "deafening silence" or "bittersweet."'),
+  q(2022,'A "monologue" differs from a "soliloquy" in that:',['Monologue is always longer','Monologue is addressed to another character or audience; soliloquy is spoken alone','Soliloquy uses verse','Monologue is only in prose'],'B','Both are extended speeches, but a soliloquy is delivered when alone; a monologue may address others.'),
+  q(2023,'The theme of exile is most prominent in which Achebe novel?',['Arrow of God','No Longer at Ease','Anthills of the Savannah','A Man of the People'],'B','Obi\'s return from England and psychological displacement make exile/belonging central to No Longer at Ease.'),
+  q(2024,'The "tragic flaw" of Okonkwo in "Things Fall Apart" is his:',['Poverty','Fear of failure and excessive pride in masculinity','Lack of education','Cowardice'],'B','Okonkwo\'s hamartia is his fear of weakness and obsessive, aggressive masculinity.'),
+];
+
+QB['Government'] = [
+  q(2015,'The constitution that gives powers to a central government over regions is called:',['Federal','Unitary','Confederate','Republican'],'B','In a unitary constitution, power is concentrated in the central government.'),
+  q(2016,'The doctrine of separation of powers is attributed to:',['John Locke','Karl Marx','Baron de Montesquieu','Jean-Jacques Rousseau'],'C','Montesquieu articulated the doctrine of separation of powers in "The Spirit of the Laws" (1748).'),
+  q(2017,'Federalism in Nigeria was introduced in:',['1914','1946','1951','1963'],'B','The Richards Constitution of 1946 introduced federalism and regionalism in Nigeria.'),
+  q(2018,'The highest law of the land in any country is the:',['Decree','Constitution','Parliament Act','Judicial ruling'],'B','The constitution is the supreme law — all other laws derive authority from it.'),
+  q(2019,'A bicameral legislature has:',['One chamber','Two chambers','Three chambers','No chambers'],'B','Bicameral = two legislative chambers (e.g. Senate and House of Representatives in Nigeria).'),
+  q(2020,'The concept of "checks and balances" means:',['Balancing the budget','Each arm of government limits the others\' powers','Equality before the law','Free and fair elections'],'B','Checks and balances ensure no arm of government becomes too powerful — each monitors the others.'),
+  q(2021,'Who is the head of the executive arm in Nigeria?',['Senate President','Speaker of the House','President','Chief Justice'],'C','The President is the head of the executive arm in Nigeria\'s presidential system.'),
+  q(2022,'An oligarchy is a system of government ruled by:',['The military','A small powerful group','Citizens directly','Elected representatives'],'B','Oligarchy is rule by a small elite group, often defined by wealth, family, or military strength.'),
+  q(2023,'The Universal Declaration of Human Rights was adopted by the UN in:',['1945','1948','1960','1952'],'B','The UDHR was adopted by the UN General Assembly on 10 December 1948.'),
+  q(2024,'Which of these is a feature of democracy?',['Rule by one person','Protection of minority rights','Absence of elections','Military control'],'B','Democracy guarantees rights including minority rights, free elections, and rule of law.'),
+  q(2015,'Pressure groups differ from political parties in that they:',['Contest elections','Do not seek political power directly but influence policy','Have no members','Are government bodies'],'B','Pressure groups aim to influence government policy but do not seek to win political power themselves.'),
+  q(2016,'The ECOWAS treaty was signed in:',['1963','1975','1980','1960'],'B','ECOWAS (Economic Community of West African States) was established by the Treaty of Lagos in 1975.'),
+  q(2017,'What is "judicial review"?',['Parliament reviewing court decisions','Courts examining constitutionality of laws and executive actions','Judges reviewing police conduct','The public reviewing court rulings'],'B','Judicial review is the power of courts to declare laws or executive actions unconstitutional.'),
+  q(2018,'A "coup d\'état" means:',['A general election','Violent or sudden overthrow of a government','A vote of no confidence','A cabinet reshuffle'],'B','A coup d\'état is the sudden, violent seizure of power from an existing government.'),
+  q(2019,'Which organ of the UN is responsible for maintaining international peace and security?',['General Assembly','International Court of Justice','Security Council','Economic and Social Council'],'C','The UN Security Council has primary responsibility for international peace and security.'),
+  q(2020,'Nigeria became a Federal Republic in:',['1960','1963','1966','1979'],'B','Nigeria became a Federal Republic on 1 October 1963, replacing the Queen as head of state.'),
+  q(2021,'The principle of "one man, one vote" upholds:',['Federalism','Electoral equality','Bicameralism','Separation of powers'],'B','One man, one vote ensures each citizen\'s vote carries equal weight — electoral equality.'),
+  q(2022,'Which military head of state handed power to civilians in 1979?',['Gowon','Murtala Mohammed','Olusegun Obasanjo','Ibrahim Babangida'],'C','Olusegun Obasanjo handed over power to Shehu Shagari on 1 October 1979.'),
+  q(2023,'The Lome Convention was primarily a treaty between:',['West African states','The EU and African, Caribbean, and Pacific (ACP) countries','Nigeria and Ghana','Commonwealth nations'],'B','The Lomé Convention (1975) was an agreement between the EEC and ACP developing nations.'),
+  q(2024,'Which of these best describes a confederation?',['Strong central government over states','Loose alliance where member states retain sovereignty','Federal system with equal powers','Unitary government'],'B','A confederation is a loose union of sovereign states that delegate limited powers to a central body.'),
+  q(2015,'Sovereignty means a state\'s:',['Military strength','Supreme and absolute authority within its territory','Economic power','Population size'],'B','Sovereignty is the supreme authority a state exercises within its borders without external interference.'),
+  q(2016,'A motion of no confidence is moved against:',['The judiciary','The executive/cabinet','The legislature','The military'],'B','A vote of no confidence is a parliamentary mechanism to remove an executive (Prime Minister/Cabinet).'),
+  q(2017,'Which Nigerian institution conducts elections?',['Federal Ministry of Justice','INEC','The Presidency','National Assembly'],'B','INEC (Independent National Electoral Commission) organises and conducts Nigerian elections.'),
+  q(2018,'The Willink Commission of 1957-58 was set up to examine:',['Nigerian independence','Minority fears and creation of states','Electoral reform','Constitutional amendment'],'B','The Willink Commission investigated minority fears ahead of Nigerian independence.'),
+  q(2019,'Proportional representation ensures that:',['Majority party wins all seats','Seats reflect the proportion of votes each party receives','Rural areas have more seats','Military candidates run'],'B','PR systems allocate seats in proportion to the share of votes won by each party.'),
+  q(2020,'The 1960 Lancaster House Conference granted independence to:',['Ghana','Nigeria','Kenya','Zimbabwe'],'B','The Lancaster House Conference agreed on the terms of Nigerian independence (1 Oct 1960).'),
+  q(2021,'Civil society organisations are best described as:',['Government departments','Non-governmental organisations that represent citizens\' interests','Political parties','Security agencies'],'B','Civil society includes NGOs, trade unions, religious bodies, and other non-state actors advocating for citizens.'),
+  q(2022,'The Fundamental Human Rights in Nigeria are enshrined in:',['Chapter I of the 1999 Constitution','Chapter IV of the 1999 Constitution','Chapter II','Chapter VI'],'B','Chapter IV of the 1999 Nigerian Constitution contains the Fundamental Rights.'),
+  q(2023,'What is "gerrymandering"?',['Election rigging','Manipulating electoral boundaries to favour a party','Voter intimidation','False election results'],'B','Gerrymandering is the manipulation of constituency boundaries to give one party an unfair advantage.'),
+  q(2024,'The African Union (AU) replaced which organisation in 2002?',['ECA','OAU','ECOWAS','Commonwealth'],'B','The African Union replaced the Organisation of African Unity (OAU) in 2002.'),
+  q(2015,'Which of these is NOT a function of political parties?',['Recruitment of leaders','Policy formulation','Running the judiciary','Aggregation of interests'],'C','Political parties do not run the judiciary — that is the role of an independent judicial arm.'),
+  q(2016,'Totalitarianism is characterised by:',['Free press and open elections','Total state control over all aspects of life','Separation of powers','Protection of civil liberties'],'B','Totalitarian states exercise complete control over politics, economy, society, and culture.'),
+  q(2017,'In a parliamentary system, the Prime Minister is accountable to:',['The President','The Monarch','The Parliament','The Courts'],'C','In parliamentary systems, the PM is accountable to and must command a majority in Parliament.'),
+  q(2018,'The term "Geopolitics" refers to:',['Geography of population','The influence of geography on politics and international relations','Trade routes only','Border disputes'],'B','Geopolitics studies how geography, resources, and space influence politics and international power.'),
+  q(2019,'Which of these is a permanent member of the UN Security Council?',['Germany','Japan','China','Brazil'],'C','The 5 permanent members (P5) are USA, UK, France, Russia, and China — each with veto power.'),
+  q(2020,'Citizenship can be acquired by:',['Birth only','Birth, marriage, naturalisation, or registration','Purchase','Military service only'],'B','Citizenship can be acquired through birth (jus soli/jus sanguinis), naturalisation, marriage, or registration.'),
+  q(2021,'The Preamble of the 1999 Nigerian Constitution begins with:',['"We the rulers..."','"We the people of the Federal Republic of Nigeria..."','"In the name of God..."','"By the order of the military..."'],'B','The 1999 Constitution opens: "We the people of the Federal Republic of Nigeria…"'),
+  q(2022,'An "alliance" in international relations is:',['A trading agreement','A formal agreement between states for mutual benefit (often security)','A military invasion','A diplomatic protest'],'B','An alliance is a formal agreement between nations — typically for collective security.'),
+  q(2023,'Judicial independence means:',['Judges are appointed by politicians','Judges are free from political influence in their decisions','Courts can override democracy','All laws are made by judges'],'B','Judicial independence ensures courts make decisions based on law, not political pressure.'),
+  q(2024,'The theory of social contract was developed by:',['Aristotle, Hobbes, Locke, Rousseau','Machiavelli only','Karl Marx only','Plato only'],'A','Hobbes, Locke, and Rousseau all developed versions of social contract theory, building on earlier ideas.'),
+];
+
+QB['Commerce'] = [
+  q(2015,'Which of the following is an aid to trade?',['Banking','Farming','Mining','Fishing'],'A','Banking, insurance, transport, and warehousing are aids to trade — they facilitate commerce.'),
+  q(2016,'The document sent by a seller to a buyer listing goods supplied and their prices is a:',['Receipt','Invoice','Credit note','Delivery note'],'B','An invoice is a detailed bill listing goods/services supplied and amounts owed.'),
+  q(2017,'The practice of buying goods for cash and selling for cash is called:',['Credit trade','Cash and carry trade','Hire purchase','Barter'],'B','Cash and carry retail requires customers to pay immediately and collect goods themselves.'),
+  q(2018,'A bill of exchange is:',['A postal order','A written unconditional order to pay a specified sum on demand or at a future date','A cheque','A promissory note'],'B','A bill of exchange is a written order requiring payment of a fixed amount at a set date.'),
+  q(2019,'Which type of business organisation has unlimited liability?',['Limited company','Partnership','Private limited company','Co-operative'],'B','General partners in a partnership have unlimited personal liability for business debts.'),
+  q(2020,'The function of a wholesaler is to:',['Sell directly to consumers','Break bulk and sell to retailers','Export goods','Manufacture goods'],'B','Wholesalers buy in large quantities from manufacturers and sell in smaller lots to retailers.'),
+  q(2021,'A franchisee is:',['The franchisor\'s employee','A person who buys the right to operate under a franchisor\'s brand','A government contractor','A silent partner'],'B','A franchisee pays a fee to use the franchisor\'s brand, system, and support.'),
+  q(2022,'Insurance operates on the principle of:',['Maximum profit','Pooling of risk among many people','Government subsidy','Speculation'],'B','Insurance pools risks across many policyholders so that losses of the few are borne by the many.'),
+  q(2023,'The main function of the Central Bank is to:',['Accept deposits from the public','Issue currency and manage monetary policy','Provide loans to individuals','Run commercial banks'],'B','The Central Bank issues legal tender and regulates the money supply through monetary policy.'),
+  q(2024,'E-commerce refers to:',['Electronic manufacturing','Buying and selling of goods/services via the internet','Electronic banking only','Government electronic transactions'],'B','E-commerce encompasses all commercial transactions conducted electronically over the internet.'),
+  q(2015,'A debit note is issued by the seller to inform the buyer that their account has been:',['Credited','Debited','Balanced','Closed'],'B','A debit note increases the amount owed by the buyer — it debits the buyer\'s account.'),
+  q(2016,'Documents of title to goods include:',['Invoice','Bill of lading','Debit note','Statement of account'],'B','A bill of lading is a document issued by a carrier acknowledging receipt of cargo for shipment — a document of title.'),
+  q(2017,'The capital of a sole trader is also known as:',['Share capital','Equity','Proprietor\'s fund / Owner\'s equity','Debenture'],'C','In a sole proprietorship, the owner\'s investment is termed proprietor\'s fund or owner\'s equity.'),
+  q(2018,'Chain stores differ from department stores in that:',['Chain stores carry more variety','Chain stores are multiple retail outlets selling similar goods under one ownership','Department stores are cheaper','Chain stores are cooperatives'],'B','Chain stores (multiples) are many branches selling the same limited range under one owner/brand.'),
+  q(2019,'A co-operative society is owned and managed by:',['Government','Its members','Shareholders','A sole proprietor'],'B','Co-operatives are democratically owned and controlled by their members for mutual benefit.'),
+  q(2020,'The prospectus is issued by a company to:',['Declare dividends','Invite the public to subscribe for shares','File annual accounts','Appoint directors'],'B','A prospectus is a formal document inviting the public to invest in a company\'s shares or debentures.'),
+  q(2021,'Carriage Insurance Freight (CIF) means that:',['Buyer pays all shipping costs','Seller pays cost, insurance, and freight to destination','Both share costs','Government pays'],'B','Under CIF terms, the seller covers the cost of goods, insurance, and freight to the buyer\'s port.'),
+  q(2022,'A consumer co-operative is primarily set up to:',['Produce goods for export','Provide goods to members at reasonable prices','Generate profit for shareholders','Offer banking services'],'B','Consumer co-operatives pool members\' resources to buy goods in bulk and sell to members cheaply.'),
+  q(2023,'Which of these is a negotiable instrument?',['Invoice','Cheque','Purchase order','Delivery note'],'B','A cheque (and bills of exchange, promissory notes) are negotiable instruments — they can be transferred.'),
+  q(2024,'Containerisation in shipping leads to:',['Higher freight costs','Reduced handling costs and faster loading/unloading','More warehousing needed','Slower delivery'],'B','Containers standardise shipping, reduce handling, theft, and damage, and speed up port operations.'),
+  q(2015,'Consignment goods are goods sent to an agent who:',['Owns them outright','Sells them on behalf of the owner and remits proceeds','Destroys them','Uses them personally'],'B','Consignment means the agent (consignee) sells goods on behalf of the owner (consignor).'),
+  q(2016,'The document that authorises a ship to leave port after customs clearance is:',['Bill of lading','Mate\'s receipt','Port clearance certificate','Consular invoice'],'C','Port clearance (also "ship\'s clearance") is issued by customs allowing a vessel to depart.'),
+  q(2017,'The Memorandum of Association of a company contains:',['Internal regulations','The company\'s objects, name, share capital, and relationship with outside world','Director lists','Staff rules'],'B','The Memorandum of Association governs the company\'s external constitution — name, objectives, capital.'),
+  q(2018,'Warehousing provides the utility of:',['Place','Time','Form','Possession'],'B','Warehousing provides time utility — goods are stored and made available when needed, not just when produced.'),
+  q(2019,'A debenture holder is a:',['Shareholder','Creditor of the company who earns fixed interest','Director','Partner'],'B','Debenture holders are creditors (lenders) who receive a fixed rate of interest on their loan to the company.'),
+  q(2020,'The term "caveat emptor" means:',['Seller beware','Let the buyer beware','Equal rights for all','Government must protect consumers'],'B','"Caveat emptor" (Latin) means the buyer takes the risk — they should examine goods before purchase.'),
+  q(2021,'VAT stands for:',['Value Addition Tax','Value Added Tax','Valued Asset Tax','Varied Administrative Tax'],'B','VAT = Value Added Tax, charged at each stage of production/distribution on the value added.'),
+  q(2022,'The Articles of Association govern:',['Company\'s external relationships','Internal management and regulations of a company','Tax obligations','Export procedures'],'B','The Articles of Association contain internal rules governing the management and operations of a company.'),
+  q(2023,'Barter trade fails due to:',['Double coincidence of wants problem','Lack of goods','High prices','Government interference'],'A','Barter requires a double coincidence of wants — each party must want exactly what the other has.'),
+  q(2024,'A multinational corporation (MNC) is a company that:',['Operates in one country','Operates in multiple countries across the world','Is owned by governments','Has no shareholders'],'B','A multinational corporation has operations, assets, or subsidiaries in more than one country.'),
+  q(2015,'A monopoly exists when:',['Many firms compete','One firm dominates the entire market','Two firms share the market','Government controls the market'],'B','A monopoly is a market dominated by a single seller with no close substitutes.'),
+  q(2016,'The main aim of the Organisation of Petroleum Exporting Countries (OPEC) is to:',['Promote free trade in oil','Coordinate oil production policies and stabilise prices among member states','Tax oil companies','Distribute oil to poor nations'],'B','OPEC coordinates member countries\' petroleum policies and stabilises global oil prices.'),
+  q(2017,'Hire purchase differs from credit sale in that:',['Hire purchase ownership passes immediately','In hire purchase, ownership passes only after the last instalment','Credit sale requires a deposit','There is no difference'],'B','Hire purchase: ownership transfers after final payment; credit sale: ownership passes immediately despite instalments.'),
+  q(2018,'The Stock Exchange provides a market for:',['Agricultural produce','New company registrations','Buying and selling of existing securities','Foreign exchange only'],'C','The Stock Exchange (secondary market) is where existing shares and bonds are bought and sold.'),
+  q(2019,'A statement of account is sent by the seller to:',['Customs authorities','The buyer to show all transactions in a period and balance owed','The government','The bank'],'B','A statement of account summarises all invoices, payments, and credits over a period.'),
+  q(2020,'Public relations in business is concerned with:',['Employee discipline','Creating and maintaining a favourable image of an organisation','Advertising products','Setting prices'],'B','Public relations manages a company\'s communication and image with all its stakeholders.'),
+  q(2021,'Which type of insurance covers the cargo/goods in transit?',['Life insurance','Fire insurance','Marine cargo insurance','Motor insurance'],'C','Marine cargo insurance covers goods against loss or damage while being transported by sea/air/land.'),
+  q(2022,'The main advantage of a public company over a private company is:',['Less regulation','Ability to raise capital from the public by selling shares','Limited membership','Simpler management'],'B','A public limited company (PLC) can invite the general public to subscribe for its shares.'),
+  q(2023,'Branding helps consumers by:',['Reducing product quality','Enabling easy identification and assessment of product quality','Increasing prices','Limiting choice'],'B','Brands help consumers identify products, establish quality expectations, and build loyalty.'),
+  q(2024,'NAFDAC regulates:',['Financial institutions','Food, drug, cosmetics, and related products in Nigeria','Petroleum products','Telecommunications'],'B','NAFDAC (National Agency for Food and Drug Administration and Control) regulates food, drugs, and cosmetics in Nigeria.'),
+];
+
+QB['Accounting'] = [
+  q(2015,'The accounting equation is:',['Assets = Liabilities + Revenue','Assets = Capital + Liabilities','Profit = Revenue - Expenses','Capital = Assets - Revenue'],'B','The fundamental accounting equation: Assets = Capital (Owner\'s Equity) + Liabilities.'),
+  q(2016,'Depreciation is the:',['Increase in asset value over time','Systematic allocation of an asset\'s cost over its useful life','Total cost of an asset','Annual repair cost'],'B','Depreciation allocates the cost of a fixed (non-current) asset over its estimated useful life.'),
+  q(2017,'The double-entry principle states that:',['Every debit must have a corresponding credit','Assets equal liabilities','Revenue is recorded when cash is received','Expenses are always cash payments'],'A','Double-entry bookkeeping: every transaction creates a debit in one account and a credit in another.'),
+  q(2018,'Goodwill is classified as a:',['Current asset','Tangible fixed asset','Intangible fixed asset','Current liability'],'C','Goodwill is an intangible asset representing the premium paid for a business\'s reputation.'),
+  q(2019,'The statement that shows a company\'s financial position at a specific date is the:',['Income statement','Statement of cash flows','Balance sheet','Trading account'],'C','The balance sheet (statement of financial position) shows assets, liabilities, and equity at a point in time.'),
+  q(2020,'Working capital is:',['Total assets minus total liabilities','Current assets minus current liabilities','Fixed assets minus current assets','Capital plus liabilities'],'B','Working capital = Current assets - Current liabilities; it measures short-term liquidity.'),
+  q(2021,'FIFO stands for:',['First In, First Out','First Invoice, Fixed Output','Final Income, Final Output','Frequent In, Frequent Out'],'A','FIFO (First In, First Out) assumes the oldest inventory is sold/used first.'),
+  q(2022,'A trial balance is prepared to:',['Show profit for the year','Check arithmetical accuracy of ledger entries','Prepare the income statement','Calculate tax'],'B','A trial balance lists all debit and credit balances to verify they are equal — checking arithmetic.'),
+  q(2023,'Gross profit is:',['Revenue minus all expenses','Revenue minus cost of goods sold','Net profit plus expenses','Revenue only'],'B','Gross profit = Net sales - Cost of Goods Sold (COGS); before deducting operating expenses.'),
+  q(2024,'In partnership accounts, interest on drawings is:',['Debited to partners\' capital','Credited to profit and loss appropriation account','Debited to the bank account','Ignored'],'B','Interest on drawings is income to the partnership — it is credited to the P&L appropriation account.'),
+  q(2015,'Accruals concept means:',['Record cash only when received','Revenue and expenses are recorded when earned/incurred, not when cash is exchanged','Record revenue only when billed','Ignore unpaid expenses'],'B','The accruals (matching) concept matches income and expenses to the period they relate to, not cash flow.'),
+  q(2016,'Petty cash is used for:',['Large business transactions','Small, day-to-day expenses','Paying suppliers','Purchasing fixed assets'],'B','Petty cash funds are used to pay small incidental expenses quickly without issuing cheques.'),
+  q(2017,'A credit note reduces the amount:',['Owed by the buyer to the seller','Owed by seller to buyer','In the bank account','In sales revenue always'],'A','A credit note reduces the buyer\'s outstanding debt — e.g. for returned goods.'),
+  q(2018,'Provision for bad debts is a:',['Current asset','Contra asset (deducted from debtors)','Current liability','Fixed liability'],'B','Provision for bad debts is a contra-asset — it reduces the net value of trade receivables.'),
+  q(2019,'The difference between the sales price and cost of purchase of goods is called:',['Net profit','Gross profit','Mark-up','Operating profit'],'C','Mark-up is the amount added to the cost price to arrive at the selling price.'),
+  q(2020,'What does LIFO stand for?',['Last Invoice, First Output','Last In, First Out','Latest Income, Fixed Outlay','Least In, Frequent Out'],'B','LIFO assumes the most recently acquired inventory is used/sold first.'),
+  q(2021,'Carriage inwards is charged to:',['Profit and loss account','Trading account as cost of goods','Balance sheet','Capital account'],'B','Carriage inwards is the cost of bringing goods in for resale — it is added to the cost of purchases in the trading account.'),
+  q(2022,'Bank reconciliation is prepared to:',['Agree the cash book balance with the bank statement balance','Prepare the income statement','Audit the company','Close the ledger'],'A','Bank reconciliation explains differences between the company\'s cash book and the bank statement.'),
+  q(2023,'Debentures are shown in the balance sheet under:',['Current assets','Non-current liabilities','Current liabilities','Equity'],'B','Debentures are long-term loans — classified as non-current liabilities in the balance sheet.'),
+  q(2024,'Return on Capital Employed (ROCE) measures:',['Liquidity','Profitability relative to capital invested','Asset turnover','Gearing'],'B','ROCE = Operating Profit / Capital Employed × 100 — measures efficiency of capital use.'),
+  q(2015,'Drawings reduce:',['Liabilities','Revenue','Capital/Owner\'s equity','Fixed assets'],'C','Drawings are amounts taken by the owner from the business — they reduce owner\'s capital.'),
+  q(2016,'The purchase of a motor vehicle is recorded as:',['Revenue expenditure','Capital expenditure','Operating expense','Loss'],'B','Purchasing a long-term asset (motor vehicle) is capital expenditure — it benefits multiple periods.'),
+  q(2017,'A sole trader\'s net profit increases when:',['Liabilities increase','Revenue exceeds expenses more','Drawings increase','Assets decrease'],'B','Net profit increases when revenues exceed expenses by a greater margin.'),
+  q(2018,'Closing stock appears in:',['Trading account only','Balance sheet only','Both trading account (as credit) and balance sheet (as current asset)','Profit and loss account only'],'C','Closing stock is credited in the trading account (reducing COGS) and appears as a current asset on the balance sheet.'),
+  q(2019,'The current ratio is calculated as:',['Current assets ÷ Total assets','Current assets ÷ Current liabilities','Total liabilities ÷ Current assets','Net profit ÷ Revenue'],'B','Current ratio = Current assets / Current liabilities; a ratio above 1 indicates adequate short-term liquidity.'),
+  q(2020,'Discount allowed is recorded in the:',['Sales day book','Discount allowed account (debit)','Purchase ledger','Balance sheet directly'],'B','Discount allowed is an expense — it is debited to the discount allowed account.'),
+  q(2021,'Outstanding expenses are treated as:',['Assets','Current liabilities','Long-term liabilities','Capital'],'B','Outstanding (accrued) expenses are amounts owed but not yet paid — they are current liabilities.'),
+  q(2022,'Capital expenditure improves:',['Day-to-day operations','The earning capacity of the business over the long term','Cash flow immediately','Monthly expenses'],'B','Capital expenditure acquires or improves long-term assets, enhancing future earning capacity.'),
+  q(2023,'A suspense account is opened when:',['Profit is uncertain','A trial balance does not agree and errors cannot be immediately found','Cash is insufficient','Tax is due'],'B','A suspense account temporarily holds the difference in a trial balance while errors are investigated.'),
+  q(2024,'Preference shareholders have priority over ordinary shareholders in:',['Voting rights','Dividend payments and return of capital on liquidation','Management decisions','Bonus shares'],'B','Preference shareholders receive fixed dividends and are repaid before ordinary shareholders in liquidation.'),
+  q(2015,'Salaries payable is a:',['Fixed asset','Revenue','Current liability','Capital'],'C','Salaries owed but not yet paid are accrued liabilities — current liabilities on the balance sheet.'),
+  q(2016,'A manufacturing account is prepared to show the:',['Gross profit','Cost of goods manufactured','Net profit','Cash flows'],'B','A manufacturing account calculates the total cost of producing goods in a manufacturing business.'),
+  q(2017,'Prepaid rent is classified as a:',['Current liability','Revenue','Current asset (prepayment)','Fixed asset'],'C','A prepayment is rent paid in advance — a current asset as the benefit has not yet been received.'),
+  q(2018,'Straight-line depreciation is calculated as:',['(Cost - Residual value) ÷ Useful life in years','Cost × Rate%','Residual value ÷ Cost','Cost ÷ Rate%'],'A','Straight-line method: Annual depreciation = (Cost - Residual value) / Useful life.'),
+  q(2019,'A credit balance on a debtor\'s account means the debtor:',['Owes money to the business','Has overpaid and is owed a refund','Is bankrupt','Has not traded'],'B','A credit balance on a debtor\'s account means the debtor has paid more than owed — they are owed a refund.'),
+  q(2020,'Tangible fixed assets include:',['Goodwill','Patents','Land and buildings','Trademarks'],'C','Tangible assets are physical — land, buildings, machinery, vehicles. Goodwill and patents are intangible.'),
+  q(2021,'Gross profit margin is:',['Net profit ÷ Revenue × 100','Gross profit ÷ Revenue × 100','Operating profit ÷ Cost of goods sold × 100','Gross profit ÷ Total assets × 100'],'B','Gross profit margin = (Gross profit / Revenue) × 100; measures profitability before operating expenses.'),
+  q(2022,'A dishonoured cheque is one that:',['Is cashed successfully','The bank refuses to pay','Is issued without a signature','Is dated in the future'],'B','A dishonoured (bounced) cheque is returned by the bank unpaid — usually due to insufficient funds.'),
+  q(2023,'In partnership, interest on capital is:',['A payment to the partner','An expense of the firm debited to P&L appropriation account','A liability','Ignored in accounts'],'B','Interest on capital compensates partners for investing in the firm — it is debited to the appropriation account.'),
+  q(2024,'Non-current liabilities include:',['Bank overdraft','Trade payables','Long-term loans','Outstanding expenses'],'C','Non-current liabilities are long-term obligations (>1 year) — such as long-term bank loans and debentures.'),
+];
+
+QB['Geography'] = [
+  q(2015,'The longest river in Africa is:',['Congo (Zaire)','Niger','Nile','Zambezi'],'C','The Nile River (about 6,650 km) is the longest river in Africa (and historically considered the world\'s longest).'),
+  q(2016,'Contour lines on a map connect points of:',['Equal rainfall','Equal population density','Equal altitude/elevation','Equal temperature'],'C','Contour lines join points of equal elevation above sea level on a topographic map.'),
+  q(2017,'The process by which water vapour becomes liquid water is:',['Evaporation','Precipitation','Condensation','Transpiration'],'C','Condensation is the conversion of water vapour to liquid — it forms clouds and dew.'),
+  q(2018,'Nigeria is located in which climate zone?',['Mediterranean','Equatorial and tropical','Desert','Temperate'],'B','Nigeria spans the tropical rainforest, Guinea savanna, Sudan savanna, and Sahel zones.'),
+  q(2019,'Laterite soils are commonly found in:',['Temperate regions','Tropical rainforest areas','Arctic regions','Desert regions'],'B','Laterite soils form in hot, humid tropical areas through intense weathering and leaching.'),
+  q(2020,'The Greenwich Meridian is located at:',['90° East','180°','0° longitude','90° West'],'C','The Prime (Greenwich) Meridian is at 0° longitude, passing through Greenwich, London.'),
+  q(2021,'ITCZ stands for:',['International Trade Climate Zone','Inter-Tropical Convergence Zone','Internal Temperature Control Zone','Inter-Terrestrial Continental Zone'],'B','The ITCZ is a belt of low pressure near the equator where trade winds converge, causing heavy rainfall.'),
+  q(2022,'The largest desert in the world is:',['Sahara','Gobi','Arabian','Kalahari'],'A','The Sahara is the world\'s largest hot desert, covering about 9.2 million km² in North Africa.'),
+  q(2023,'Population density is calculated as:',['Population × Area','Population ÷ Area','Area ÷ Population','Population + Area'],'B','Population density = Total population / Total land area (persons per km²).'),
+  q(2024,'Which of these is a renewable source of energy?',['Coal','Natural gas','Solar','Petroleum'],'C','Solar energy is inexhaustible and renewable; coal, gas, and petroleum are finite fossil fuels.'),
+  q(2015,'Fold mountains are formed by:',['Volcanic eruptions','Tectonic plate collision causing rock folding','River erosion','Glacial deposition'],'B','Fold mountains (e.g. Himalayas, Alps) form where tectonic plates collide and compress rock strata into folds.'),
+  q(2016,'The Amazon rainforest is located in:',['Africa','Asia','South America','Australia'],'C','The Amazon Basin rainforest, the world\'s largest, lies mainly in Brazil, South America.'),
+  q(2017,'Which type of rainfall results from moist air rising over a mountain?',['Convectional','Frontal','Relief (orographic)','Cyclonic'],'C','Relief (orographic) rainfall occurs when moist air is forced to rise over mountains, cools, and precipitates.'),
+  q(2018,'The study of population is called:',['Ecology','Demography','Sociology','Geography'],'B','Demography is the scientific study of human populations — size, composition, distribution, and change.'),
+  q(2019,'Savanna vegetation is characterised by:',['Dense forest canopy','Grassland with scattered trees','Tundra shrubs','Alpine meadows'],'B','Savannas feature tropical grasslands with scattered, drought-resistant trees and seasonal rainfall.'),
+  q(2020,'The ozone layer is located in the:',['Troposphere','Stratosphere','Mesosphere','Thermosphere'],'B','The ozone layer is in the stratosphere (15–35 km altitude) and absorbs UV radiation.'),
+  q(2021,'Which Nigerian state is not located in the Niger Delta?',['Bayelsa','Rivers','Delta','Plateau'],'D','Plateau State is located in North-central Nigeria, far from the Niger Delta region.'),
+  q(2022,'Soil erosion is most severe in areas with:',['Dense vegetation','Flat terrain','Sparse vegetation and steep slopes','Heavy clay soils'],'C','Erosion is severe where vegetation is absent (no root binding) and slopes accelerate runoff.'),
+  q(2023,'The Tropic of Cancer is at:',['23.5° South','23.5° North','66.5° North','0°'],'B','The Tropic of Cancer is at approximately 23.5°N — the northernmost point where the sun is directly overhead.'),
+  q(2024,'Urban primacy refers to:',['Equal-sized cities','The dominance of one very large city over others in a country','Multiple megacities','Rural dominance'],'B','Urban primacy occurs when one city is disproportionately larger than all others — e.g. Lagos in Nigeria.'),
+  q(2015,'Mangrove forests in Nigeria are found mainly in the:',['Savanna zone','Niger Delta coastal zone','Jos Plateau','Sokoto Plains'],'B','Mangroves grow in coastal, brackish, tidal areas — Nigeria\'s Niger Delta has extensive mangrove forests.'),
+  q(2016,'The rotation of the Earth on its axis causes:',['Seasons','Day and night','Eclipses','Tides'],'B','Earth\'s daily rotation on its axis causes the cycle of day and night.'),
+  q(2017,'Which of the following is a landlocked country in West Africa?',['Ghana','Nigeria','Niger','Senegal'],'C','Niger is landlocked — it has no coastline. Nigeria, Ghana, and Senegal all have Atlantic coasts.'),
+  q(2018,'Weathering refers to the:',['Transport of rock material','Breakdown of rocks in situ by physical, chemical, or biological processes','Deposition of sediments','Erosion by running water'],'B','Weathering is the in-situ disintegration and decomposition of rocks without their transport.'),
+  q(2019,'The major cash crop of the savanna zone in Nigeria is:',['Cocoa','Oil palm','Groundnut','Rubber'],'C','Groundnuts (peanuts) are the dominant cash crop of the Sudan savanna in northern Nigeria.'),
+  q(2020,'International Date Line is located approximately at:',['0° longitude','90° East','180° longitude','90° West'],'C','The International Date Line runs roughly along the 180° meridian in the Pacific Ocean.'),
+  q(2021,'Lagos is located in which geographical zone of Nigeria?',['Mangrove swamp/coastal','Guinea savanna','Sudan savanna','Sahel zone'],'A','Lagos lies in the coastal lowlands and mangrove zone of south-western Nigeria.'),
+  q(2022,'The phenomenon of "urban heat island" refers to:',['Cooling of city centres','Urban areas being warmer than surrounding rural areas due to human activity','Flooding in cities','Desert encroachment into cities'],'B','Urban heat islands form because concrete, asphalt, and human activities generate and retain more heat than rural land.'),
+  q(2023,'Igneous rocks are formed from:',['Sediments compressed over time','Rocks changed by heat and pressure','Cooled magma or lava','Biological deposits'],'C','Igneous rocks crystallise from cooled magma (intrusive) or lava (extrusive).'),
+  q(2024,'Migration from rural to urban areas is called:',['Emigration','Rural-urban migration','Urbanisation cycle','Counter-urbanisation'],'B','Rural-urban migration is the movement of people from rural areas to cities in search of better opportunities.'),
+  q(2015,'The most important factor in determining climate is:',['Altitude','Latitude','Distance from the sea','Ocean currents'],'B','Latitude is the primary determinant of climate as it determines the angle and intensity of solar radiation.'),
+  q(2016,'An earthquake\'s strength is measured on the:',['Beaufort scale','Richter scale','Saffir-Simpson scale','Fujita scale'],'B','Earthquake magnitude is measured on the Richter scale (or moment magnitude scale).'),
+  q(2017,'The Jos Plateau in Nigeria is notable for the mining of:',['Crude oil','Tin and columbite','Coal','Gold'],'B','The Jos Plateau has significant deposits of tin and columbite, historically important for Nigeria.'),
+  q(2018,'Which ocean is the largest?',['Atlantic','Indian','Arctic','Pacific'],'D','The Pacific Ocean is the world\'s largest and deepest ocean, covering about 165 million km².'),
+  q(2019,'Pastoral farming involves:',['Growing crops for sale','Rearing of livestock','Subsistence crop farming','Agro-forestry'],'B','Pastoral farming is the rearing and management of livestock (cattle, sheep, goats).'),
+  q(2020,'Trade winds blow from:',['Equator to poles','Poles to equator','Sub-tropical high-pressure belts toward the equator','West to east'],'C','Trade winds blow from the subtropical high-pressure zones toward the low-pressure equatorial belt.'),
+  q(2021,'A waterfall is formed when:',['A river enters the sea','A river flows over a band of hard rock underlain by soft rock, creating a step','Two rivers meet','Rain falls on a mountain'],'B','When a river crosses from resistant rock to softer rock, differential erosion creates a waterfall.'),
+  q(2022,'Crop rotation helps to:',['Reduce soil erosion only','Maintain soil fertility and reduce pests','Increase soil erosion','Replace irrigation'],'B','Crop rotation alternates different crops on the same land to restore nutrients and break pest cycles.'),
+  q(2023,'The term "megalopolis" refers to:',['A very large city','A chain of metropolitan areas that merge into one vast urban region','A capital city','A planned city'],'B','A megalopolis is a continuous strip of urban areas — e.g. the Boston-Washington corridor (BosWash).'),
+  q(2024,'Rill erosion is:',['Wind erosion','Erosion of soil by small channels/streams formed by surface runoff','Deep gully formation','Sheet erosion'],'B','Rill erosion forms small channels (rills) on sloping land as surface runoff concentrates and cuts into soil.'),
+];
+
+QB['History'] = [
+  q(2015,'The Berlin Conference of 1884-85 was significant because:',['It granted independence to African nations','European powers partitioned Africa among themselves','It ended slavery','It created the League of Nations'],'B','At the Berlin Conference, European powers divided Africa into colonial territories without African input.'),
+  q(2016,'Who was the first President of Nigeria?',['Tafawa Balewa','Nnamdi Azikiwe','Obafemi Awolowo','Ahmadu Bello'],'B','Dr. Nnamdi Azikiwe became the first President of independent Nigeria on 1 October 1963.'),
+  q(2017,'The Sokoto Caliphate was founded in 1804 by:',['Usman dan Fodio','Uthman ibn Affan','Tafawa Balewa','Shehu Lamido'],'A','Usman dan Fodio led the Fulani jihad and established the Sokoto Caliphate in 1804.'),
+  q(2018,'Nigeria gained independence from Britain on:',['1 October 1960','1 October 1963','27 July 1914','15 August 1947'],'A','Nigeria became independent from British rule on 1 October 1960.'),
+  q(2019,'The slave trade was formally abolished in the British Empire in:',['1772','1807','1833','1865'],'B','The Slave Trade Act of 1807 abolished the slave trade in the British Empire.'),
+  q(2020,'The Scramble for Africa refers to:',['African wars among states','The rapid colonisation of Africa by European powers (1880s-1900s)','African independence movements','The search for African gold'],'B','The Scramble for Africa was the rapid invasion and annexation of African territories by European nations.'),
+  q(2021,'The Biafran War in Nigeria lasted from:',['1960-1963','1967-1970','1966-1967','1970-1975'],'B','The Nigerian Civil War (Biafra War) lasted from May 1967 to January 1970.'),
+  q(2022,'Who led the colonial resistance against the British in Benin Kingdom?',['Jaja of Opobo','Oba Overamwen','Nana Olomu','Ekitiparapo'],'B','Oba Overamwen led Benin\'s resistance before the British Punitive Expedition of 1897.'),
+  q(2023,'The Atlantic Slave Trade primarily transported enslaved Africans to:',['Europe','Asia','The Americas','The Middle East'],'C','The transatlantic slave trade forcibly transported millions of Africans to the Americas (1500s-1800s).'),
+  q(2024,'The Amalgamation of Nigeria in 1914 was carried out by:',['Herbert Macaulay','Frederick Lugard','Nnamdi Azikiwe','Charles Cameron Clifford'],'B','Lord Frederick Lugard amalgamated the Northern and Southern Protectorates of Nigeria on 1 January 1914.'),
+  q(2015,'The Indirect Rule policy in Nigeria was introduced by:',['Goldie','Lugard','Burns','Macpherson'],'B','Lord Lugard introduced Indirect Rule — governing through existing indigenous rulers — in Northern Nigeria.'),
+  q(2016,'Which event directly triggered World War I?',['The Russian Revolution','Assassination of Archduke Franz Ferdinand of Austria','Germany\'s invasion of Poland','The sinking of the Lusitania'],'B','Archduke Franz Ferdinand\'s assassination in Sarajevo (June 1914) triggered the alliance system that led to WWI.'),
+  q(2017,'The Emancipation Proclamation (1863) was issued by:',['George Washington','Abraham Lincoln','Thomas Jefferson','Ulysses S. Grant'],'B','President Lincoln issued the Emancipation Proclamation, declaring enslaved people in Confederate states free.'),
+  q(2018,'The Nile Valley civilization was centered in:',['Sudan and Egypt','Ethiopia and Somalia','Kenya and Uganda','Libya and Tunisia'],'A','Ancient Egyptian civilization along the Nile Valley was centred in the region of modern Egypt and Sudan.'),
+  q(2019,'Pan-Africanism as a movement was promoted by:',['Nelson Mandela','Kwame Nkrumah and W.E.B. Du Bois','Julius Nyerere alone','Patrice Lumumba alone'],'B','Kwame Nkrumah of Ghana and W.E.B. Du Bois of the USA were leading advocates of Pan-Africanism.'),
+  q(2020,'The Organisation of African Unity (OAU) was founded in:',['1945','1960','1963','1975'],'C','The OAU was established on 25 May 1963 in Addis Ababa, Ethiopia (now African Union Day).'),
+  q(2021,'Which Nigerian leader was known as "Zik of Africa"?',['Awolowo','Tafawa Balewa','Nnamdi Azikiwe','Ahmadu Bello'],'C','Nnamdi Azikiwe was popularly called "Zik of Africa" for his pan-African activism.'),
+  q(2022,'The Great Depression of the 1930s began with:',['The Russian Revolution','Wall Street Crash of 1929','WWI','WWII'],'B','The Great Depression was triggered by the Wall Street stock market crash of October 1929.'),
+  q(2023,'Which ancient civilisation built the Pyramids of Giza?',['Mesopotamian','Greek','Ancient Egyptian','Roman'],'C','The Great Pyramids of Giza were built by the ancient Egyptians as royal tombs, around 2580–2560 BCE.'),
+  q(2024,'The United Nations was established in:',['1919','1939','1945','1948'],'C','The UN was founded on 24 October 1945, after WWII, to promote international peace and cooperation.'),
+  q(2015,'The concept of "Negritude" was developed by:',['Kwame Nkrumah','Léopold Sédar Senghor and Aimé Césaire','Marcus Garvey','W.E.B. Du Bois'],'B','Negritude was a literary and intellectual movement celebrating Black African culture, founded by Senghor and Césaire.'),
+  q(2016,'The Hausa-Fulani jihad of 1804 was motivated by:',['Political power alone','Religious (Islamic) revival and opposition to corrupt practices','Trade dominance','Ethnic rivalry'],'B','Usman dan Fodio\'s jihad sought to purify Islam and overthrow rulers he considered un-Islamic.'),
+  q(2017,'The first black republic in the world was:',['Ghana','Nigeria','Liberia','Haiti'],'D','Haiti became the first Black republic in 1804 after a successful slave revolution against France.'),
+  q(2018,'Apartheid in South Africa was dismantled in:',['1980','1990','1994','1999'],'C','The first multiracial democratic elections were held in April 1994, ending apartheid rule.'),
+  q(2019,'The Warrant Chief system in Eastern Nigeria led to:',['Political stability','The Aba Women\'s Riot (1929)','The creation of regions','Independence movements'],'B','The Aba Women\'s Revolt (or Ogu Umunwanyi) of 1929 was a direct response to the abuses of the Warrant Chief system.'),
+  q(2020,'The Cold War was a period of rivalry between:',['France and Germany','USA and USSR','Britain and China','NATO and the EU'],'B','The Cold War (1947-1991) was the ideological and geopolitical rivalry between the USA and the USSR.'),
+  q(2021,'Who was the first Prime Minister of Nigeria?',['Nnamdi Azikiwe','Ahmadu Bello','Abubakar Tafawa Balewa','Obafemi Awolowo'],'C','Sir Abubakar Tafawa Balewa was Nigeria\'s first and only Prime Minister (1960-1966).'),
+  q(2022,'The Monroe Doctrine (1823) was a policy of:',['Britain controlling the Americas','The USA declaring the Americas off-limits to further European colonisation','The USA joining European alliances','Free trade in the Americas'],'B','The Monroe Doctrine stated that further European colonisation of the Americas would be seen as a threat to US peace.'),
+  q(2023,'The Clifford Constitution of 1922 was significant because:',['It granted independence','It introduced the first elections and elected African representation to the legislative council','It created regions','It abolished indirect rule'],'B','The Clifford Constitution introduced elective representation for Africans in Lagos and Calabar for the first time.'),
+  q(2024,'The Transatlantic Slave Trade lasted approximately:',['50 years','100 years','400 years','200 years'],'C','The transatlantic slave trade operated from roughly the 1500s to the 1800s — about 400 years.'),
+  q(2015,'World War II ended in:',['1943','1944','1945','1946'],'C','WWII ended in 1945 — VE Day (May 8) in Europe and VJ Day (September 2) in the Pacific.'),
+  q(2016,'The League of Nations was established after:',['World War II','World War I','The French Revolution','The American Civil War'],'B','The League of Nations (1920) was founded after WWI to maintain peace — it was the precursor to the UN.'),
+  q(2017,'The Rivonia Trial (1963-64) sentenced _____ to life imprisonment.',['Desmond Tutu','Oliver Tambo','Nelson Mandela','Steve Biko'],'C','Nelson Mandela and other ANC leaders were convicted at the Rivonia Trial and sentenced to life imprisonment.'),
+  q(2018,'The Lugard Amalgamation joined which two Nigerian territories?',['Lagos and Calabar','Southern and Northern Protectorates','Eastern and Western Nigeria','Lagos and Northern Nigeria'],'B','Lord Lugard merged the Protectorate of Northern Nigeria and the Protectorate of Southern Nigeria in 1914.'),
+  q(2019,'The Ewi of Ado-Ekiti is the traditional ruler of:',['Oyo','Ife','Ado-Ekiti','Benin'],'C','The Ewi is the traditional ruler of Ado-Ekiti, capital of Ekiti State.'),
+  q(2020,'Who colonised Nigeria?',['France','Portugal','Britain','Germany'],'B','Britain colonised Nigeria, administering it from the late 19th century until independence in 1960.'),
+  q(2021,'The Magna Carta (1215) established the principle of:',['Democracy','Rule of law and limits on royal power','Slavery abolition','Church supremacy'],'B','The Magna Carta curbed the absolute power of the English king and established rule of law.'),
+  q(2022,'The founder of the NNDP (Nigerian National Democratic Party) in 1923 was:',['Nnamdi Azikiwe','Herbert Macaulay','H.O. Davies','Ernest Ikoli'],'B','Herbert Macaulay founded the NNDP in 1923 — Nigeria\'s first political party.'),
+  q(2023,'The French Revolution began in:',['1776','1789','1799','1804'],'B','The French Revolution started in 1789 with the storming of the Bastille on 14 July.'),
+  q(2024,'FESTAC 77 was held in:',['Accra','Nairobi','Lagos','Dakar'],'C','The Second World Black and African Festival of Arts and Culture (FESTAC 77) was held in Lagos, Nigeria.'),
+];
+
+QB['CRS'] = [
+  q(2015,'According to Genesis, on which day did God create man?',['Third','Fifth','Sixth','Seventh'],'C','God created man on the sixth day (Genesis 1:26-31), and rested on the seventh.'),
+  q(2016,'The story of the Good Samaritan teaches:',['Racial segregation','Love for neighbour regardless of race or religion','Religious superiority','Legal duty only'],'B','The Parable of the Good Samaritan (Luke 10:25-37) teaches unconditional love and compassion for all.'),
+  q(2017,'The first king of Israel was:',['David','Solomon','Saul','Samuel'],'C','Saul was anointed the first king of Israel by Samuel (1 Samuel 10).'),
+  q(2018,'Paul\'s letter to the Romans emphasises:',['Circumcision as salvation','Justification by faith alone','Jewish law as supreme','Works as the basis of salvation'],'B','Romans 3:28 — Paul teaches that a person is justified by faith apart from works of the law.'),
+  q(2019,'The Golden Rule in Christianity is:',['Love God with all your heart','Do to others as you would have them do to you','Fear the Lord','Keep the Sabbath holy'],'B','Matthew 7:12 — "Do to others what you would have them do to you" is the Golden Rule.'),
+  q(2020,'The Sermon on the Mount is found in:',['Mark chapters 5-7','Luke 6','Matthew chapters 5-7','John 3'],'C','The Sermon on the Mount is recorded in Matthew chapters 5–7.'),
+  q(2021,'Moses received the Ten Commandments on:',['Mount Zion','Mount Carmel','Mount Sinai','Mount Hermon'],'C','God gave Moses the Ten Commandments on Mount Sinai (Exodus 20).'),
+  q(2022,'The book of Job deals with the theme of:',['Love and marriage','Suffering and faith in God','Creation','Prophecy'],'B','Job explores the problem of innocent suffering and maintaining faith in God through trials.'),
+  q(2023,'The prophet who was thrown into the den of lions was:',['Elijah','Isaiah','Daniel','Jeremiah'],'C','Daniel was thrown into the lions\' den by King Darius (Daniel 6) for continuing to pray to God.'),
+  q(2024,'Pentecost in Acts refers to:',['The birth of Jesus','The outpouring of the Holy Spirit on the disciples','The resurrection of Jesus','Paul\'s conversion'],'B','Acts 2 records the descent of the Holy Spirit on the disciples at Pentecost.'),
+  q(2015,'The parable of the Prodigal Son illustrates:',['Punishment for sin','God\'s unconditional love and forgiveness for repentant sinners','Strict justice','Economic hardship'],'B','Luke 15:11-32 — God (the father) joyfully welcomes back the repentant sinner.'),
+  q(2016,'Elijah\'s victory over the prophets of Baal took place on:',['Mount Sinai','Mount Carmel','Mount Zion','Mount Tabor'],'B','Elijah confronted the 450 prophets of Baal on Mount Carmel (1 Kings 18).'),
+  q(2017,'The fruit of the Spirit listed in Galatians 5:22-23 does NOT include:',['Love','Joy','Anger','Peace'],'C','The fruits of the Spirit are love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, self-control — not anger.'),
+  q(2018,'Jesus performed his first miracle at:',['Jerusalem','Bethlehem','Cana in Galilee','Capernaum'],'C','Jesus turned water into wine at the wedding at Cana in Galilee (John 2:1-11).'),
+  q(2019,'The concept of "Agape" in the New Testament means:',['Romantic love','Brotherly love','Unconditional, sacrificial divine love','Friendship love'],'C','Agape (Greek) is unconditional, self-giving love — the highest form of love, attributed to God.'),
+  q(2020,'Samuel anointed David as king because:',['He was tall and handsome','God looks at the heart, not outward appearance','His brothers rejected the role','He asked to be king'],'B','1 Samuel 16:7 — God told Samuel that man looks at outward appearance but God looks at the heart.'),
+  q(2021,'The Great Commission (Matthew 28:19-20) commands believers to:',['Stay in Jerusalem','Go and make disciples of all nations','Build temples','Observe the Sabbath'],'B','Jesus commanded his followers to go, make disciples, baptise, and teach all nations.'),
+  q(2022,'The book of Revelation was written by:',['Paul','Peter','John','James'],'C','Revelation was written by John (the Apostle) during his exile on the island of Patmos.'),
+  q(2023,'The feeding of the 5,000 demonstrates:',['Jesus\' power over nature','Jesus\' compassion and miraculous provision','The disciples\' failure','God\'s judgment'],'B','John 6:1-14 — Jesus miraculously fed 5,000 men with five loaves and two fish, showing divine compassion and power.'),
+  q(2024,'Paul\'s missionary journeys primarily aimed to:',['Conquer territories','Spread the Gospel of Jesus Christ to the Gentiles','Establish trade routes','Resist Roman rule'],'B','Paul undertook three missionary journeys to spread Christianity beyond Jewish communities to Gentiles across Asia Minor and Europe.'),
+  q(2015,'The Tower of Babel story explains:',['The origin of sin','The diversity of languages and nations on earth','The creation of the world','The origin of religion'],'B','Genesis 11:1-9 — God confused human language at Babel, scattering people across the earth.'),
+  q(2016,'Abraham is called the "Father of Faith" because:',['He built the first temple','He obeyed God\'s call and trusted His promises even when circumstances seemed impossible','He wrote the Bible','He was the first priest'],'B','Hebrews 11:8-19 — Abraham is the model of faith for leaving his homeland and trusting God\'s promise.'),
+  q(2017,'The prophet who said "Here I am, send me" was:',['Jeremiah','Ezekiel','Isaiah','Amos'],'C','Isaiah 6:8 — In his vision of God\'s throne, Isaiah volunteered: "Here am I. Send me!"'),
+  q(2018,'The Council of Jerusalem (Acts 15) resolved:',['Whether Jesus was divine','Whether Gentile Christians needed to be circumcised to be saved','The canon of Scripture','The date of Easter'],'B','Acts 15 — The Jerusalem Council decided Gentiles did not need to observe the Mosaic law (circumcision) for salvation.'),
+  q(2019,'The Beatitudes begin with:',['You shall have no other gods','Blessed are the poor in spirit: theirs is the kingdom of heaven','In the beginning was the Word','Love the Lord your God'],'B','Matthew 5:3 opens the Beatitudes: "Blessed are the poor in spirit, for theirs is the kingdom of heaven."'),
+  q(2020,'Samson\'s strength came from:',['A magic staff','His uncut hair (Nazirite vow)','Prayer','His giant physique'],'B','Judges 16 — Samson\'s strength was tied to his uncut hair as part of his Nazirite vow to God.'),
+  q(2021,'The concept of "Shalom" in Hebrew means:',['War','Honour','Peace and wholeness','Wealth'],'C','Shalom is the Hebrew concept of peace, wholeness, completeness, and well-being.'),
+  q(2022,'John the Baptist was the son of:',['Joseph and Mary','Zechariah and Elizabeth','Aaron and Miriam','Joachim and Anne'],'B','Luke 1 — John the Baptist was born to the elderly priest Zechariah and his wife Elizabeth.'),
+  q(2023,'The "I AM" sayings in John\'s Gospel reveal:',['Jesus\' humility','Jesus\' divine identity and mission','The disciples\' faith','Jewish law'],'B','John\'s seven "I AM" statements (I am the bread of life, light of the world, etc.) reveal Jesus\'s divine identity.'),
+  q(2024,'The fall of man (Genesis 3) resulted from:',['Eating from the tree of life','Disobeying God by eating from the tree of knowledge of good and evil','Murder','Idolatry'],'B','Adam and Eve\'s disobedience (eating the forbidden fruit) caused the fall and separation from God.'),
+  q(2015,'The Exodus from Egypt was led by:',['Abraham','Joseph','Moses','Joshua'],'C','Moses led the Israelites out of Egyptian slavery in the Exodus (Exodus 3-15).'),
+  q(2016,'Jesus\' triumphal entry into Jerusalem is celebrated as:',['Christmas','Easter','Palm Sunday','Pentecost'],'C','Palm Sunday commemorates Jesus\'s triumphal entry into Jerusalem (Matthew 21:1-11).'),
+  q(2017,'The shortest verse in the Bible is:',['God is love','In the beginning','Jesus wept','Do not fear'],'C','"Jesus wept" (John 11:35) is the shortest verse in the Bible.'),
+  q(2018,'Repentance in the New Testament means:',['Feeling guilty','A complete turning away from sin and turning toward God','Church attendance','Water baptism'],'B','Metanoia (Greek) — repentance means a fundamental change of mind and direction, turning from sin to God.'),
+  q(2019,'The Passover celebrates:',['The creation of the world','God\'s deliverance of Israel from Egypt','The giving of the Law','The covenant with Abraham'],'B','Passover commemorates God\'s passing over Israelite homes (marked with blood) during the plagues of Egypt.'),
+  q(2020,'The epistle with the most chapters in the New Testament is:',['Romans','1 Corinthians','2 Corinthians','Hebrews'],'B','1 Corinthians has 16 chapters — the most of any New Testament epistle.'),
+  q(2021,'Jesus was baptised by John in the river:',['Nile','Euphrates','Jordan','Tigris'],'C','Jesus was baptised in the River Jordan (Matthew 3:13-17).'),
+  q(2022,'The Holy Trinity refers to:',['Three separate gods','God as Father, Son, and Holy Spirit — one God in three persons','Three prophets','Three archangels'],'B','The doctrine of the Trinity holds that God is one being existing as three co-equal persons.'),
+  q(2023,'The Last Supper took place during the Jewish festival of:',['Yom Kippur','Passover','Tabernacles','Purim'],'B','Jesus celebrated the Last Supper with his disciples during the Passover meal (Luke 22:14-20).'),
+  q(2024,'Joseph was sold into slavery by his brothers for:',['20 shekels of silver','30 pieces of silver','50 shekels','100 talents'],'A','Genesis 37:28 — Joseph was sold to Midianite merchants for 20 shekels of silver.'),
+];
+
+QB['Further Mathematics'] = [
+  q(2015,'Find the derivative of y = sin(3x).',['cos(3x)','3cos(3x)','-cos(3x)','sin(3x)'],'B','By chain rule: dy/dx = cos(3x) × 3 = 3cos(3x).'),
+  q(2016,'Evaluate ∫₀^π sin(x)dx.',['0','2','1','π'],'B','∫₀^π sin(x)dx = [-cos(x)]₀^π = (-cos π) - (-cos 0) = 1+1 = 2.'),
+  q(2017,'The locus of points equidistant from (2,3) and (4,5) is:',['A circle','A straight line (perpendicular bisector)','A parabola','An ellipse'],'B','Points equidistant from two fixed points lie on the perpendicular bisector of the segment joining them.'),
+  q(2018,'Find the sum to infinity of the GP: 1 + 1/3 + 1/9 + ...',['3/2','2','3/4','2/3'],'A','S∞ = a/(1-r) = 1/(1-1/3) = 1/(2/3) = 3/2.'),
+  q(2019,'If f(x) = e^(2x), find f\'(x).',['e^(2x)','2e^(2x)','e^(2x)/2','2xe^(2x)'],'B','By chain rule: d/dx[e^(2x)] = 2e^(2x).'),
+  q(2020,'The general solution of dy/dx = y is:',['y = x + c','y = Ce^x','y = sin(x)','y = x²'],'B','Separating variables: dy/y = dx → ln|y| = x + c → y = Ce^x.'),
+  q(2021,'Evaluate: lim(x→0) (sin x)/x',['0','∞','1','Undefined'],'C','By L\'Hôpital\'s rule or standard limit: lim(x→0) sin(x)/x = 1.'),
+  q(2022,'The equation x² + y² - 4x + 6y - 12 = 0 represents a circle with centre:',['(2,-3)','(-2,3)','(4,-6)','(-4,6)'],'A','Complete the square: (x-2)²+(y+3)²=25; centre = (2,-3).'),
+  q(2023,'Find the range of values of x for which 2x² - 5x - 3 < 0.',['x < -1/2 or x > 3','-1/2 < x < 3','x > 3','x < -1/2'],'B','Roots of 2x²-5x-3=0 are x=-1/2 and x=3; quadratic opens up, so negative between roots.'),
+  q(2024,'Evaluate: ⁸C₃',['56','28','84','70'],'A','⁸C₃ = 8!/(3!5!) = (8×7×6)/(3×2×1) = 56.'),
+  q(2015,'The angle between vectors a=(1,0) and b=(0,1) is:',['0°','45°','90°','180°'],'C','a·b = 0; since the dot product is zero, vectors are perpendicular (90°).'),
+  q(2016,'The nth term of the sequence 2, 6, 18, 54, ... is:',['2n','2×3^(n-1)','3n','n×2^n'],'B','This is a GP with a=2, r=3: T_n = 2×3^(n-1).'),
+  q(2017,'Differentiate y = ln(5x) with respect to x.',['5/x','1/x','5','1/(5x)'],'B','d/dx[ln(5x)] = 1/x (by chain rule: 1/(5x) × 5 = 1/x).'),
+  q(2018,'The probability distribution function sums to:',['0','0.5','1','Depends on distribution'],'C','All probabilities in a probability distribution must sum to exactly 1.'),
+  q(2019,'A complex number z = a + bi has modulus:',['a+b','√(a+b)','√(a²+b²)','a²+b²'],'C','|z| = √(a² + b²) is the modulus (magnitude) of a complex number.'),
+  q(2020,'Find dy/dx if y = x³ ln x.',['3x² ln x','x²(3 ln x + 1)','x³/x','3x² + 1/x'],'B','Product rule: dy/dx = 3x²·ln x + x³·(1/x) = 3x²ln x + x² = x²(3ln x + 1).'),
+  q(2021,'The inverse of the function f(x) = 3x - 1 is:',['3x+1','(x+1)/3','(x-1)/3','1/(3x-1)'],'B','Let y=3x-1; swap: x=3y-1; solve: y=(x+1)/3.'),
+  q(2022,'Evaluate: d/dx [tan x]',['sec x','sec²x','cosec²x','cot x'],'B','The derivative of tan x is sec²x.'),
+  q(2023,'Solve the complex equation z² + 9 = 0.',['z = ±3','z = ±3i','z = 9i','z = ±√3'],'B','z² = -9 → z = ±√(-9) = ±3i.'),
+  q(2024,'The binomial expansion of (1+x)^n for small x gives the approximation:',['1-nx','1+nx+n(n-1)x²/2 + ...','nx','1-x^n'],'B','By the binomial theorem: (1+x)^n = 1 + nx + n(n-1)x²/2! + ... for |x| < 1.'),
+  q(2015,'If P(A) = 0.4 and P(B) = 0.5 and A and B are independent, find P(A∩B).',['0.9','0.2','0.1','0.45'],'B','For independent events: P(A∩B) = P(A) × P(B) = 0.4 × 0.5 = 0.2.'),
+  q(2016,'Find the stationary point of y = x³ - 3x.',['(1,-2) and (-1,2)','(0,0)','(3,0)','(1,0)'],'A','dy/dx = 3x²-3=0 → x=±1; y(1)=-2, y(-1)=2.'),
+  q(2017,'The sum of a GP with a=3, r=2, n=5 is:',['93','96','31','62'],'A','S = a(r^n - 1)/(r-1) = 3(32-1)/1 = 93.'),
+  q(2018,'Evaluate: ∫x²dx from 1 to 3',['26/3','9','8⅔','6'],'C','∫₁³ x²dx = [x³/3]₁³ = 9 - 1/3 = 26/3 = 8⅔.'),
+  q(2019,'The gradient of a curve is zero at a turning point. The second derivative test: if d²y/dx² > 0, the point is:',['Maximum','Minimum','Point of inflection','Saddle point'],'B','Positive second derivative → the curve is concave up → minimum turning point.'),
+  q(2020,'Express sin(A+B) using compound angle formula.',['sin A·sin B + cos A·cos B','sin A·cos B + cos A·sin B','sin A·cos B - cos A·sin B','cos A·cos B - sin A·sin B'],'B','sin(A+B) = sin A cos B + cos A sin B (compound angle formula).'),
+  q(2021,'The number of arrangements of the letters in MATHEMATICS is:',['11!/(2!2!2!)','11!','9!','11!/8!'],'A','MATHEMATICS has 11 letters with M, A, T each repeated twice: arrangements = 11!/(2!2!2!).'),
+  q(2022,'If the variance of a dataset is 16, the standard deviation is:',['256','4','8','2'],'B','Standard deviation = √variance = √16 = 4.'),
+  q(2023,'Find the area enclosed between y = x² and y = x.',['1/6','1/3','1/2','1/4'],'A','∫₀¹(x - x²)dx = [x²/2 - x³/3]₀¹ = 1/2 - 1/3 = 1/6.'),
+  q(2024,'The eccentricity of a circle is:',['0','1','Less than 1 but greater than 0','Greater than 1'],'A','A circle has eccentricity e = 0 (a special case of an ellipse).'),
+  q(2015,'If z₁ = 2+3i and z₂ = 1-i, find z₁ × z₂.',['5+i','5-i','5+5i','2+3i'],'A','(2+3i)(1-i) = 2-2i+3i-3i² = 2+i+3 = 5+i.'),
+  q(2016,'De Moivre\'s theorem states that [r(cosθ+isinθ)]^n =',['r^n (cos nθ + i sin nθ)','r(cos nθ + i sin nθ)','r^n (cos θ + i sin θ)','n·r(cosθ+isinθ)'],'A','De Moivre\'s theorem: [r(cosθ+isinθ)]^n = r^n(cos nθ + i sin nθ).'),
+  q(2017,'Solve: |2x - 3| ≤ 5',['x ≤ 4','1 ≤ x ≤ 4','-1 ≤ x ≤ 4','-1 ≤ x ≤ 3'],'C','-5 ≤ 2x-3 ≤ 5 → -2 ≤ 2x ≤ 8 → -1 ≤ x ≤ 4.'),
+  q(2018,'The transpose of a 2×3 matrix is a:',['2×3 matrix','3×2 matrix','3×3 matrix','2×2 matrix'],'B','Transposing swaps rows and columns: a 2×3 matrix becomes a 3×2 matrix.'),
+  q(2019,'Find the determinant of the matrix: [[2,3],[1,4]]',['5','11','8','6'],'A','det = (2x4) - (3x1) = 8 - 3 = 5.'),
+  q(2020,'Newton\'s Forward Difference formula is used for:',['Differentiation','Numerical interpolation','Integration only','Finding roots'],'B','Newton\'s Forward Difference formula is used for numerical interpolation of equally spaced data.'),
+  q(2021,'The value of e (Euler\'s number) to 4 decimal places is:',['2.7183','3.1416','1.6180','2.3026'],'A','e ≈ 2.71828... ≈ 2.7183 (base of natural logarithm).'),
+  q(2022,'Evaluate: Σ(r=1 to 4) r² ',['30','20','25','40'],'A','1²+2²+3²+4² = 1+4+9+16 = 30.'),
+  q(2023,'If A and B are mutually exclusive, P(A∪B) =',['P(A) × P(B)','P(A) + P(B)','P(A) + P(B) - P(A∩B)','P(A) - P(B)'],'B','For mutually exclusive events P(A∩B)=0, so P(A∪B) = P(A) + P(B).'),
+  q(2024,'The period of the function y = sin(2x) is:',['2π','π','π/2','4π'],'B','Period = 2π/frequency coefficient = 2π/2 = π.'),
+];
+
+// ── SUBJECTS CONFIG ──
+const SUBJECTS_CONFIG = {
+  'English':           {name:'English Language',       icon:'📝', track:'compulsory', tag:'Compulsory'},
+  'Mathematics':       {name:'Mathematics',             icon:'📐', track:'science',    tag:'Science'},
+  'Physics':           {name:'Physics',                 icon:'⚛️', track:'science',    tag:'Science'},
+  'Chemistry':         {name:'Chemistry',               icon:'🧪', track:'science',    tag:'Science'},
+  'Biology':           {name:'Biology',                 icon:'🌿', track:'science',    tag:'Science'},
+  'Further Mathematics':{name:'Further Maths',          icon:'∑',  track:'science',    tag:'Science'},
+  'Literature':        {name:'Literature in English',   icon:'📖', track:'arts',       tag:'Arts'},
+  'Government':        {name:'Government',              icon:'🏛️', track:'arts',       tag:'Arts'},
+  'CRS':               {name:'Christian Rel. Studies',  icon:'✝️', track:'arts',       tag:'Arts'},
+  'History':           {name:'History',                 icon:'🏺', track:'arts',       tag:'Arts'},
+  'Economics':         {name:'Economics',               icon:'📈', track:'commercial', tag:'Commercial'},
+  'Commerce':          {name:'Commerce',                icon:'🏪', track:'commercial', tag:'Commercial'},
+  'Accounting':        {name:'Accounting',              icon:'💹', track:'commercial', tag:'Commercial'},
+  'Geography':         {name:'Geography',               icon:'🌍', track:'arts',       tag:'Arts/Comm'},
+};
+
+// ── STATE ──
+let examQs = [], userAns = {}, flagged = new Set();
+let curQ = 0, timerID = null, timeLeft = 7200;
+let examMode = 'full', selSubjects = ['English'], selYears = [];
+
+// ── UTILS ──
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function el(id){return document.getElementById(id);}
+function html(id,v){el(id).innerHTML=v;}
+
+// ── DASHBOARD INIT ──
+function initDashboard(){
+  // Build subject grid
+  const grid = el('subj-grid'); grid.innerHTML = '';
+  Object.entries(SUBJECTS_CONFIG).forEach(([key,cfg])=>{
+    const d = document.createElement('div');
+    d.className = 'subj-card'+(key==='English'?' is-selected is-compulsory':'');
+    d.dataset.key = key;
+    d.innerHTML = `<div class="sc-icon">${cfg.icon}</div><div class="sc-name">${cfg.name}</div><div class="sc-track">${cfg.tag}</div>`;
+    if(key !== 'English') d.onclick = ()=>toggleSubject(d, key);
+    grid.appendChild(d);
+  });
+  // Build year row
+  const yr = el('year-row'); yr.innerHTML = '';
+  const all = document.createElement('div');
+  all.className='yr-pill is-active'; all.textContent='All Years';
+  all.onclick=()=>selectYear('all',all); yr.appendChild(all);
+  for(let y=2015;y<=2024;y++){
+    const p=document.createElement('div');
+    p.className='yr-pill'; p.textContent=y; p.dataset.year=y;
+    p.onclick=()=>selectYear(y,p); yr.appendChild(p);
+  }
+  selSubjects=['English']; selYears=[];
+  updateSummary();
+}
+
+function toggleSubject(el,key){
+  const i=selSubjects.indexOf(key);
+  if(i>-1){selSubjects.splice(i,1);el.classList.remove('is-selected');}
+  else{
+    if(selSubjects.length>=4){alert('Select only 3 subjects in addition to English (4 total).');return;}
+    selSubjects.push(key); el.classList.add('is-selected');
+  }
+  updateSummary();
+}
+
+function selectMode(el,mode){
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active'); examMode=mode; updateSummary();
+}
+
+function selectYear(year,el){
+  if(year==='all'){
+    selYears=[];
+    document.querySelectorAll('.yr-pill').forEach(p=>p.classList.remove('is-active'));
+    el.classList.add('is-active');
+  } else {
+    document.querySelector('.yr-pill:first-child').classList.remove('is-active');
+    const i=selYears.indexOf(year);
+    if(i>-1){selYears.splice(i,1);el.classList.remove('is-active');}
+    else{selYears.push(year);el.classList.add('is-active');}
+    if(!selYears.length) document.querySelector('.yr-pill:first-child').classList.add('is-active');
+  }
+}
+
+function updateSummary(){
+  const ok = selSubjects.length===4;
+  el('start-btn').disabled = !ok;
+  const summ = el('sel-summary');
+  if(!ok){summ.innerHTML=`Select <span>${4-selSubjects.length}</span> more subject(s) to unlock the exam.`;}
+  else{summ.innerHTML=`<span>${selSubjects.join(', ')}</span> · ${selYears.length?selYears.join(', '):'All Years'} · 160 Questions · 2 Hours`;}
+}
+
+// ── EXAM BUILD ──
+function buildExamQs(){
+  let all=[];
+  selSubjects.forEach(subj=>{
+    let pool=[...(QB[subj]||[])];
+    if(selYears.length){
+      let yr=pool.filter(q=>selYears.includes(q.year));
+      if(yr.length<40) yr=[...yr,...pool.filter(q=>!selYears.includes(q.year))];
+      pool=yr;
+    }
+    pool=shuffle(pool);
+    const sel=pool.slice(0,Math.min(40,pool.length));
+    while(sel.length<40){const ex=shuffle([...(QB[subj]||[])]);sel.push(...ex.slice(0,40-sel.length));}
+    sel.slice(0,40).forEach(q=>{
+      const L=['A','B','C','D'];
+      const paired=q.opts.map((o,i)=>({text:o,isAns:L[i]===q.ans}));
+      shuffle(paired);
+      const newAns=L[paired.findIndex(p=>p.isAns)];
+      all.push({subject:subj,year:q.year,text:q.text,opts:paired.map(p=>p.text),ans:newAns,exp:q.exp});
+    });
+  });
+  return all;
+}
+
+function startExam(){
+  if(selSubjects.length!==4){alert('Please select exactly 4 subjects.');return;}
+  examQs=buildExamQs(); userAns={}; flagged=new Set(); curQ=0; timeLeft=7200;
+  showPage('exam');
+  // Show splash, hide active exam
+  el('exam-splash').style.display='flex';
+  el('exam-splash').style.flexDirection='column';
+  el('exam-active').style.display='none';
+  // Populate splash
+  const modeLabel=examMode==='full'?'Full JAMB Simulation':examMode==='year'?'Year Practice':'Subject Drill';
+  el('splash-title').textContent=modeLabel;
+  el('splash-desc').textContent=`${selSubjects.length} subjects · ${examQs.length} questions · ${selYears.length?selYears.join(', '):'All Years (2015–2024)'}`;
+  el('splash-rules').innerHTML=`
+    <div class="splash-rule"><span class="splash-rule-icon">⏱️</span><div class="splash-rule-text"><strong>2 Hours</strong>Timer starts when you click Begin</div></div>
+    <div class="splash-rule"><span class="splash-rule-icon">📝</span><div class="splash-rule-text"><strong>${examQs.length} Questions</strong>40 per subject</div></div>
+    <div class="splash-rule"><span class="splash-rule-icon">🚩</span><div class="splash-rule-text"><strong>Flag & Review</strong>Mark questions to revisit</div></div>
+    <div class="splash-rule"><span class="splash-rule-icon">📊</span><div class="splash-rule-text"><strong>Full Review</strong>Answers explained after exam</div></div>`;
+  el('splash-subjects').innerHTML=selSubjects.map(s=>`<span class="tag tag-amber">${SUBJECTS_CONFIG[s].icon} ${SUBJECTS_CONFIG[s].name}</span>`).join('');
+}
+
+function beginExamNow(){
+  // Hide splash, show active exam
+  el('exam-splash').style.display='none';
+  el('exam-active').style.display='flex';
+  el('exam-active').style.flexDirection='column';
+  el('e-title').textContent=`JAMB Practice — ${selSubjects.join(' · ')}`;
+  renderDots(); renderQ(); startTimer();
+}
+
+function cancelTodashboard(){
+  examQs=[]; userAns={}; flagged=new Set(); clearInterval(timerID);
+  showPage('dashboard');
+}
+
+// ── TIMER ──
+function startTimer(){
+  clearInterval(timerID);
+  timerID=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timerID);submitExam();}},1000);
+}
+function updateTimer(){
+  const h=Math.floor(timeLeft/3600),m=Math.floor((timeLeft%3600)/60),s=timeLeft%60;
+  el('timer-display').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const t=el('timer'); t.classList.toggle('warn',timeLeft<600);
+}
+
+// ── RENDER Q ──
+function renderDots(){
+  if(!examQs.length) return;
+  const wrap=el('q-dots'); wrap.innerHTML='';
+  examQs.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='q-dot'+(i===curQ?' is-current':'')+(userAns[i]!==undefined?' is-done':'')+(flagged.has(i)?' is-flagged':'');
+    b.textContent=i+1; b.onclick=()=>goQ(i); wrap.appendChild(b);
+  });
+}
+function renderQ(){
+  if(!examQs.length || curQ >= examQs.length || !examQs[curQ]) return;
+  const q=examQs[curQ];
+  el('q-num').textContent=`Question ${curQ+1} of ${examQs.length}`;
+  el('q-subj-tag').textContent=q.subject;
+  el('q-year-tag').textContent=q.year;
+  el('e-prog').textContent=`Q ${curQ+1} / ${examQs.length}`;
+  el('q-text').textContent=q.text;
+  el('flag-btn').textContent=flagged.has(curQ)?'🚩 Unflag':'🚩 Flag';
+  const opts=el('q-opts'); opts.innerHTML='';
+  const L=['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const d=document.createElement('div');
+    d.className='opt'+(userAns[curQ]===L[i]?' is-selected':'');
+    d.innerHTML=`<div class="opt-letter">${L[i]}</div><div class="opt-text">${opt}</div>`;
+    d.onclick=()=>{userAns[curQ]=L[i];renderQ();renderDots();};
+    opts.appendChild(d);
+  });
+// removed stray renderDots call
+}
+function nextQ(){if(examQs.length && curQ<examQs.length-1){curQ++;renderQ();}}
+function prevQ(){if(examQs.length && curQ>0){curQ--;renderQ();}}
+function goQ(i){if(i>=0&&i<examQs.length){curQ=i;renderQ();}}
+function toggleFlag(){if(!examQs.length)return;if(flagged.has(curQ))flagged.delete(curQ);else flagged.add(curQ);renderQ();}
+
+function openSubmitModal(){
+  const u=examQs.length-Object.keys(userAns).length;
+  el('modal-msg').textContent=u>0?`You have ${u} unanswered question(s). Are you sure you want to submit?`:'All questions answered. Submit?';
+  el('modal-bg').classList.add('open');
+}
+function closeModal(){el('modal-bg').classList.remove('open');}
+function submitExam(){clearInterval(timerID);closeModal();showPage('results');renderResults();}
+
+// ── RESULTS ──
+let curFilter='all';
+function renderResults(){
+  if(!examQs.length){showPage('dashboard');return;}
+  const total=examQs.length;
+  let correct=0;
+  const ss={};
+  selSubjects.forEach(s=>{ss[s]={c:0,t:0};});
+  examQs.forEach((q,i)=>{
+    const ok=userAns[i]===q.ans;
+    if(ok)correct++;
+    ss[q.subject].t++;
+    if(ok)ss[q.subject].c++;
+  });
+  const pct=Math.round((correct/total)*100);
+  const unanswered=examQs.filter((_,i)=>userAns[i]===undefined).length;
+  const wrong=total-correct-unanswered;
+
+  // Ring
+  el('res-pct').textContent=pct+'%';
+  const circ=2*Math.PI*56;
+  const ring=el('score-ring');
+  ring.style.strokeDashoffset=circ*(1-pct/100);
+  ring.style.stroke=pct>=70?'var(--green)':pct>=50?'var(--accent)':'var(--red)';
+
+  let grade,col;
+  if(pct>=80){grade='Excellent — A';col='var(--green)';}
+  else if(pct>=70){grade='Very Good — B';col='#84cc16';}
+  else if(pct>=60){grade='Good — C';col='var(--accent)';}
+  else if(pct>=50){grade='Pass — D';col='#f97316';}
+  else{grade='Below Pass — F';col='var(--red)';}
+  el('res-grade').textContent=grade; el('res-grade').style.color=col;
+  el('res-caption').textContent=`You answered ${correct} out of ${total} correctly`;
+
+  el('score-stats-row').innerHTML=`
+    <div class="sc-stat"><div class="sc-stat-num" style="color:var(--green)">${correct}</div><div class="sc-stat-lbl">Correct</div></div>
+    <div class="sc-stat"><div class="sc-stat-num" style="color:var(--red)">${wrong}</div><div class="sc-stat-lbl">Wrong</div></div>
+    <div class="sc-stat"><div class="sc-stat-num" style="color:var(--text2)">${unanswered}</div><div class="sc-stat-lbl">Unanswered</div></div>
+    <div class="sc-stat"><div class="sc-stat-num">${pct}%</div><div class="sc-stat-lbl">Total Score</div></div>`;
+
+  el('subj-bk-grid').innerHTML=selSubjects.map(s=>{
+    const d=ss[s], sp=Math.round((d.c/d.t)*100);
+    const bc=sp>=70?'var(--green)':sp>=50?'var(--accent)':'var(--red)';
+    return `<div class="subj-bk-card">
+      <div class="subj-bk-top"><span class="subj-bk-name">${SUBJECTS_CONFIG[s].icon} ${SUBJECTS_CONFIG[s].name}</span><span class="subj-bk-pct" style="color:${bc}">${sp}%</span></div>
+      <div class="subj-bk-bar"><div class="subj-bk-fill" style="width:${sp}%;background:${bc}"></div></div>
+      <div class="subj-bk-nums">${d.c} correct of ${d.t}</div></div>`;
+  }).join('');
+
+  renderReview('all');
+}
+
+function filterReview(type,btn){
+  curFilter=type;
+  document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderReview(type);
+}
+
+function renderReview(filter){
+  let qs=examQs.map((q,i)=>({...q,idx:i}));
+  if(filter==='wrong')qs=qs.filter(q=>userAns[q.idx]!==undefined&&userAns[q.idx]!==q.ans);
+  else if(filter==='correct')qs=qs.filter(q=>userAns[q.idx]===q.ans);
+  else if(filter==='unanswered')qs=qs.filter(q=>userAns[q.idx]===undefined);
+
+  el('review-list').innerHTML = qs.length ? qs.map(q=>{
+    const ua=userAns[q.idx], isOk=ua===q.ans, isUn=ua===undefined;
+    const L=['A','B','C','D'];
+    const optsHtml=q.opts.map((opt,oi)=>{
+      const ltr=L[oi];
+      let cls='rv-opt is-neutral', mark='';
+      if(ltr===q.ans){cls='rv-opt is-correct-ans';mark=' ✓';}
+      else if(ltr===ua&&!isOk){cls='rv-opt is-user-wrong';mark=' ✗';}
+      return `<div class="${cls}"><span class="rv-opt-letter">${ltr}.</span>${opt}${mark}</div>`;
+    }).join('');
+    const badgeCls=isOk?'tag tag-green':isUn?'tag tag-blue':'tag tag-red';
+    const badgeTxt=isOk?'✓ Correct':isUn?'— Skipped':'✗ Wrong';
+    const cardCls=isOk?'rv-card is-correct':isUn?'rv-card is-unanswered':'rv-card is-wrong';
+    return `<div class="${cardCls}">
+      <div class="rv-top"><span class="${badgeCls}">${badgeTxt}</span><span class="rv-meta">Q${q.idx+1} · ${q.subject} · ${q.year}</span></div>
+      <div class="rv-q">${q.text}</div>
+      <div class="rv-opts">${optsHtml}</div>
+      <div class="rv-exp"><strong>Explanation:</strong> ${q.exp}</div></div>`;
+  }).join('') : '<p style="text-align:center;padding:2rem;color:var(--text2)">No questions match this filter.</p>';
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{initDashboard();});
+
+</script>
+</body>
+</html>
