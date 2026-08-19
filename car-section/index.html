@@ -1,46 +1,556 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <title>Car-Section</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Polyglot — Language Translator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDEEE9;
+    --paper-2:#E2E4DC;
+    --ink:#1F3A3D;
+    --ink-soft:#4B615F;
+    --coral:#D8574A;
+    --coral-dark:#B8402F;
+    --gold:#C9A227;
+    --line:#C7CBBF;
+    --white:#FBFBF8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:40px 20px;
+  }
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+  }
+  header{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    margin-bottom:36px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:20px;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    font-family:'Fraunces',serif;
+    font-size:42px;
+    font-weight:600;
+    letter-spacing:-0.5px;
+    line-height:1;
+  }
+  .brand em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--coral);
+  }
+  .tagline{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    margin-top:6px;
+  }
+  .stamp{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    border:1.5px solid var(--gold);
+    color:var(--gold);
+    padding:8px 14px;
+    border-radius:3px;
+    transform:rotate(-3deg);
+    white-space:nowrap;
+  }
+
+  .panel{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+  }
+
+  .lang-bar{
+    display:flex;
+    align-items:center;
+    background:var(--paper-2);
+    border-bottom:1px solid var(--line);
+  }
+  .lang-select-group{
+    flex:1;
+    display:flex;
+    align-items:center;
+    padding:10px 18px;
+    position:relative;
+  }
+  .lang-select-group label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--ink-soft);
+    margin-right:10px;
+    flex-shrink:0;
+  }
+  select{
+    appearance:none;
+    -webkit-appearance:none;
+    background:transparent;
+    border:none;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    color:var(--ink);
+    padding:4px 22px 4px 2px;
+    cursor:pointer;
+    width:100%;
+  }
+  select:focus{outline:2px solid var(--coral); outline-offset:2px; border-radius:2px;}
+  .lang-select-group::after{
+    content:"▾";
+    position:absolute;
+    right:16px;
+    color:var(--ink-soft);
+    font-size:11px;
+    pointer-events:none;
+  }
+  .swap-btn{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:50%;
+    width:36px;
+    height:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+    margin:0 6px;
+    color:var(--ink);
+    font-size:16px;
+    transition:transform 0.25s ease, background 0.2s ease, color 0.2s ease;
+  }
+  .swap-btn:hover{
+    background:var(--coral);
+    color:var(--white);
+    transform:rotate(180deg);
+  }
+  .swap-btn:focus-visible{outline:2px solid var(--coral); outline-offset:2px;}
+
+  .body-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  @media (max-width:680px){
+    .body-grid{grid-template-columns:1fr;}
+    .body-grid .col:first-child{border-bottom:1px solid var(--line);}
+    .body-grid .col:first-child textarea{border-right:none;}
+  }
+  .col{
+    display:flex;
+    flex-direction:column;
+  }
+  .col:first-child textarea{
+    border-right:1px solid var(--line);
+  }
+  textarea{
+    border:none;
+    resize:none;
+    font-family:'Inter',sans-serif;
+    font-size:17px;
+    line-height:1.55;
+    padding:22px;
+    height:220px;
+    color:var(--ink);
+    background:var(--white);
+  }
+  textarea:focus{outline:none; background:#fff;}
+  textarea::placeholder{color:#A9AEA0;}
+
+  .output{
+    padding:22px;
+    height:220px;
+    overflow-y:auto;
+    font-size:17px;
+    line-height:1.55;
+    color:var(--ink);
+    background:#F4F5F0;
+  }
+  .output.placeholder{color:#A9AEA0; font-style:italic;}
+  .output .loading{
+    display:inline-flex;
+    gap:4px;
+    align-items:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .dot{
+    width:5px;height:5px;border-radius:50%;background:var(--coral);
+    animation:pulse 1.1s ease-in-out infinite;
+  }
+  .dot:nth-child(2){animation-delay:0.15s;}
+  .dot:nth-child(3){animation-delay:0.3s;}
+  @keyframes pulse{
+    0%,80%,100%{opacity:0.25; transform:scale(0.8);}
+    40%{opacity:1; transform:scale(1);}
+  }
+
+  .footer-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 18px;
+    border-top:1px solid var(--line);
+    background:var(--paper-2);
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .char-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.5px;
+  }
+  .actions{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .icon-btn{
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:4px;
+    width:34px;
+    height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    color:var(--ink-soft);
+    font-size:15px;
+    transition:all 0.15s ease;
+  }
+  .icon-btn:hover{
+    border-color:var(--ink);
+    color:var(--ink);
+  }
+  .icon-btn.copied{
+    border-color:var(--gold);
+    color:var(--gold);
+  }
+  .icon-btn:disabled{opacity:0.35; cursor:not-allowed;}
+
+  .translate-row{
+    display:flex;
+    justify-content:center;
+    margin-top:26px;
+  }
+  .translate-btn{
+    background:var(--coral);
+    color:var(--white);
+    border:none;
+    padding:15px 44px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:0.3px;
+    border-radius:4px;
+    cursor:pointer;
+    transition:background 0.15s ease, transform 0.1s ease;
+  }
+  .translate-btn:hover{background:var(--coral-dark);}
+  .translate-btn:active{transform:scale(0.98);}
+  .translate-btn:disabled{background:#C9BEB9; cursor:not-allowed;}
+  .translate-btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
+
+  .hint{
+    text-align:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:12px;
+    letter-spacing:0.3px;
+  }
+  .hint kbd{
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:1px 5px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+
+  .error-msg{
+    color:var(--coral-dark);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    margin-top:4px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .swap-btn, .translate-btn, .dot{animation:none !important; transition:none !important;}
+  }
+</style>
 </head>
-
 <body>
-    <section class="section section-1">
-        <img src="icon-sedans.svg">
-        <div class="content">
-            <h2>SEDANS</h2>
-            <p>
-                Choose a sedan for its affordadability and excellent fuel economy. Ideal for cruising in city or on your next road trip.
-            </p>
-            <button class="button-1">Learn More</button>
-        </div>
+<div class="wrap">
 
-    </section>
-    <section class="section section-2">
-        <img src="icon-suvs.svg">
-        <div class="content">
-            <h2>SUVS</h2>
-            <p>
-                Take an SUV for its spacious interior, power, and versality. Perfect for your next family vacation and off-road adventures.
-            </p>
-            <button class="button-2">Learn More</button>
-        </div>
-    </section>
-    <section class="section section-3">
-        <img src="icon-luxury.svg">
-        <div class="content">
-            <h2>LUXURY</h2>
-            <p>
-                Cruise in the best car brands without the bloated prices. Enjoy the enhanced comfort of a luxury rental and arrive in style.
-            </p>
-            <button class="button-3">Learn More</button>
-        </div>
-    </section>
+  <header>
+    <div>
+      <div class="brand">Felicity<em>Tech</em></div>
+      <div class="tagline">Text in, meaning across</div>
+    </div>
+    <div class="stamp" id="directionStamp">EN → ES</div>
+  </header>
 
+  <div class="panel">
+    <div class="lang-bar">
+      <div class="lang-select-group">
+        <label for="sourceLang">From</label>
+        <select id="sourceLang"></select>
+      </div>
+      <button class="swap-btn" id="swapBtn" title="Swap languages" aria-label="Swap languages">⇄</button>
+      <div class="lang-select-group">
+        <label for="targetLang">To</label>
+        <select id="targetLang"></select>
+      </div>
+    </div>
+
+    <div class="body-grid">
+      <div class="col">
+        <textarea id="sourceText" placeholder="Type or paste text to translate…" maxlength="4500"></textarea>
+        <div class="footer-bar">
+          <span class="char-count"><span id="charCount">0</span> / 4500</span>
+          <div class="actions">
+            <button class="icon-btn" id="listenSourceBtn" title="Listen to source text" aria-label="Listen to source text">🔊</button>
+            <button class="icon-btn" id="clearBtn" title="Clear text" aria-label="Clear text">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="output placeholder" id="outputText">Translation will appear here.</div>
+        <div class="footer-bar">
+          <span class="char-count" id="statusText"></span>
+          <div class="actions">
+            <button class="icon-btn" id="listenOutputBtn" title="Listen to translation" aria-label="Listen to translation" disabled>🔊</button>
+            <button class="icon-btn" id="copyBtn" title="Copy translation" aria-label="Copy translation" disabled>⎘</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="translate-row">
+    <button class="translate-btn" id="translateBtn">Translate</button>
+  </div>
+  <div class="hint">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to translate</div>
+  <div class="error-msg" id="errorMsg" style="text-align:center;"></div>
+
+</div>
+
+<script>
+const LANGUAGES = [
+  ["auto","Auto-detect"],
+  ["en","English"],["es","Spanish"],["fr","French"],["de","German"],
+  ["it","Italian"],["pt","Portuguese"],["nl","Dutch"],["ru","Russian"],
+  ["zh","Chinese (Simplified)"],["ja","Japanese"],["ko","Korean"],
+  ["ar","Arabic"],["hi","Hindi"],["bn","Bengali"],["ur","Urdu"],
+  ["tr","Turkish"],["vi","Vietnamese"],["th","Thai"],["id","Indonesian"],
+  ["pl","Polish"],["uk","Ukrainian"],["el","Greek"],["he","Hebrew"],
+  ["sv","Swedish"],["fi","Finnish"],["no","Norwegian"],["da","Danish"],
+  ["cs","Czech"],["ro","Romanian"],["hu","Hungarian"],["sw","Swahili"],
+  ["yo","Yoruba"],["ig","Igbo"],["ha","Hausa"],["fa","Persian"],
+  ["ms","Malay"],["tl","Filipino"]
+];
+
+const sourceSel = document.getElementById('sourceLang');
+const targetSel = document.getElementById('targetLang');
+const sourceText = document.getElementById('sourceText');
+const outputText = document.getElementById('outputText');
+const translateBtn = document.getElementById('translateBtn');
+const swapBtn = document.getElementById('swapBtn');
+const copyBtn = document.getElementById('copyBtn');
+const clearBtn = document.getElementById('clearBtn');
+const listenSourceBtn = document.getElementById('listenSourceBtn');
+const listenOutputBtn = document.getElementById('listenOutputBtn');
+const charCount = document.getElementById('charCount');
+const statusText = document.getElementById('statusText');
+const errorMsg = document.getElementById('errorMsg');
+const directionStamp = document.getElementById('directionStamp');
+
+LANGUAGES.forEach(([code,name])=>{
+  const o1 = document.createElement('option'); o1.value=code; o1.textContent=name;
+  sourceSel.appendChild(o1);
+  if(code!=='auto'){
+    const o2 = document.createElement('option'); o2.value=code; o2.textContent=name;
+    targetSel.appendChild(o2);
+  }
+});
+sourceSel.value='auto';
+targetSel.value='es';
+
+let lastTranslation = "";
+
+function langName(code){
+  const f = LANGUAGES.find(l=>l[0]===code);
+  return f ? f[1] : code;
+}
+
+function updateStamp(){
+  const s = sourceSel.value==='auto' ? 'AUTO' : sourceSel.value.toUpperCase();
+  const t = targetSel.value.toUpperCase();
+  directionStamp.textContent = s + ' → ' + t;
+}
+sourceSel.addEventListener('change', updateStamp);
+targetSel.addEventListener('change', updateStamp);
+updateStamp();
+
+sourceText.addEventListener('input', ()=>{
+  charCount.textContent = sourceText.value.length;
+});
+
+clearBtn.addEventListener('click', ()=>{
+  sourceText.value='';
+  charCount.textContent='0';
+  sourceText.focus();
+});
+
+swapBtn.addEventListener('click', ()=>{
+  if(sourceSel.value==='auto') return; // can't swap from an auto-detected source
+  const s = sourceSel.value, t = targetSel.value;
+  sourceSel.value = t;
+  targetSel.value = s;
+  updateStamp();
+  if(lastTranslation){
+    sourceText.value = lastTranslation;
+    charCount.textContent = sourceText.value.length;
+    doTranslate();
+  }
+});
+
+async function translateViaGoogle(text, source, target){
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${source}&tl=${target}&dt=t&q=${encodeURIComponent(text)}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('Google endpoint failed');
+  const data = await res.json();
+  return data[0].map(chunk => chunk[0]).join('');
+}
+
+async function translateViaMyMemory(text, source, target){
+  const langpair = `${source}|${target}`;
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('MyMemory endpoint failed');
+  const data = await res.json();
+  if(!data.responseData || !data.responseData.translatedText) throw new Error('No translation returned');
+  return data.responseData.translatedText;
+}
+
+async function doTranslate(){
+  const text = sourceText.value.trim();
+  errorMsg.textContent = '';
+  if(!text){
+    outputText.textContent = 'Translation will appear here.';
+    outputText.classList.add('placeholder');
+    copyBtn.disabled = true;
+    listenOutputBtn.disabled = true;
+    return;
+  }
+  const source = sourceSel.value;
+  const target = targetSel.value;
+
+  translateBtn.disabled = true;
+  translateBtn.textContent = 'Translating…';
+  outputText.classList.remove('placeholder');
+  outputText.innerHTML = '<span class="loading">Working<span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+  statusText.textContent = '';
+
+  let result = null;
+  let usedFallback = false;
+
+  try{
+    result = await translateViaGoogle(text, source, target);
+  }catch(e){
+    try{
+      usedFallback = true;
+      result = await translateViaMyMemory(text, source === 'auto' ? 'en' : source, target);
+    }catch(e2){
+      errorMsg.textContent = 'Translation failed — please check your connection and try again.';
+    }
+  }
+
+  translateBtn.disabled = false;
+  translateBtn.textContent = 'Translate';
+
+  if(result){
+    lastTranslation = result;
+    outputText.textContent = result;
+    outputText.classList.remove('placeholder');
+    copyBtn.disabled = false;
+    listenOutputBtn.disabled = false;
+    statusText.textContent = usedFallback ? 'via MyMemory API' : 'via Google Translate';
+  } else {
+    outputText.textContent = 'Translation will appear here.';
+    outputText.classList.add('placeholder');
+    copyBtn.disabled = true;
+    listenOutputBtn.disabled = true;
+  }
+}
+
+translateBtn.addEventListener('click', doTranslate);
+sourceText.addEventListener('keydown', (e)=>{
+  if((e.ctrlKey||e.metaKey) && e.key==='Enter'){
+    e.preventDefault();
+    doTranslate();
+  }
+});
+
+copyBtn.addEventListener('click', async ()=>{
+  if(!lastTranslation) return;
+  try{
+    await navigator.clipboard.writeText(lastTranslation);
+    copyBtn.classList.add('copied');
+    copyBtn.textContent = '✓';
+    setTimeout(()=>{ copyBtn.classList.remove('copied'); copyBtn.textContent='⎘'; }, 1500);
+  }catch(e){
+    errorMsg.textContent = 'Could not copy — please select and copy manually.';
+  }
+});
+
+function speak(text, langCode){
+  if(!('speechSynthesis' in window)) {
+    errorMsg.textContent = 'Text-to-speech is not supported in this browser.';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = langCode;
+  window.speechSynthesis.speak(utter);
+}
+
+listenSourceBtn.addEventListener('click', ()=>{
+  const text = sourceText.value.trim();
+  if(!text) return;
+  const lang = sourceSel.value==='auto' ? 'en' : sourceSel.value;
+  speak(text, lang);
+});
+
+listenOutputBtn.addEventListener('click', ()=>{
+  if(!lastTranslation) return;
+  speak(lastTranslation, targetSel.value);
+});
+</script>
 </body>
-
 </html>
